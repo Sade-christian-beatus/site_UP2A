@@ -124,15 +124,17 @@ Procédure recommandée une fois le projet Supabase créé :
 
 ## Stockage (Supabase Storage)
 
-Buckets prévus (à créer lors de la configuration du projet, hors migration
-SQL versionnée pour l'instant) :
+Buckets déclarés dans `supabase/config.toml` (`[storage.buckets.*]`), avec
+RLS sur `storage.objects` dans `supabase/migrations/0004_storage_policies.sql` :
 
 - `candidatures` — pièces jointes des préinscriptions (accès restreint aux
-  admins + upload server-side uniquement).
-- `supports-cours` — documents pédagogiques (lecture étudiants de la
-  formation concernée, écriture admin).
-- `documents-etudiants` — documents administratifs générés (lecture
-  propriétaire uniquement, écriture admin).
+  admins ; upload réel server-side via `service_role`, qui bypass la RLS).
+- `supports-cours` — documents pédagogiques. RLS admin uniquement pour
+  l'instant ; l'accès étudiant fin (lecture de sa propre formation/année)
+  sera ajouté en phase 6 une fois la convention de chemin des objets
+  arrêtée avec les écrans réels.
+- `documents-etudiants` — documents administratifs générés. Même
+  remarque : RLS admin uniquement pour l'instant, affinée en phase 6.
 
 ## Ce que WordPress ne fait jamais
 
