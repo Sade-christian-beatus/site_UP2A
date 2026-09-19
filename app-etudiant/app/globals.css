@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/*
+ * Tokens du design system UP-2A (docs/02-design-system.md).
+ * Statut : proposition de départ à valider par le client — voir le doc.
+ * Tailwind v4 étant "CSS-first", ces tokens sont déclarés ici plutôt que
+ * dans un tailwind.config.ts (voir docs/04-conventions.md).
+ */
+:root {
+  --color-primary: #0b4d3c;
+  --color-primary-dark: #083a2d;
+  --color-accent: #c9a227;
+  --color-accent-light: #e4c868;
+  --color-ink: #14202b;
+  --color-ink-soft: #3e4c57;
+  --color-bg: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-border: #e2dfd6;
+  --color-success: #2e7d32;
+  --color-error: #b3261e;
+  --color-warning: #b8860b;
+
+  --font-heading: ui-serif, Georgia, "Times New Roman", serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 32, 43, 0.06);
+  --shadow-md: 0 4px 12px rgba(20, 32, 43, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 32, 43, 0.12);
+
+  --motion-fast: 0.2s;
+  --motion-base: 0.4s;
+  --motion-slow: 0.8s;
+}
+
+/* Expose les tokens comme utilitaires Tailwind (bg-primary, text-ink, etc.) */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --color-warning: var(--color-warning);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
