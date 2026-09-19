@@ -119,12 +119,33 @@ enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
-# Uncomment to configure local storage buckets
-# [storage.buckets.images]
-# public = false
-# file_size_limit = "50MiB"
-# allowed_mime_types = ["image/png", "image/jpeg"]
-# objects_path = "./images"
+# Buckets UP-2A — voir docs/01-architecture.md "Stockage (Supabase Storage)".
+# Déclarés ici pour rester versionnés (au lieu de clics manuels dans le
+# dashboard). Non publics : l'accès réel est gouverné par des policies de
+# Storage à créer côté projet (RLS sur storage.objects), pas par ce flag seul.
+
+[storage.buckets.candidatures]
+public = false
+file_size_limit = "10MiB"
+allowed_mime_types = ["application/pdf", "image/jpeg", "image/png"]
+
+[storage.buckets.supports-cours]
+public = false
+file_size_limit = "50MiB"
+allowed_mime_types = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "image/jpeg",
+  "image/png",
+]
+
+[storage.buckets.documents-etudiants]
+public = false
+file_size_limit = "10MiB"
+allowed_mime_types = ["application/pdf"]
 
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]

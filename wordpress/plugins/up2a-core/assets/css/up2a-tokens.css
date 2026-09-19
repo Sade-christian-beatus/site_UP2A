@@ -1,0 +1,35 @@
+/*
+ * Tokens du design system UP-2A (docs/02-design-system.md).
+ * Statut : proposition de départ à valider par le client — voir le doc.
+ * Doivent rester identiques aux tokens de app-etudiant/app/globals.css
+ * pour une cohérence visuelle vitrine / espace étudiant.
+ */
+:root {
+  --up2a-color-primary: #0b4d3c;
+  --up2a-color-primary-dark: #083a2d;
+  --up2a-color-accent: #c9a227;
+  --up2a-color-accent-light: #e4c868;
+  --up2a-color-ink: #14202b;
+  --up2a-color-ink-soft: #3e4c57;
+  --up2a-color-bg: #f7f5f0;
+  --up2a-color-surface: #ffffff;
+  --up2a-color-border: #e2dfd6;
+  --up2a-color-success: #2e7d32;
+  --up2a-color-error: #b3261e;
+  --up2a-color-warning: #b8860b;
+
+  --up2a-font-heading: ui-serif, Georgia, "Times New Roman", serif;
+  --up2a-font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --up2a-radius-sm: 4px;
+  --up2a-radius-md: 8px;
+  --up2a-radius-lg: 16px;
+
+  --up2a-shadow-sm: 0 1px 2px rgba(20, 32, 43, 0.06);
+  --up2a-shadow-md: 0 4px 12px rgba(20, 32, 43, 0.08);
+  --up2a-shadow-lg: 0 12px 32px rgba(20, 32, 43, 0.12);
+
+  --up2a-motion-fast: 0.2s;
+  --up2a-motion-base: 0.4s;
+  --up2a-motion-slow: 0.8s;
+}
