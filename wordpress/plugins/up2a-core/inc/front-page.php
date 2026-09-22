@@ -676,9 +676,23 @@ function up2a_core_gallery_images(): array {
 			'alt'     => __( "Architecture du bâtiment de l'UP-2A", 'up2a-core' ),
 			'legende' => __( "L'architecture", 'up2a-core' ),
 		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe-mobile.webp',
+			'alt'     => __( "Groupe d'étudiants de l'UP-2A devant le campus", 'up2a-core' ),
+			'legende' => __( 'Nos étudiants sur le campus', 'up2a-core' ),
+		),
 	);
 
-	return apply_filters( 'up2a_core_gallery_images', $defaults );
+	$images = apply_filters( 'up2a_core_gallery_images', $defaults );
+
+	// Même garde-fou que up2a_core_formations() : un filtre externe qui
+	// renverrait une liste vide ne doit jamais vider la galerie.
+	if ( ! is_array( $images ) || empty( $images ) ) {
+		return $defaults;
+	}
+
+	return $images;
 }
 
 /**
@@ -956,13 +970,13 @@ function up2a_core_render_footer(): void {
 			<div class="up2a-footer__col up2a-footer__col--brand">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="up2a-footer__logo">
 					<picture>
-						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.webp' ); ?>" type="image/webp">
+						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.webp' ); ?>" type="image/webp">
 						<img
-							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.png' ); ?>"
+							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.png' ); ?>"
 							alt="<?php esc_attr_e( "UP-2A — Université Privée An-Nahdah d'Afrique", 'up2a-core' ); ?>"
 							loading="lazy"
-							width="677"
-							height="186"
+							width="480"
+							height="134"
 						>
 					</picture>
 				</a>

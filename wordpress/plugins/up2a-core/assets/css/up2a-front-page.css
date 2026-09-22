@@ -1784,14 +1784,11 @@
 
 .up2a-footer__logo {
   display: inline-flex;
-  background: #ffffff;
-  padding: 10px 18px;
-  border-radius: var(--up2a-radius-md);
   margin: 0 0 22px;
 }
 
 .up2a-footer__logo img {
-  height: 34px;
+  height: 44px;
   width: auto;
   display: block;
 }

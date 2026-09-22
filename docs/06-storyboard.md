@@ -226,6 +226,19 @@ probablement une autre extension du site qui intercepte le filtre
 ignore désormais un résultat de filtre vide/invalide et retombe sur les 4
 licences par défaut (voir `wordpress/README.md`, Dépannage §7).
 
+## Nouveau logo footer + 8e photo galerie (2026-09-22)
+
+Le client a fourni un nouveau lockup logo (fond marine, texte/emblème
+blancs, `assets/img/logo-up2a-footer.webp`/`.png`) pensé pour un fond
+sombre — remplace l'ancien logo + chip blanc dans le footer, qui utilisait
+un fond blanc pour rester lisible (`up2a_core_render_footer()`). Fond
+détouré (transparence) pour se fondre directement dans le footer marine,
+sans bloc blanc autour.
+
+Ajout d'une 8e photo à `up2a_core_gallery_images()` (groupe d'étudiants
+devant le campus, fournie par le client), avec la même garde-fou anti-liste-vide
+que `up2a_core_formations()` (voir plus haut) appliqué également ici.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc
