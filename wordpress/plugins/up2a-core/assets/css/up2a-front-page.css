@@ -69,22 +69,6 @@
   );
 }
 
-.up2a-hero__wave {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: min(320px, 40vw);
-  height: auto;
-  line-height: 0;
-  pointer-events: none;
-}
-
-.up2a-hero__wave svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
 .up2a-hero__content {
   position: relative;
   max-width: 620px;
@@ -167,28 +151,6 @@
   background: #ffffff;
   color: var(--up2a-color-primary-dark);
   transform: translateY(-1px);
-}
-
-.up2a-hero__badges {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 28px;
-}
-
-.up2a-hero__badges li {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.up2a-hero__badges svg {
-  color: var(--up2a-color-accent);
-  flex-shrink: 0;
 }
 
 .up2a-hero__dots {
@@ -520,6 +482,19 @@
   margin: 0 auto 16px;
 }
 
+.up2a-values__icon--accent {
+  background: var(--up2a-color-accent);
+  color: var(--up2a-color-ink);
+}
+
+.up2a-values__icon--teal {
+  background: var(--up2a-color-teal);
+}
+
+.up2a-values__icon--red {
+  background: var(--up2a-color-red);
+}
+
 .up2a-values__card h3 {
   font-family: var(--up2a-font-heading);
   color: var(--up2a-color-primary);
@@ -564,16 +539,33 @@
   overflow: hidden;
   padding: 0;
   cursor: pointer;
-  background-size: cover;
-  background-position: center;
   box-shadow: var(--up2a-shadow-md);
   text-align: left;
+}
+
+.up2a-formations__card-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.up2a-formations__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--up2a-motion-base) ease;
+}
+
+.up2a-formations__card:hover .up2a-formations__card-media img {
+  transform: scale(1.06);
 }
 
 .up2a-formations__card::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(180deg, rgba(3, 18, 42, 0.15) 0%, rgba(3, 18, 42, 0.15) 45%, rgba(3, 18, 42, 0.92) 100%);
   transition: background var(--up2a-motion-base) ease;
 }
@@ -595,6 +587,16 @@
   letter-spacing: 0.04em;
   padding: 6px 14px;
   border-radius: 999px;
+}
+
+.up2a-formations__badge--sjpa {
+  background: var(--up2a-color-teal);
+  color: #ffffff;
+}
+
+.up2a-formations__badge--seg {
+  background: var(--up2a-color-red);
+  color: #ffffff;
 }
 
 .up2a-formations__hover-link {
@@ -1182,6 +1184,8 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  transition: transform 0.3s ease-out;
+  will-change: transform;
 }
 
 .up2a-decor__shape {

@@ -145,16 +145,36 @@
 
 ## Décor de fond par section
 
-- Chaque scène (hors Hero, qui a son propre décor de slider/vague) porte
-  un léger décor purement visuel — un "blob" flouté et un anneau fin, aux
-  couleurs de la palette de marque, positionnés différemment par section
-  pour éviter la monotonie d'un fond plat. Toujours `aria-hidden`, jamais
-  porteur de contenu.
-- Mise en scène : léger parallaxe au scroll (`scrub`) sur desktop
-  uniquement — désactivé sur mobile (`ScrollTrigger.matchMedia()`, voir
-  CLAUDE.md §7) et sous `prefers-reduced-motion: reduce`.
-- Classes : `js-decor` (conteneur par section), `js-decor-shape` (chaque
-  forme).
+- Chaque scène (hors Hero, qui n'a plus de décor propre depuis le retrait
+  de la vague, voir plus bas) porte un léger décor purement visuel — un
+  "blob" flouté et un anneau fin, aux couleurs de la palette de marque,
+  positionnés différemment par section pour éviter la monotonie d'un fond
+  plat. Toujours `aria-hidden`, jamais porteur de contenu.
+- Mise en scène : léger parallaxe au scroll (`scrub`) sur les formes
+  individuelles, **et** un suivi léger du curseur sur le conteneur entier
+  (desktop uniquement dans les deux cas — désactivé sur mobile et sous
+  `prefers-reduced-motion: reduce`, voir CLAUDE.md §7). Les deux effets
+  ciblent des éléments différents (formes vs conteneur) pour ne jamais
+  entrer en conflit.
+- Classes : `js-decor` (conteneur par section, suivi du curseur),
+  `js-decor-shape` (chaque forme, parallaxe au scroll).
+
+## Hero — nettoyage (2026-09-22)
+
+La vague décorative en bas à gauche et la liste de badges ("Préinscription
+100% en ligne", etc.) ont été retirées du Hero à la demande du client
+(redondantes avec le reste de la page, et chevauchaient visuellement le
+nouveau compte à rebours). Le Hero se termine maintenant simplement sur
+les CTA.
+
+## Harmonisation des couleurs
+
+- **Nos valeurs** : chaque icône a sa propre couleur de la palette
+  (Excellence = accent, Savoir = teal, Intégrité = primaire, Ouverture =
+  rouge) plutôt qu'une couleur unique répétée.
+- **Nos formations** : le badge de faculté est coloré par faculté (SJPA =
+  teal, SEG = rouge) au lieu d'accent partout — aide aussi à distinguer
+  visuellement les deux facultés d'un coup d'œil.
 
 ## Règles transverses (toutes scènes)
 

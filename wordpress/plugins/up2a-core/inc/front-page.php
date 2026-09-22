@@ -259,9 +259,6 @@ function up2a_core_render_hero(): void {
 		<?php endif; ?>
 
 		<div class="up2a-hero__scrim" aria-hidden="true"></div>
-		<div class="up2a-hero__wave" aria-hidden="true">
-			<svg viewBox="0 0 220 100" preserveAspectRatio="none"><path d="M0,100 L0,55 C35,20 70,0 110,15 C150,30 175,10 220,0 L220,100 Z" fill="var(--up2a-color-accent)" fill-opacity="0.9"/><path d="M0,100 L0,75 C45,55 85,45 130,60 C165,72 195,55 220,40 L220,100 Z" fill="var(--up2a-color-primary-dark)" fill-opacity="0.55"/></svg>
-		</div>
 
 		<div class="up2a-hero__content">
 			<p class="up2a-hero__eyebrow"><span></span> UP-2A</p>
@@ -284,11 +281,6 @@ function up2a_core_render_hero(): void {
 					<?php echo up2a_core_content_icon( 'arrow' ); ?>
 				</a>
 			</div>
-			<ul class="up2a-hero__badges">
-				<li><?php echo up2a_core_content_icon( 'check' ); ?> <?php esc_html_e( 'Préinscription 100% en ligne', 'up2a-core' ); ?></li>
-				<li><?php echo up2a_core_content_icon( 'check' ); ?> <?php esc_html_e( 'Aucun frais de dossier', 'up2a-core' ); ?></li>
-				<li><?php echo up2a_core_content_icon( 'check' ); ?> <?php esc_html_e( '4 licences, Ouagadougou', 'up2a-core' ); ?></li>
-			</ul>
 		</div>
 
 		<?php if ( count( $slides ) > 1 ) : ?>
@@ -404,24 +396,28 @@ function up2a_core_render_pourquoi(): void {
 function up2a_core_render_valeurs(): void {
 	$valeurs = array(
 		array(
-			'icone' => 'star',
-			'titre' => __( 'Excellence', 'up2a-core' ),
-			'texte' => __( 'Une exigence académique constante, portée par un corps enseignant qualifié et des méthodes pédagogiques rigoureuses.', 'up2a-core' ),
+			'icone'   => 'star',
+			'couleur' => 'accent',
+			'titre'   => __( 'Excellence', 'up2a-core' ),
+			'texte'   => __( 'Une exigence académique constante, portée par un corps enseignant qualifié et des méthodes pédagogiques rigoureuses.', 'up2a-core' ),
 		),
 		array(
-			'icone' => 'book',
-			'titre' => __( 'Savoir', 'up2a-core' ),
-			'texte' => __( 'Une formation ancrée dans les savoirs fondamentaux et les compétences pratiques attendues par le monde professionnel.', 'up2a-core' ),
+			'icone'   => 'book',
+			'couleur' => 'teal',
+			'titre'   => __( 'Savoir', 'up2a-core' ),
+			'texte'   => __( 'Une formation ancrée dans les savoirs fondamentaux et les compétences pratiques attendues par le monde professionnel.', 'up2a-core' ),
 		),
 		array(
-			'icone' => 'shield',
-			'titre' => __( 'Intégrité', 'up2a-core' ),
-			'texte' => __( 'Une éducation qui forme des femmes et des hommes responsables, honnêtes et engagés envers leur communauté.', 'up2a-core' ),
+			'icone'   => 'shield',
+			'couleur' => 'primary',
+			'titre'   => __( 'Intégrité', 'up2a-core' ),
+			'texte'   => __( 'Une éducation qui forme des femmes et des hommes responsables, honnêtes et engagés envers leur communauté.', 'up2a-core' ),
 		),
 		array(
-			'icone' => 'globe',
-			'titre' => __( 'Ouverture', 'up2a-core' ),
-			'texte' => __( 'Une université tournée vers l\'Afrique et le monde, accueillante pour tous les profils d\'étudiants.', 'up2a-core' ),
+			'icone'   => 'globe',
+			'couleur' => 'red',
+			'titre'   => __( 'Ouverture', 'up2a-core' ),
+			'texte'   => __( 'Une université tournée vers l\'Afrique et le monde, accueillante pour tous les profils d\'étudiants.', 'up2a-core' ),
 		),
 	);
 	?>
@@ -432,7 +428,7 @@ function up2a_core_render_valeurs(): void {
 			<div class="up2a-values__grid">
 				<?php foreach ( $valeurs as $v ) : ?>
 					<div class="up2a-values__card js-values-card">
-						<div class="up2a-values__icon"><?php echo up2a_core_content_icon( $v['icone'] ); ?></div>
+						<div class="up2a-values__icon up2a-values__icon--<?php echo esc_attr( $v['couleur'] ); ?>"><?php echo up2a_core_content_icon( $v['icone'] ); ?></div>
 						<h3><?php echo esc_html( $v['titre'] ); ?></h3>
 						<p><?php echo esc_html( $v['texte'] ); ?></p>
 					</div>
@@ -540,9 +536,19 @@ function up2a_core_render_formations(): void {
 						type="button"
 						class="up2a-formations__card js-formations-card"
 						data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
-						style="background-image:url('<?php echo esc_url( $f['image']['desktop'] ); ?>')"
 					>
-						<span class="up2a-formations__badge"><?php echo esc_html( $f['faculte'] ); ?></span>
+						<picture class="up2a-formations__card-media">
+							<source srcset="<?php echo esc_url( $f['image']['mobile'] ); ?>" media="(max-width: 640px)">
+							<img
+								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+								alt=""
+								loading="lazy"
+								decoding="async"
+								width="600"
+								height="450"
+							>
+						</picture>
+						<span class="up2a-formations__badge up2a-formations__badge--<?php echo esc_attr( strtolower( $f['faculte'] ) ); ?>"><?php echo esc_html( $f['faculte'] ); ?></span>
 						<span class="up2a-formations__hover-link"><?php esc_html_e( 'Voir la formation', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></span>
 						<span class="up2a-formations__card-footer">
 							<span class="up2a-formations__card-title"><?php echo esc_html( $f['nom'] ); ?></span>
