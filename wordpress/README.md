@@ -266,6 +266,21 @@ Dans l'ordre le plus probable :
       afficher le code source de la page (menu du navigateur → Code
       source) et chercher `up2a-front-page.css?ver=` — le numéro doit
       correspondre au `Version:` de `up2a-core.php` dans ce dépôt.
+7. **Une section précise reste vide alors que tout le reste de la page est
+   à jour** (diagnostiqué le 2026-09-22 sur "Nos formations" : le HTML et
+   le CSS les plus récents sont bien servis partout ailleurs sur la même
+   page, mais une seule section n'affiche aucun contenu et ne réagit pas
+   au clic). Ce n'est **pas** un souci de cache (qui affecterait toute la
+   page, pas une section isolée) — c'est le signe qu'une autre extension
+   active sur le site modifie ou vide les données de cette section via un
+   filtre WordPress (`up2a_core_formations`, `up2a_core_gallery_images`...).
+   Pour isoler la cause : désactivez temporairement toutes les extensions
+   sauf Elementor, Hello Elementor et `up2a-core`, rechargez la page ; si
+   la section réapparaît, réactivez les autres extensions une par une pour
+   trouver la responsable. Depuis la version 0.9.1, `up2a-core` ignore de
+   toute façon un filtre qui renverrait une liste vide et retombe sur le
+   contenu par défaut, donc ce cas précis ne devrait plus produire de
+   section vide.
 
 Si le problème persiste après ces vérifications, une capture d'écran de
 ce que vous voyez (et de vos réglages Pages/Lecture) permettrait un

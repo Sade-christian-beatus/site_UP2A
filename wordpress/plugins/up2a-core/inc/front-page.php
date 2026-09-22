@@ -520,7 +520,17 @@ function up2a_core_formations(): array {
 		),
 	);
 
-	return apply_filters( 'up2a_core_formations', $defaults );
+	$formations = apply_filters( 'up2a_core_formations', $defaults );
+
+	// Garde-fou : si un filtre externe (autre extension, code du thème)
+	// renvoie une valeur vide ou invalide, on retombe sur les 4 licences
+	// par défaut plutôt que d'afficher une section vide — voir
+	// docs/06-storyboard.md "Corrections et ajouts".
+	if ( ! is_array( $formations ) || empty( $formations ) ) {
+		return $defaults;
+	}
+
+	return $formations;
 }
 
 function up2a_core_render_formations(): void {

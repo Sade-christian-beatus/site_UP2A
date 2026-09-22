@@ -213,6 +213,19 @@ les deux colonnes s'empilent.
   distinguer comme case "dynamique" — indépendant de GSAP, s'arrête sous
   `prefers-reduced-motion: reduce`.
 
+## Formations — garde-fou contre une section vide (2026-09-22)
+
+Diagnostiqué sur le site réel : toutes les sections de la home affichaient
+la dernière version (HTML et CSS à jour, vérifié dans le code source),
+sauf "Nos formations" qui restait totalement vide et ne réagissait pas au
+clic. Comme le reste de la page (Galerie, Comment candidater, Contact,
+Footer — tous rendus par la même requête, après Formations) s'affichait
+correctement, ce n'était ni un cache ni une erreur PHP fatale, mais très
+probablement une autre extension du site qui intercepte le filtre
+`up2a_core_formations` et renvoie une liste vide. `up2a_core_formations()`
+ignore désormais un résultat de filtre vide/invalide et retombe sur les 4
+licences par défaut (voir `wordpress/README.md`, Dépannage §7).
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc
