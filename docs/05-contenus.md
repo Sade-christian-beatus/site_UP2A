@@ -19,20 +19,24 @@
   *« Rejoignez dès aujourd'hui l'UNIVERSITÉ PRIVÉE AN-NAHDAH D'AFRIQUE
   pour bâtir une carrière à la hauteur de vos ambitions »*
 
-## Home — Hero
+## Home — Hero (slider)
 
 > Titre principal
-**Former aujourd'hui les élites de demain.**
+**Former aujourd'hui les élites de demain !**
 
 > Sous-titre
-L'Université Privée An-Nahdah d'Afrique forme des diplômés compétents,
-intègres et prêts à servir leur pays et leur continent.
+Une formation de qualité pour construire les compétences, développer les
+ambitions et préparer les professionnels de demain.
 
-> CTA
-Faire ma préinscription
+> CTA (deux boutons)
+Découvrir nos formations · S'inscrire maintenant
 
-> Badges de confiance (sous le CTA)
-Préinscription 100% en ligne · Aucun frais de dossier · 4 facultés, Ouagadougou
+> Badges de confiance (sous les CTA)
+Préinscription 100% en ligne · Aucun frais de dossier · 4 licences, Ouagadougou
+
+> Images du slider
+`hero-slide-1.webp` / `hero-slide-2.webp` — photos de campus fournies par
+le client (voir `wordpress/plugins/up2a-core/assets/img/`).
 
 ## Home — Pourquoi choisir l'UP-2A
 
@@ -86,35 +90,34 @@ accueillante pour tous les profils d'étudiants.
   précis à confirmer — voir "Formations" ci-dessous)*
 - Taux d'encadrement / autres repères : `[À CONFIRMER]`
 
-## Formations `[intitulés provisoires — à confirmer/remplacer par le client]`
+## Formations (confirmées par le client, 2026-09-22)
 
-Le brief mentionne "4 licences" sans préciser les intitulés. Les 4
-propositions ci-dessous ne servent qu'à avoir un schéma de données
-cohérent (facultés + formations) et un contenu de démonstration. **Elles
-doivent être validées ou remplacées avant toute mise en production**,
-et sont reprises à l'identique dans `supabase/migrations/0003_seed.sql`
-avec le même avertissement.
+2 facultés, 4 licences — repris à l'identique dans
+`supabase/migrations/0003_seed.sql` et dans le template
+`wordpress/plugins/up2a-core/templates/front-page-onepage.php`. Les
+descriptions de chaque licence (une phrase) sont une formulation de
+travail à valider, les intitulés eux sont confirmés.
 
-1. **Licence en Gestion des Entreprises** — Faculté des Sciences
-   Économiques et de Gestion.
-   Formation aux fondamentaux de la gestion, de la comptabilité et du
-   management, pour des diplômés opérationnels dans les organisations
-   publiques et privées.
+**Sciences Juridiques, Politiques et de l'Administration (SJPA)**
 
-2. **Licence en Droit** — Faculté de Droit et Sciences Politiques.
-   Formation juridique généraliste, préparant aux métiers du droit, de
-   l'administration et aux poursuites en master/spécialisation.
+1. **Licence en Droit Public**
+   Droit constitutionnel, administratif et institutions publiques — pour
+   les métiers de l'administration, de la fonction publique et des
+   collectivités.
 
-3. **Licence en Informatique et Réseaux** — Faculté des Sciences et
-   Technologies.
-   Formation aux compétences numériques recherchées : développement,
-   réseaux, systèmes — pour répondre aux besoins de la transformation
-   digitale.
+2. **Licence en Droit Privé**
+   Droit civil, des affaires et des contrats — pour les métiers du droit,
+   du conseil juridique et des professions judiciaires.
 
-4. **Licence en Communication et Journalisme** — Faculté des Lettres,
-   Langues et Sciences Humaines.
-   Formation aux métiers de la communication, de l'information et des
-   médias, avec une exigence d'intégrité et de rigueur professionnelle.
+**Sciences Économiques et de Gestion (SEG)**
+
+3. **Licence en Logistique Internationale**
+   Transport, chaîne d'approvisionnement et commerce international — pour
+   les métiers de la logistique et des échanges.
+
+4. **Licence en Marketing Communication**
+   Stratégie de marque, communication et marketing digital — pour les
+   métiers du marketing et de la communication d'entreprise.
 
 ## Admissions — Étapes (résumé pour la home)
 
@@ -129,7 +132,8 @@ CLAUDE.md §3.)*
 
 ## Contact `[adresse précise, e-mail et réseaux sociaux à confirmer]`
 
-- Adresse : `[À CONFIRMER]`, Ouagadougou, Burkina Faso
+- Adresse : **Ouagadougou - Balkuy, Burkina Faso** (confirmé — numéro de
+  rue/repère précis encore `[À CONFIRMER]` si besoin pour un plan/itinéraire)
 - Téléphone : **+226 50 63 85 54** (confirmé)
 - E-mail : `[À CONFIRMER]`
 - Réseaux sociaux : `[À CONFIRMER]`

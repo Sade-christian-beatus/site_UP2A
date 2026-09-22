@@ -97,9 +97,12 @@ de cette page tant qu'on n'en a pas besoin).
   "Admissions"...) se configure dans **Apparence → Menus** : créer un
   menu, y ajouter les pages/liens souhaités, puis lui assigner
   l'emplacement **"Menu principal UP-2A"**.
-- **Un modèle de page "Accueil UP-2A (onepage)"** avec les sections Hero,
-  Pourquoi choisir l'UP-2A, Valeurs, Formations, Admissions, CTA, Contact
-  et pied de page (voir docs/06-storyboard.md). Pour l'activer :
+- **Un modèle de page "Accueil UP-2A (onepage)"** avec un Hero en slider
+  (photos de campus, rotation automatique), une section "Pourquoi choisir
+  l'UP-2A", les Valeurs, les Formations en cartes qui se retournent au
+  survol/tap ("flip cards", avec la description au dos), les Admissions,
+  un CTA final, la section Contact et un pied de page multi-colonnes
+  (voir docs/06-storyboard.md). Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -113,22 +116,22 @@ de cette page tant qu'on n'en a pas besoin).
 
 ### Images
 
-Aucune photo n'est utilisée sur la home à ce jour : ni l'IA qui a préparé
-ce scaffold, ni le réseau de cet environnement d'exécution ne donnent
-accès à des banques de photos ou à un générateur d'images (voir
-docs/CLAUDE.md §3 — les visuels doivent être générés/fournis par vous et
-téléversés). Deux emplacements sont prêts à recevoir de vraies images dès
-qu'elles existent, sans toucher au code : ajouter dans `wp-config.php`
+Le Hero est un **slider** de 2 photos de campus fournies par le client
+(`assets/img/hero-slide-1.webp` / `hero-slide-2.webp`, + versions
+`-mobile` allégées), avec rotation automatique (~6,5s) et navigation par
+points. Pour remplacer ou ajouter des diapositives sans toucher au code,
+utiliser le filtre `up2a_core_hero_slides` depuis un mu-plugin, ou
+demander une mise à jour du plugin.
+
+La section "Pourquoi choisir l'UP-2A" utilise par défaut une illustration
+vectorielle de marque (`assets/img/motif-communaute.svg`). Pour la
+remplacer par une vraie photo, ajouter dans `wp-config.php` :
 
 ```php
-define('UP2A_HERO_IMAGE_URL', 'https://.../batiment.webp');       // fond du Hero
-define('UP2A_LIFE_IMAGE_URL', 'https://.../vie-etudiante.webp');  // section "Pourquoi choisir l'UP-2A"
+define('UP2A_LIFE_IMAGE_URL', 'https://.../vie-etudiante.webp');
 ```
 
 (remplacer l'URL par celle du média une fois téléversé dans **Médias**).
-En attendant, le Hero utilise un dégradé de marque et la section
-"Pourquoi choisir l'UP-2A" utilise une illustration vectorielle
-(`assets/img/motif-communaute.svg`) plutôt qu'un espace vide.
 
 ## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
 

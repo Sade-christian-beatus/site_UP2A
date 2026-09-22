@@ -12,8 +12,13 @@
 > construite comme un **template de page fourni par `up2a-core`**
 > (sélectionnable dans wp-admin), plutôt qu'assemblée manuellement dans
 > Elementor — plus rapide et plus fiable pour des scènes animées
-> complexes, voir `wordpress/README.md`. Les scènes 4 (chiffres clés) et
-> 6 (actualités) sont **reportées** : elles dépendent de données réelles
+> complexes, voir `wordpress/README.md`. Le Hero utilise désormais un
+> **slider de vraies photos de campus** (fournies par le client) avec
+> rotation automatique et points de navigation ; les cartes Formations
+> se retournent au survol/tap ("flip cards") pour révéler la description
+> au dos. L'adresse complète (Ouagadougou - Balkuy) est intégrée dans la
+> section Contact et le pied de page. Les scènes 4 (chiffres clés) et 6
+> (actualités) restent **reportées** : elles dépendent de données réelles
 > (chiffres validés, articles publiés) qui n'existent pas encore —
 > inutile de publier des nombres inventés ou une actualité vide.
 
