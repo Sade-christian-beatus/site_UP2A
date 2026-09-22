@@ -90,6 +90,108 @@
   transform: translateY(-1px);
 }
 
+.up2a-hero__badges {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 28px;
+}
+
+.up2a-hero__badges li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.up2a-hero__badges svg {
+  color: var(--up2a-color-accent);
+  flex-shrink: 0;
+}
+
+/* --- Pourquoi choisir l'UP-2A --- */
+
+.up2a-section-title--left {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.up2a-pourquoi {
+  padding: 88px 0;
+  background: var(--up2a-color-surface);
+}
+
+.up2a-pourquoi__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.up2a-pourquoi__text p {
+  color: var(--up2a-color-ink-soft);
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.up2a-pourquoi__points {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.up2a-pourquoi__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--up2a-color-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.up2a-pourquoi__points svg {
+  color: var(--up2a-color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.up2a-pourquoi__media {
+  background: var(--up2a-color-surface-alt);
+  border-radius: var(--up2a-radius-lg);
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.up2a-pourquoi__media[style*="--up2a-life-image"] {
+  padding: 0;
+  min-height: 320px;
+  background-image: var(--up2a-life-image);
+  background-size: cover;
+  background-position: center;
+}
+
+.up2a-pourquoi__media img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .up2a-pourquoi__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* --- Valeurs (scène 2) --- */
 
 .up2a-values {
@@ -108,6 +210,18 @@
   border-radius: var(--up2a-radius-lg);
   padding: 32px 24px;
   text-align: center;
+}
+
+.up2a-values__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--up2a-color-primary);
+  color: #ffffff;
+  margin: 0 auto 16px;
 }
 
 .up2a-values__card h3 {
@@ -144,6 +258,18 @@
   padding: 28px 24px;
 }
 
+.up2a-formations__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--up2a-radius-md);
+  background: var(--up2a-color-surface-alt);
+  color: var(--up2a-color-primary);
+  margin: 0 0 16px;
+}
+
 .up2a-formations__faculte {
   margin: 0 0 8px;
   font-size: 0.75rem;
@@ -157,6 +283,13 @@
   font-family: var(--up2a-font-heading);
   font-size: 1.125rem;
   color: var(--up2a-color-ink);
+  margin: 0 0 12px;
+}
+
+.up2a-formations__texte {
+  color: var(--up2a-color-ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.6;
   margin: 0 0 16px;
 }
 
@@ -238,6 +371,58 @@
   margin: 0 0 28px;
 }
 
+/* --- Contact --- */
+
+.up2a-contact {
+  padding: 88px 0;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-contact__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.up2a-contact__card {
+  background: var(--up2a-color-surface);
+  border-radius: var(--up2a-radius-lg);
+  box-shadow: var(--up2a-shadow-sm);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.up2a-contact__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--up2a-color-primary-dark);
+  color: #ffffff;
+  margin: 0 auto 16px;
+}
+
+.up2a-contact__card h3 {
+  font-family: var(--up2a-font-heading);
+  font-size: 1rem;
+  color: var(--up2a-color-ink);
+  margin: 0 0 8px;
+}
+
+.up2a-contact__card p,
+.up2a-contact__card a {
+  margin: 0;
+  color: var(--up2a-color-ink-soft);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.up2a-contact__card a:hover {
+  color: var(--up2a-color-primary);
+}
+
 /* --- Footer de contenu --- */
 
 .up2a-footer {
@@ -277,7 +462,9 @@
   .up2a-hero__title,
   .up2a-values__card,
   .up2a-formations__card,
-  .up2a-admissions__steps li {
+  .up2a-admissions__steps li,
+  .up2a-pourquoi__text > *,
+  .up2a-pourquoi__media {
     opacity: 1 !important;
     transform: none !important;
   }

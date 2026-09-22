@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 190" role="img" aria-label="Illustration d'une communaute etudiante">
+<g>
+<clipPath id="clip0"><circle cx="70" cy="100" r="46"/></clipPath>
+<circle cx="70" cy="100" r="46" fill="#0D6B83" stroke="#ffffff" stroke-width="4"/>
+<g clip-path="url(#clip0)">
+<circle cx="70" cy="86.2" r="13.8" fill="#ffffff" fill-opacity="0.92"/>
+<ellipse cx="70" cy="128.5" rx="30.4" ry="26.7" fill="#ffffff" fill-opacity="0.92"/>
+</g>
+</g>
+<g>
+<clipPath id="clip4"><circle cx="510" cy="100" r="46"/></clipPath>
+<circle cx="510" cy="100" r="46" fill="#0D6B83" stroke="#ffffff" stroke-width="4"/>
+<g clip-path="url(#clip4)">
+<circle cx="510" cy="86.2" r="13.8" fill="#ffffff" fill-opacity="0.92"/>
+<ellipse cx="510" cy="128.5" rx="30.4" ry="26.7" fill="#ffffff" fill-opacity="0.92"/>
+</g>
+</g>
+<g>
+<clipPath id="clip1"><circle cx="178" cy="86" r="56"/></clipPath>
+<circle cx="178" cy="86" r="56" fill="#FDB41B" stroke="#ffffff" stroke-width="4"/>
+<g clip-path="url(#clip1)">
+<circle cx="178" cy="69.2" r="16.8" fill="#ffffff" fill-opacity="0.92"/>
+<ellipse cx="178" cy="120.7" rx="37.0" ry="32.5" fill="#ffffff" fill-opacity="0.92"/>
+</g>
+</g>
+<g>
+<clipPath id="clip3"><circle cx="402" cy="86" r="56"/></clipPath>
+<circle cx="402" cy="86" r="56" fill="#D60B30" stroke="#ffffff" stroke-width="4"/>
+<g clip-path="url(#clip3)">
+<circle cx="402" cy="69.2" r="16.8" fill="#ffffff" fill-opacity="0.92"/>
+<ellipse cx="402" cy="120.7" rx="37.0" ry="32.5" fill="#ffffff" fill-opacity="0.92"/>
+</g>
+</g>
+<g>
+<clipPath id="clip2"><circle cx="290" cy="94" r="64"/></clipPath>
+<circle cx="290" cy="94" r="64" fill="#0B2A5B" stroke="#ffffff" stroke-width="4"/>
+<g clip-path="url(#clip2)">
+<circle cx="290" cy="74.8" r="19.2" fill="#ffffff" fill-opacity="0.92"/>
+<ellipse cx="290" cy="133.7" rx="42.2" ry="37.1" fill="#ffffff" fill-opacity="0.92"/>
+</g>
+</g>
+</svg>

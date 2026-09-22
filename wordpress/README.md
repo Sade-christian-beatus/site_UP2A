@@ -98,8 +98,8 @@ de cette page tant qu'on n'en a pas besoin).
   menu, y ajouter les pages/liens souhaités, puis lui assigner
   l'emplacement **"Menu principal UP-2A"**.
 - **Un modèle de page "Accueil UP-2A (onepage)"** avec les sections Hero,
-  Valeurs, Formations, Admissions et pied de page (voir
-  docs/06-storyboard.md). Pour l'activer :
+  Pourquoi choisir l'UP-2A, Valeurs, Formations, Admissions, CTA, Contact
+  et pied de page (voir docs/06-storyboard.md). Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -110,10 +110,25 @@ de cette page tant qu'on n'en a pas besoin).
 - Sections volontairement absentes pour l'instant : "chiffres clés" (pas
   de chiffres validés par le client) et "actualités" (pas encore
   d'articles) — voir docs/06-storyboard.md.
-- L'image du bâtiment (docs/CLAUDE.md §3) n'est pas encore intégrée : le
-  Hero utilise un dégradé de secours. Pour la brancher une fois
-  disponible, ajouter dans `wp-config.php` :
-  `define('UP2A_HERO_IMAGE_URL', 'https://.../batiment.webp');`
+
+### Images
+
+Aucune photo n'est utilisée sur la home à ce jour : ni l'IA qui a préparé
+ce scaffold, ni le réseau de cet environnement d'exécution ne donnent
+accès à des banques de photos ou à un générateur d'images (voir
+docs/CLAUDE.md §3 — les visuels doivent être générés/fournis par vous et
+téléversés). Deux emplacements sont prêts à recevoir de vraies images dès
+qu'elles existent, sans toucher au code : ajouter dans `wp-config.php`
+
+```php
+define('UP2A_HERO_IMAGE_URL', 'https://.../batiment.webp');       // fond du Hero
+define('UP2A_LIFE_IMAGE_URL', 'https://.../vie-etudiante.webp');  // section "Pourquoi choisir l'UP-2A"
+```
+
+(remplacer l'URL par celle du média une fois téléversé dans **Médias**).
+En attendant, le Hero utilise un dégradé de marque et la section
+"Pourquoi choisir l'UP-2A" utilise une illustration vectorielle
+(`assets/img/motif-communaute.svg`) plutôt qu'un espace vide.
 
 ## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
 

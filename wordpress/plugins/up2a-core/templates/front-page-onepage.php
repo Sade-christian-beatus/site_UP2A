@@ -17,10 +17,12 @@ get_header();
 <main id="up2a-onepage">
 	<?php
 	up2a_core_render_hero();
+	up2a_core_render_pourquoi();
 	up2a_core_render_valeurs();
 	up2a_core_render_formations();
 	up2a_core_render_admissions();
 	up2a_core_render_cta_final();
+	up2a_core_render_contact();
 	up2a_core_render_footer();
 	?>
 </main>
