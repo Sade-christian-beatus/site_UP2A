@@ -1,38 +1,45 @@
 # 02 — Design system
 
-> **Statut : proposition de départ, à valider par le client** (LUPORA
-> Group / UP-2A) avant application définitive dans Elementor et Tailwind.
-> Rien ici n'est une charte graphique officielle imposée par l'université —
-> c'est un point de départ cohérent avec le brief (valeurs d'excellence,
-> savoir, intégrité ; ton ouvert et professionnel).
+> **Statut : palette confirmée par le logo réel** (extraite le
+> 2026-09-22 d'une capture d'écran d'en-tête fournie par le client,
+> montrant le logo officiel UP-2A). Remplace la proposition initiale
+> (vert/or) qui n'était qu'une hypothèse de départ. Typographie, échelle
+> et composants restent des propositions à valider.
 
 ## Principe directeur
 
 Une identité qui évoque le sérieux académique et les valeurs de
-l'association fondatrice (excellence, savoir, intégrité) **sans
-vocabulaire confessionnel visuel appuyé** (pas de motifs religieux
-explicites) — sobriété institutionnelle + une touche dorée pour le
-prestige académique.
+l'association fondatrice (excellence, savoir, intégrité) : bleu marine
+institutionnel (couleur dominante du logo et de l'en-tête officiel),
+rehaussé par les couleurs du blason (or/orange, rouge, sarcelle) en
+touches d'accent — sans vocabulaire confessionnel visuel appuyé.
 
-## Palette (proposition)
+## Palette (extraite du logo officiel)
 
 | Token | Valeur | Usage |
 |---|---|---|
-| `--color-primary` | `#0B4D3C` (vert profond) | Couleur de marque principale : header, CTA primaires, liens |
-| `--color-primary-dark` | `#083A2D` | Hover/actif sur primaire |
-| `--color-accent` | `#C9A227` (or/doré) | Accents de prestige : soulignés, badges, séparateurs, détails |
-| `--color-accent-light` | `#E4C868` | Hover sur accent, fonds subtils |
-| `--color-ink` | `#14202B` (encre bleu-nuit) | Texte principal |
-| `--color-ink-soft` | `#3E4C57` | Texte secondaire |
-| `--color-bg` | `#F7F5F0` (blanc cassé/crème) | Fond de page par défaut |
+| `--color-primary` | `#0B2A5B` (bleu marine) | Couleur de marque principale : header, boutons primaires (ex. "Espace étudiant"), liens |
+| `--color-primary-dark` | `#061A3D` | Hover/actif sur primaire, fond de la barre supérieure |
+| `--color-accent` | `#FDB41B` (or/orange) | Accents de prestige : soulignés, badges, séparateurs, détails |
+| `--color-accent-light` | `#FFD873` | Hover sur accent, fonds subtils |
+| `--color-teal` | `#0D6B83` (sarcelle, blason) | Accent secondaire (icônes, illustrations liées au blason) |
+| `--color-red` | `#D60B30` (rouge, blason) | Accent secondaire (icônes, illustrations liées au blason) |
+| `--color-ink` | `#0F1B2E` (encre bleu-nuit) | Texte principal |
+| `--color-ink-soft` | `#45526B` | Texte secondaire |
+| `--color-bg` | `#FFFFFF` | Fond de page par défaut (blanc, comme l'en-tête officiel) |
 | `--color-surface` | `#FFFFFF` | Cartes, formulaires |
-| `--color-border` | `#E2DFD6` | Séparateurs, bordures discrètes |
+| `--color-surface-alt` | `#F5F7FA` | Fond de section alterné (léger gris-bleu) |
+| `--color-border` | `#E2E5EC` | Séparateurs, bordures discrètes |
 | `--color-success` | `#2E7D32` | Confirmations (ex. préinscription envoyée) |
-| `--color-error` | `#B3261E` | Erreurs de formulaire |
-| `--color-warning` | `#B8860B` | Avertissements |
+| `--color-error` | `#D60B30` (= `--color-red`) | Erreurs de formulaire |
+| `--color-warning` | `#FD7503` | Avertissements |
 
 Contraste vérifié AA minimum pour `--color-ink` sur `--color-bg`/`--color-surface`,
 et pour le texte blanc sur `--color-primary`.
+
+> Les anciennes valeurs vert/or (`#0B4D3C` / `#C9A227`) sont abandonnées.
+> Si vous retrouvez ces couleurs quelque part (ancienne capture d'écran,
+> brouillon), elles sont obsolètes.
 
 ## Typographie
 
