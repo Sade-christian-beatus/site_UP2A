@@ -74,6 +74,8 @@
   }
 
   var img = lightbox.querySelector(".js-galerie-lightbox-img");
+  var caption = lightbox.querySelector(".js-galerie-lightbox-caption");
+  var count = lightbox.querySelector(".js-galerie-lightbox-count");
   var closeBtn = lightbox.querySelector(".js-galerie-close");
   var prevBtn = lightbox.querySelector(".js-galerie-prev");
   var nextBtn = lightbox.querySelector(".js-galerie-next");
@@ -84,6 +86,12 @@
     var item = items[current];
     img.src = item.dataset.full;
     img.alt = item.dataset.alt || "";
+    if (caption) {
+      caption.textContent = item.dataset.legende || "";
+    }
+    if (count) {
+      count.textContent = current + 1 + " / " + items.length;
+    }
     lightbox.classList.add("is-open");
     lightbox.setAttribute("aria-hidden", "false");
   }
@@ -247,6 +255,59 @@
           scrollTrigger: { trigger: ".js-galerie", start: "top 75%" },
         });
       },
+    });
+  }
+
+  // Scène 3 ter — Documents : bloc brochure en fondu + translation.
+  var documents = document.querySelector(".js-documents");
+  if (documents && registerScrollEffect) {
+    registerScrollEffect({
+      desktop: function () {
+        gsap.from(documents.querySelectorAll(".up2a-documents__cover, .up2a-documents__text > *"), {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: { trigger: documents, start: "top 75%" },
+        });
+      },
+    });
+  }
+
+  // Décor de fond par section : léger parallaxe au scroll, purement
+  // décoratif — desktop uniquement (voir CLAUDE.md §7 : effets lourds
+  // désactivés sur mobile), aucun effet statique de repli nécessaire
+  // puisque le décor reste visible sans mouvement.
+  var decorSections = document.querySelectorAll(".js-decor");
+  if (decorSections.length && registerScrollEffect) {
+    registerScrollEffect({
+      desktop: function () {
+        decorSections.forEach(function (decor) {
+          var shapes = decor.querySelectorAll(".js-decor-shape");
+          gsap.to(shapes[0] || [], {
+            y: -60,
+            ease: "none",
+            scrollTrigger: {
+              trigger: decor.closest("section"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+          gsap.to(shapes[1] || [], {
+            y: 50,
+            ease: "none",
+            scrollTrigger: {
+              trigger: decor.closest("section"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+        });
+      },
+      mobile: function () {},
     });
   }
 

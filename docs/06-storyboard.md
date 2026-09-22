@@ -79,6 +79,15 @@
   pas de pin, pas d'effet 3D.
 - Classes : `js-galerie`, `js-galerie-item`, `js-galerie-lightbox`.
 
+## Scène 3 ter — Documents (brochure)
+
+- Contenu : mise en avant de la brochure institutionnelle (présentation
+  des formations, admissions, coordonnées) avec un aperçu visuel stylisé
+  de couverture (pas un faux scan) et un bouton de téléchargement — état
+  "bientôt disponible" tant qu'aucun PDF réel n'est fourni (voir docs/05).
+- Mise en scène : simple fondu + translation Y au scroll, pas de pin.
+- Classes : `js-documents`.
+
 ## Scène 4 — Chiffres clés / repères institutionnels
 
 - Contenu : quelques repères factuels validés par le client (ex. année de
@@ -120,6 +129,19 @@
 
 - Liens légaux, mentions (autorisation MESRI n°2026-001647), réseaux
   sociaux, plan du site. Pas d'animation particulière.
+
+## Décor de fond par section
+
+- Chaque scène (hors Hero, qui a son propre décor de slider/vague) porte
+  un léger décor purement visuel — un "blob" flouté et un anneau fin, aux
+  couleurs de la palette de marque, positionnés différemment par section
+  pour éviter la monotonie d'un fond plat. Toujours `aria-hidden`, jamais
+  porteur de contenu.
+- Mise en scène : léger parallaxe au scroll (`scrub`) sur desktop
+  uniquement — désactivé sur mobile (`ScrollTrigger.matchMedia()`, voir
+  CLAUDE.md §7) et sous `prefers-reduced-motion: reduce`.
+- Classes : `js-decor` (conteneur par section), `js-decor-shape` (chaque
+  forme).
 
 ## Règles transverses (toutes scènes)
 
