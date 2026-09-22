@@ -298,6 +298,7 @@ function up2a_core_render_hero(): void {
 	?>
 	<div class="up2a-hero__countdown-wrap">
 		<div class="up2a-hero__countdown js-hero-countdown" data-target="<?php echo esc_attr( gmdate( 'c', $rentree_ts ) ); ?>">
+			<div class="up2a-hero__countdown-icon" aria-hidden="true"><?php echo up2a_core_content_icon( 'clock' ); ?></div>
 			<div class="up2a-hero__countdown-label">
 				<span class="up2a-hero__countdown-eyebrow"><?php esc_html_e( 'Rentrée académique', 'up2a-core' ); ?></span>
 				<span class="up2a-hero__countdown-date"><?php echo esc_html( up2a_core_format_date_fr( $rentree_ts ) ); ?></span>
@@ -524,6 +525,7 @@ function up2a_core_formations(): array {
 
 function up2a_core_render_formations(): void {
 	$formations = up2a_core_formations();
+	$photos     = up2a_core_gallery_images();
 	?>
 	<section id="up2a-formations" class="up2a-formations js-formations">
 		<?php echo up2a_core_decor( 'formations' ); ?>
@@ -536,13 +538,14 @@ function up2a_core_render_formations(): void {
 						type="button"
 						class="up2a-formations__card js-formations-card"
 						data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
+						data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+						data-image-alt="<?php echo esc_attr( $f['nom'] ); ?>"
 					>
 						<picture class="up2a-formations__card-media">
 							<source srcset="<?php echo esc_url( $f['image']['mobile'] ); ?>" media="(max-width: 640px)">
 							<img
 								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
 								alt=""
-								loading="lazy"
 								decoding="async"
 								width="600"
 								height="450"
@@ -561,17 +564,23 @@ function up2a_core_render_formations(): void {
 
 		<?php foreach ( $formations as $f ) : ?>
 			<template class="js-formation-template" data-formation="<?php echo esc_attr( $f['slug'] ); ?>">
-				<div class="up2a-formation-modal__icon"><?php echo up2a_core_content_icon( $f['icone'] ); ?></div>
-				<p class="up2a-formation-modal__faculte"><?php echo esc_html( $f['faculte_full'] ); ?></p>
+				<span class="up2a-formation-modal__badge up2a-formation-modal__badge--<?php echo esc_attr( strtolower( $f['faculte'] ) ); ?>"><?php echo esc_html( $f['faculte'] ); ?></span>
 				<h3><?php echo esc_html( $f['nom'] ); ?></h3>
+				<p class="up2a-formation-modal__highlight"><?php echo up2a_core_content_icon( $f['icone'] ); ?> <?php esc_html_e( 'Licence · 3 ans', 'up2a-core' ); ?></p>
+				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_icon( 'cap' ); ?> <?php echo esc_html( $f['faculte_full'] ); ?></p>
+				<hr class="up2a-formation-modal__divider">
+				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Description', 'up2a-core' ); ?></p>
 				<p class="up2a-formation-modal__intro"><?php echo esc_html( $f['intro'] ); ?></p>
-				<p class="up2a-formation-modal__debouches-title"><?php esc_html_e( 'Débouchés', 'up2a-core' ); ?></p>
+				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Débouchés', 'up2a-core' ); ?></p>
 				<ul class="up2a-formation-modal__debouches">
 					<?php foreach ( $f['debouches'] as $debouche ) : ?>
 						<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
 					<?php endforeach; ?>
 				</ul>
-				<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+				<div class="up2a-formation-modal__actions">
+					<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+					<button type="button" class="up2a-formation-modal__back js-formation-modal-close"><?php esc_html_e( 'Retour aux formations', 'up2a-core' ); ?></button>
+				</div>
 			</template>
 		<?php endforeach; ?>
 
@@ -579,6 +588,25 @@ function up2a_core_render_formations(): void {
 			<div class="up2a-formation-modal__backdrop js-formation-modal-close"></div>
 			<div class="up2a-formation-modal__panel" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Détail de la formation', 'up2a-core' ); ?>">
 				<button type="button" class="up2a-formation-modal__close js-formation-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-core' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
+				<div class="up2a-formation-modal__gallery">
+					<div class="up2a-formation-modal__main">
+						<img class="js-formation-modal-mainimg" src="" alt="">
+						<button type="button" class="up2a-formation-modal__nav up2a-formation-modal__nav--prev js-formation-modal-prev" aria-label="<?php esc_attr_e( 'Photo précédente', 'up2a-core' ); ?>">‹</button>
+						<button type="button" class="up2a-formation-modal__nav up2a-formation-modal__nav--next js-formation-modal-next" aria-label="<?php esc_attr_e( 'Photo suivante', 'up2a-core' ); ?>">›</button>
+					</div>
+					<div class="up2a-formation-modal__thumbs js-formation-modal-thumbs">
+						<?php foreach ( $photos as $pi => $photo ) : ?>
+							<button
+								type="button"
+								class="up2a-formation-modal__thumb js-formation-modal-thumb"
+								data-src="<?php echo esc_url( $photo['desktop'] ); ?>"
+								data-alt="<?php echo esc_attr( $photo['alt'] ); ?>"
+							>
+								<img src="<?php echo esc_url( $photo['mobile'] ); ?>" alt="" loading="lazy" decoding="async">
+							</button>
+						<?php endforeach; ?>
+					</div>
+				</div>
 				<div class="up2a-formation-modal__content js-formation-modal-content"></div>
 			</div>
 		</div>
@@ -663,24 +691,41 @@ function up2a_core_render_galerie(): void {
 				<?php foreach ( $images as $i => $img ) : ?>
 					<button
 						type="button"
-						class="up2a-galerie__item js-galerie-item"
+						class="up2a-galerie__item js-galerie-item<?php echo 0 === $i ? ' up2a-galerie__item--featured js-galerie-featured' : ''; ?>"
 						data-index="<?php echo (int) $i; ?>"
 						data-full="<?php echo esc_url( $img['desktop'] ); ?>"
 						data-alt="<?php echo esc_attr( $img['alt'] ); ?>"
 						data-legende="<?php echo esc_attr( $img['legende'] ?? '' ); ?>"
 					>
-						<picture>
-							<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
-							<img
-								src="<?php echo esc_url( $img['desktop'] ); ?>"
-								alt="<?php echo esc_attr( $img['alt'] ); ?>"
-								loading="lazy"
-								width="600"
-								height="450"
-							>
-						</picture>
+						<?php if ( 0 === $i ) : ?>
+							<div class="up2a-galerie__featured-stack js-galerie-featured-stack">
+								<?php foreach ( $images as $si => $simg ) : ?>
+									<img
+										class="up2a-galerie__featured-slide<?php echo 0 === $si ? ' is-active' : ''; ?>"
+										src="<?php echo esc_url( $simg['desktop'] ); ?>"
+										alt="<?php echo esc_attr( $simg['alt'] ); ?>"
+										data-full="<?php echo esc_url( $simg['desktop'] ); ?>"
+										data-alt="<?php echo esc_attr( $simg['alt'] ); ?>"
+										data-legende="<?php echo esc_attr( $simg['legende'] ?? '' ); ?>"
+										loading="<?php echo 0 === $si ? 'eager' : 'lazy'; ?>"
+										decoding="async"
+									>
+								<?php endforeach; ?>
+							</div>
+						<?php else : ?>
+							<picture>
+								<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
+								<img
+									src="<?php echo esc_url( $img['desktop'] ); ?>"
+									alt="<?php echo esc_attr( $img['alt'] ); ?>"
+									loading="lazy"
+									width="600"
+									height="450"
+								>
+							</picture>
+						<?php endif; ?>
 						<span class="up2a-galerie__caption">
-							<span class="up2a-galerie__caption-text"><?php echo esc_html( $img['legende'] ?? '' ); ?></span>
+							<span class="up2a-galerie__caption-text js-galerie-caption-text"><?php echo esc_html( $img['legende'] ?? '' ); ?></span>
 							<span class="up2a-galerie__zoom" aria-hidden="true"><?php echo up2a_core_content_icon( 'globe' ); ?></span>
 						</span>
 					</button>
@@ -795,7 +840,7 @@ function up2a_core_render_admissions(): void {
 				<div class="up2a-admissions__feature-text">
 					<h3><span class="up2a-admissions__number">1.</span> <?php echo esc_html( $premiere['titre'] ); ?></h3>
 					<p><?php echo esc_html( $premiere['texte'] ); ?></p>
-					<a href="#up2a-formations" class="up2a-hero__cta up2a-hero__cta--accent">
+					<a href="#up2a-formations" class="up2a-hero__cta up2a-hero__cta--primary">
 						<?php esc_html_e( 'Voir nos formations', 'up2a-core' ); ?>
 						<?php echo up2a_core_content_icon( 'arrow' ); ?>
 					</a>
@@ -899,7 +944,18 @@ function up2a_core_render_footer(): void {
 	<footer class="up2a-footer">
 		<div class="up2a-section-inner up2a-footer__grid">
 			<div class="up2a-footer__col up2a-footer__col--brand">
-				<p class="up2a-footer__brand">Université Privée<br>An-Nahdah d'Afrique</p>
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="up2a-footer__logo">
+					<picture>
+						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.webp' ); ?>" type="image/webp">
+						<img
+							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.png' ); ?>"
+							alt="<?php esc_attr_e( "UP-2A — Université Privée An-Nahdah d'Afrique", 'up2a-core' ); ?>"
+							loading="lazy"
+							width="677"
+							height="186"
+						>
+					</picture>
+				</a>
 				<p class="up2a-footer__slogan"><?php esc_html_e( 'Former aujourd\'hui les élites de demain.', 'up2a-core' ); ?></p>
 				<p class="up2a-footer__contact-line">
 					<?php echo up2a_core_icon( 'pin' ); ?>

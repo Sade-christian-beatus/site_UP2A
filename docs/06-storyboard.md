@@ -175,6 +175,43 @@ les CTA.
 - **Nos formations** : le badge de faculté est coloré par faculté (SJPA =
   teal, SEG = rouge) au lieu d'accent partout — aide aussi à distinguer
   visuellement les deux facultés d'un coup d'œil.
+- **Comment candidater / Nous contacter** (2026-09-22) : les fonds teintés,
+  icônes et bouton CTA passent de l'accent (orange) à la couleur
+  principale (bleu marine) — demande explicite du client, ces deux
+  sections gardent une identité plus institutionnelle/"action" que
+  promotionnelle.
+
+## Modale Formation — refonte "fiche" (2026-09-22)
+
+La modale de détail d'une formation adopte désormais une mise en page à
+deux colonnes façon fiche immobilière (référence fournie par le client) :
+galerie photo à gauche (image principale + bande de vignettes, flèches
+précédent/suivant — réutilise les 7 photos de la section Galerie,
+`up2a_core_gallery_images()`, la photo de la carte cliquée étant
+sélectionnée en premier) et détails à droite (badge de faculté, titre,
+ligne de mise en avant "Licence · 3 ans", faculté complète, description,
+débouchés, CTA préinscription + lien "Retour aux formations"). Sur mobile,
+les deux colonnes s'empilent.
+
+## Corrections et ajouts (2026-09-22)
+
+- **Formations** : les images de fond des cartes sont repassées en
+  chargement immédiat (non lazy) — le lazy loading causait un affichage
+  gris/manquant sur certaines cartes, signalé par le client.
+- **Footer** : ajout du logo (sur fond blanc pour rester lisible), ligne
+  d'accent en haut, séparateurs verticaux entre colonnes, meilleure
+  hiérarchie typographique.
+- **Compte à rebours** : ajout d'une icône horloge, séparateurs verticaux
+  entre chaque statistique, ombre plus prononcée.
+- **Hero** : arrière-plan (slider) en parallaxe au scroll (défile plus
+  lentement que le contenu), desktop uniquement. La couche
+  `.up2a-hero__slides` est surdimensionnée en CSS pour que ce déplacement
+  ne révèle jamais de bord vide.
+- **Galerie** : la grande case de la grille ("cadre agrandi") fait
+  maintenant défiler toutes les photos de la galerie en fondu enchaîné
+  toutes les 10 secondes, avec une bordure de couleur primaire pour la
+  distinguer comme case "dynamique" — indépendant de GSAP, s'arrête sous
+  `prefers-reduced-motion: reduce`.
 
 ## Règles transverses (toutes scènes)
 
