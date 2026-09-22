@@ -102,15 +102,26 @@ function up2a_core_hero_slides(): array {
 }
 
 /**
- * URL d'une photo de vie étudiante pour la section "Pourquoi nous
- * choisir". Sans photo fournie, une illustration de marque est utilisée
- * à la place (assets/img/motif-communaute.svg) — jamais un espace vide.
+ * Photo de campus pour la section "Pourquoi choisir l'UP-2A" (bâtiment +
+ * étudiants, fournie par le client). Retourne un tableau
+ * ['desktop' => url, 'mobile' => url] ou un tableau vide pour revenir à
+ * l'illustration de marque (assets/img/motif-communaute.svg) — jamais un
+ * espace vide.
  */
-function up2a_core_life_image_url(): string {
+function up2a_core_life_image(): array {
 	if ( defined( 'UP2A_LIFE_IMAGE_URL' ) ) {
-		return UP2A_LIFE_IMAGE_URL;
+		return array(
+			'desktop' => UP2A_LIFE_IMAGE_URL,
+			'mobile'  => defined( 'UP2A_LIFE_IMAGE_MOBILE_URL' ) ? UP2A_LIFE_IMAGE_MOBILE_URL : UP2A_LIFE_IMAGE_URL,
+		);
 	}
-	return apply_filters( 'up2a_core_life_image_url', '' );
+
+	$default = array(
+		'desktop' => UP2A_CORE_URL . 'assets/img/pourquoi-photo.webp',
+		'mobile'  => UP2A_CORE_URL . 'assets/img/pourquoi-photo-mobile.webp',
+	);
+
+	return apply_filters( 'up2a_core_life_image', $default );
 }
 
 /**
@@ -216,7 +227,7 @@ function up2a_core_render_hero(): void {
 // --------------------------------------------------------------------
 
 function up2a_core_render_pourquoi(): void {
-	$image  = up2a_core_life_image_url();
+	$image  = up2a_core_life_image();
 	$points = array(
 		__( 'Encadrement pédagogique de proximité, en petits effectifs', 'up2a-core' ),
 		__( 'Formations connectées aux besoins concrets du marché du travail', 'up2a-core' ),
@@ -236,8 +247,19 @@ function up2a_core_render_pourquoi(): void {
 					<?php endforeach; ?>
 				</ul>
 			</div>
-			<div class="up2a-pourquoi__media" <?php echo $image ? 'style="--up2a-life-image: url(' . esc_url( $image ) . ')"' : ''; ?>>
-				<?php if ( ! $image ) : ?>
+			<div class="up2a-pourquoi__media">
+				<?php if ( ! empty( $image['desktop'] ) ) : ?>
+					<picture>
+						<source srcset="<?php echo esc_url( $image['mobile'] ); ?>" media="(max-width: 640px)">
+						<img
+							src="<?php echo esc_url( $image['desktop'] ); ?>"
+							alt="<?php esc_attr_e( "Étudiants de l'UP-2A devant le campus", 'up2a-core' ); ?>"
+							loading="lazy"
+							width="972"
+							height="642"
+						>
+					</picture>
+				<?php else : ?>
 					<img
 						src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/motif-communaute.svg' ); ?>"
 						alt="<?php esc_attr_e( 'Illustration de la communauté étudiante UP-2A', 'up2a-core' ); ?>"
