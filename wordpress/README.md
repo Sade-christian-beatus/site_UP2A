@@ -101,9 +101,12 @@ de cette page tant qu'on n'en a pas besoin).
   (photos de campus, rotation automatique), une section "Pourquoi choisir
   l'UP-2A", les Valeurs, les Formations en cartes qui se retournent au
   survol/tap ("flip cards", avec la description au dos), une **Galerie
-  photo** (grille + lightbox), les Admissions, un CTA final, la section
+  photo** (grille + lightbox, 7 photos), une section **"Télécharger nos
+  documents"** (brochure), les Admissions, un CTA final, la section
   Contact et un pied de page multi-colonnes (voir docs/06-storyboard.md).
-  Pour l'activer :
+  Chaque section a désormais un léger décor de fond (formes discrètes aux
+  couleurs de la marque, avec un effet de parallaxe au scroll sur
+  desktop). Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -137,10 +140,24 @@ sans cette constante, la photo par défaut reste utilisée — plus jamais
 l'illustration vectorielle, gardée uniquement comme filet de sécurité si
 le fichier venait à manquer).
 
-La **Galerie** réutilise par défaut ces mêmes photos. Pour ajouter
-d'autres photos à la galerie sans toucher au code, utiliser le filtre
-`up2a_core_gallery_images` depuis un mu-plugin (même logique que
-`up2a_core_hero_slides` ci-dessus), ou demander une mise à jour du plugin.
+La **Galerie** affiche par défaut 7 photos (campus + vie étudiante,
+fournies par le client). Pour en ajouter d'autres sans toucher au code,
+utiliser le filtre `up2a_core_gallery_images` depuis un mu-plugin (même
+logique que `up2a_core_hero_slides` ci-dessus), ou demander une mise à
+jour du plugin.
+
+### Documents (brochure)
+
+La section **"Télécharger nos documents"** est prête mais aucun PDF n'a
+encore été fourni : elle affiche honnêtement "Brochure disponible
+prochainement" plutôt qu'un lien mort. Dès qu'une brochure PDF existe,
+la brancher via `wp-config.php` :
+
+```php
+define('UP2A_BROCHURE_URL', 'https://.../brochure-up2a.pdf');
+```
+
+(remplacer l'URL par celle du média une fois téléversé dans **Médias**).
 
 ### Localisation
 
@@ -206,6 +223,29 @@ Dans l'ordre le plus probable :
 5. **Erreur PHP silencieuse.** Activez temporairement `WP_DEBUG` dans
    `wp-config.php` (`define('WP_DEBUG', true);`) et rechargez la page pour
    voir si un message d'erreur apparaît ; désactivez-le ensuite.
+6. **Cache (souvent la cause quand desktop est à jour mais pas mobile).**
+   Le CSS/JS de `up2a-core` est chargé avec un numéro de version
+   (`?ver=0.5.0` par exemple) qui force normalement le navigateur à
+   recharger le fichier après une mise à jour du plugin — mais un cache
+   intermédiaire peut ignorer ce paramètre. À vérifier dans l'ordre :
+   1. **Cache du navigateur mobile** : rechargement forcé (souvent
+      indisponible sur mobile) ou plus simple, ouvrir le site en
+      navigation privée sur le téléphone — si l'affichage y est correct,
+      c'est bien un cache local à vider (Réglages du navigateur → Effacer
+      les données de navigation).
+   2. **Plugin de cache WordPress** (WP Super Cache, LiteSpeed Cache,
+      W3 Total Cache...) : certains gardent un **cache mobile séparé** du
+      cache desktop, qu'une purge "normale" ne vide pas toujours —
+      chercher une option "Mobile cache" / "Cache séparé mobile" dans ses
+      réglages et le vider explicitement.
+   3. **Cache de l'hébergeur ou d'un CDN** (Cloudflare, cache serveur
+      mutualisé...) : purger le cache depuis le tableau de bord de
+      l'hébergeur si disponible, ou attendre l'expiration du cache (souvent
+      quelques heures) si aucune option de purge n'est accessible.
+   4. Pour confirmer que la version installée est bien la dernière :
+      afficher le code source de la page (menu du navigateur → Code
+      source) et chercher `up2a-front-page.css?ver=` — le numéro doit
+      correspondre au `Version:` de `up2a-core.php` dans ce dépôt.
 
 Si le problème persiste après ces vérifications, une capture d'écran de
 ce que vous voyez (et de vos réglages Pages/Lecture) permettrait un

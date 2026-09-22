@@ -152,6 +152,21 @@ function up2a_core_content_icon( string $name ): string {
 	return $icons[ $name ] ?? '';
 }
 
+/**
+ * Décor de fond par section : formes discrètes (cercles/anneaux) en
+ * dégradé de la palette de marque, purement décoratives (aria-hidden),
+ * derrière le contenu (voir `.up2a-decor` dans up2a-front-page.css).
+ * Un léger parallaxe au scroll leur est appliqué en JS, desktop
+ * uniquement (voir up2a-front-page.js et CLAUDE.md §7 : pas d'effet
+ * lourd sur mobile).
+ */
+function up2a_core_decor( string $variant ): string {
+	return '<div class="up2a-decor up2a-decor--' . esc_attr( $variant ) . ' js-decor" aria-hidden="true">'
+		. '<span class="up2a-decor__shape up2a-decor__shape--blob js-decor-shape"></span>'
+		. '<span class="up2a-decor__shape up2a-decor__shape--ring js-decor-shape"></span>'
+		. '</div>';
+}
+
 // --------------------------------------------------------------------
 // Scène 1 — Hero
 // --------------------------------------------------------------------
@@ -236,6 +251,7 @@ function up2a_core_render_pourquoi(): void {
 	);
 	?>
 	<section class="up2a-pourquoi js-pourquoi">
+		<?php echo up2a_core_decor( 'pourquoi' ); ?>
 		<div class="up2a-section-inner up2a-pourquoi__grid">
 			<div class="up2a-pourquoi__text">
 				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Pourquoi choisir l\'UP-2A', 'up2a-core' ); ?></h2>
@@ -303,6 +319,7 @@ function up2a_core_render_valeurs(): void {
 	);
 	?>
 	<section class="up2a-values js-values">
+		<?php echo up2a_core_decor( 'valeurs' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Nos valeurs', 'up2a-core' ); ?></h2>
 			<div class="up2a-values__grid">
@@ -356,6 +373,7 @@ function up2a_core_render_formations(): void {
 	);
 	?>
 	<section id="up2a-formations" class="up2a-formations js-formations">
+		<?php echo up2a_core_decor( 'formations' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Nos formations', 'up2a-core' ); ?></h2>
 			<p class="up2a-formations__hint"><?php esc_html_e( 'Survolez (ou touchez) une carte pour en savoir plus', 'up2a-core' ); ?></p>
@@ -396,16 +414,43 @@ function up2a_core_gallery_images(): array {
 			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-1.webp',
 			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-1-mobile.webp',
 			'alt'     => __( "Le campus de l'UP-2A", 'up2a-core' ),
+			'legende' => __( 'Le campus', 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment-mobile.webp',
+			'alt'     => __( "Étudiants de l'UP-2A devant le bâtiment", 'up2a-core' ),
+			'legende' => __( 'Vie étudiante', 'up2a-core' ),
 		),
 		array(
 			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-2.webp',
 			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-2-mobile.webp',
 			'alt'     => __( "Le bâtiment de l'UP-2A", 'up2a-core' ),
+			'legende' => __( 'Le bâtiment', 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-facade.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-facade-mobile.webp',
+			'alt'     => __( "Façade principale du campus de l'UP-2A", 'up2a-core' ),
+			'legende' => __( 'La façade principale', 'up2a-core' ),
 		),
 		array(
 			'desktop' => UP2A_CORE_URL . 'assets/img/pourquoi-photo.webp',
 			'mobile'  => UP2A_CORE_URL . 'assets/img/pourquoi-photo-mobile.webp',
 			'alt'     => __( "Étudiants devant le campus de l'UP-2A", 'up2a-core' ),
+			'legende' => __( 'Nos étudiants', 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-angle.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-angle-mobile.webp',
+			'alt'     => __( "Vue d'angle du campus de l'UP-2A", 'up2a-core' ),
+			'legende' => __( 'Le campus, vue latérale', 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-perspective.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-perspective-mobile.webp',
+			'alt'     => __( "Architecture du bâtiment de l'UP-2A", 'up2a-core' ),
+			'legende' => __( "L'architecture", 'up2a-core' ),
 		),
 	);
 
@@ -424,6 +469,7 @@ function up2a_core_render_galerie(): void {
 	}
 	?>
 	<section id="up2a-galerie" class="up2a-galerie js-galerie">
+		<?php echo up2a_core_decor( 'galerie' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Galerie', 'up2a-core' ); ?></h2>
 			<p class="up2a-galerie__hint"><?php esc_html_e( "Un aperçu du campus et de la vie étudiante à l'UP-2A", 'up2a-core' ); ?></p>
@@ -435,6 +481,7 @@ function up2a_core_render_galerie(): void {
 						data-index="<?php echo (int) $i; ?>"
 						data-full="<?php echo esc_url( $img['desktop'] ); ?>"
 						data-alt="<?php echo esc_attr( $img['alt'] ); ?>"
+						data-legende="<?php echo esc_attr( $img['legende'] ?? '' ); ?>"
 					>
 						<picture>
 							<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
@@ -446,7 +493,10 @@ function up2a_core_render_galerie(): void {
 								height="450"
 							>
 						</picture>
-						<span class="up2a-galerie__zoom" aria-hidden="true"><?php echo up2a_core_content_icon( 'globe' ); ?></span>
+						<span class="up2a-galerie__caption">
+							<span class="up2a-galerie__caption-text"><?php echo esc_html( $img['legende'] ?? '' ); ?></span>
+							<span class="up2a-galerie__zoom" aria-hidden="true"><?php echo up2a_core_content_icon( 'globe' ); ?></span>
+						</span>
 					</button>
 				<?php endforeach; ?>
 			</div>
@@ -455,8 +505,68 @@ function up2a_core_render_galerie(): void {
 		<div class="up2a-galerie__lightbox js-galerie-lightbox" aria-hidden="true">
 			<button type="button" class="up2a-galerie__lightbox-close js-galerie-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-core' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
 			<button type="button" class="up2a-galerie__lightbox-nav up2a-galerie__lightbox-nav--prev js-galerie-prev" aria-label="<?php esc_attr_e( 'Image précédente', 'up2a-core' ); ?>">‹</button>
-			<img class="up2a-galerie__lightbox-img js-galerie-lightbox-img" src="" alt="">
+			<figure class="up2a-galerie__lightbox-figure">
+				<img class="up2a-galerie__lightbox-img js-galerie-lightbox-img" src="" alt="">
+				<figcaption class="up2a-galerie__lightbox-caption js-galerie-lightbox-caption"></figcaption>
+			</figure>
 			<button type="button" class="up2a-galerie__lightbox-nav up2a-galerie__lightbox-nav--next js-galerie-next" aria-label="<?php esc_attr_e( 'Image suivante', 'up2a-core' ); ?>">›</button>
+			<p class="up2a-galerie__lightbox-count js-galerie-lightbox-count" aria-hidden="true"></p>
+		</div>
+	</section>
+	<?php
+}
+
+// --------------------------------------------------------------------
+// Scène 3 ter — Documents (brochure)
+// --------------------------------------------------------------------
+// Aucun PDF n'a été fourni à ce jour : la section reste en place (jamais
+// bloquée sur l'asset manquant, voir CLAUDE.md §3) mais l'affiche
+// honnêtement comme "bientôt disponible" plutôt que de pointer vers un
+// lien mort. Brancher un vrai PDF via UP2A_BROCHURE_URL (wp-config.php)
+// ou le filtre `up2a_core_brochure_url` dès qu'il existe.
+
+function up2a_core_brochure_url(): string {
+	if ( defined( 'UP2A_BROCHURE_URL' ) ) {
+		return UP2A_BROCHURE_URL;
+	}
+	return apply_filters( 'up2a_core_brochure_url', '' );
+}
+
+function up2a_core_render_documents(): void {
+	$url = up2a_core_brochure_url();
+	?>
+	<section id="up2a-documents" class="up2a-documents js-documents">
+		<?php echo up2a_core_decor( 'documents' ); ?>
+		<div class="up2a-section-inner up2a-documents__grid">
+			<div class="up2a-documents__cover" aria-hidden="true">
+				<div class="up2a-documents__cover-page up2a-documents__cover-page--back"></div>
+				<div class="up2a-documents__cover-page up2a-documents__cover-page--front">
+					<span class="up2a-documents__cover-icon"><?php echo up2a_core_content_icon( 'book' ); ?></span>
+					<span class="up2a-documents__cover-title">Brochure<br>UP-2A</span>
+					<span class="up2a-documents__cover-sub"><?php esc_html_e( 'Formations & admissions', 'up2a-core' ); ?></span>
+				</div>
+			</div>
+			<div class="up2a-documents__text">
+				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Télécharger nos documents', 'up2a-core' ); ?></h2>
+				<p><?php esc_html_e( "Retrouvez l'ensemble de nos formations, nos conditions d'admission et les informations pratiques de l'université dans notre brochure officielle.", 'up2a-core' ); ?></p>
+				<ul class="up2a-documents__list">
+					<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php esc_html_e( 'Présentation des 2 facultés et des 4 licences', 'up2a-core' ); ?></span></li>
+					<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php esc_html_e( "Conditions d'admission et pièces à fournir", 'up2a-core' ); ?></span></li>
+					<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php esc_html_e( 'Coordonnées et localisation du campus', 'up2a-core' ); ?></span></li>
+				</ul>
+				<?php if ( $url ) : ?>
+					<a href="<?php echo esc_url( $url ); ?>" class="up2a-hero__cta up2a-hero__cta--accent" download>
+						<?php echo up2a_core_content_icon( 'file' ); ?>
+						<?php esc_html_e( 'Télécharger la brochure (PDF)', 'up2a-core' ); ?>
+						<?php echo up2a_core_content_icon( 'arrow' ); ?>
+					</a>
+				<?php else : ?>
+					<span class="up2a-documents__soon" aria-disabled="true">
+						<?php echo up2a_core_content_icon( 'clock' ); ?>
+						<?php esc_html_e( 'Brochure disponible prochainement', 'up2a-core' ); ?>
+					</span>
+				<?php endif; ?>
+			</div>
 		</div>
 	</section>
 	<?php
@@ -475,6 +585,7 @@ function up2a_core_render_admissions(): void {
 	);
 	?>
 	<section id="up2a-admissions" class="up2a-admissions js-admissions">
+		<?php echo up2a_core_decor( 'admissions' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Comment candidater', 'up2a-core' ); ?></h2>
 			<p class="up2a-admissions__note">
@@ -500,6 +611,7 @@ function up2a_core_render_admissions(): void {
 function up2a_core_render_cta_final(): void {
 	?>
 	<section class="up2a-cta-final js-cta-final">
+		<?php echo up2a_core_decor( 'cta-final' ); ?>
 		<div class="up2a-section-inner up2a-cta-final__inner">
 			<h2><?php esc_html_e( 'Prêt·e à construire votre avenir ?', 'up2a-core' ); ?></h2>
 			<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?></a>
@@ -515,6 +627,7 @@ function up2a_core_render_cta_final(): void {
 function up2a_core_render_contact(): void {
 	?>
 	<section id="up2a-contact" class="up2a-contact js-contact">
+		<?php echo up2a_core_decor( 'contact' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Nous contacter', 'up2a-core' ); ?></h2>
 			<div class="up2a-contact__grid">
@@ -548,6 +661,7 @@ function up2a_core_render_footer(): void {
 		'#up2a-hero'       => __( 'Accueil', 'up2a-core' ),
 		'#up2a-formations' => __( 'Formations', 'up2a-core' ),
 		'#up2a-galerie'    => __( 'Galerie', 'up2a-core' ),
+		'#up2a-documents'  => __( 'Documents', 'up2a-core' ),
 		'#up2a-admissions' => __( 'Admissions', 'up2a-core' ),
 		'#up2a-contact'    => __( 'Contact', 'up2a-core' ),
 	);

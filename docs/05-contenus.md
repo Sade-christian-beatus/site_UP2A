@@ -91,11 +91,36 @@ Galerie
 Un aperçu du campus et de la vie étudiante à l'UP-2A
 
 > Images (grille + lightbox au clic)
-Les 3 photos réelles déjà fournies par le client (`hero-slide-1.webp`,
-`hero-slide-2.webp`, `pourquoi-photo.webp`) — les mêmes qu'ailleurs sur la
-home, réutilisées ici en grille. D'autres photos viendront s'y ajouter au
-fil de l'eau via le filtre `up2a_core_gallery_images` (voir
-wordpress/README.md), sans qu'il soit nécessaire de toucher au code.
+7 photos réelles fournies par le client : les 3 déjà utilisées ailleurs
+sur la home (`hero-slide-1.webp`, `hero-slide-2.webp`,
+`pourquoi-photo.webp`) et 4 nouvelles vues du campus/de la vie étudiante
+(`gallery-campus-facade.webp`, `gallery-campus-angle.webp`,
+`gallery-campus-perspective.webp`, `gallery-etudiants-batiment.webp`),
+chacune avec une légende affichée au survol/dans la lightbox. D'autres
+photos viendront s'y ajouter au fil de l'eau via le filtre
+`up2a_core_gallery_images` (voir wordpress/README.md), sans qu'il soit
+nécessaire de toucher au code.
+
+## Home — Télécharger nos documents
+
+> Titre
+Télécharger nos documents
+
+> Paragraphe
+Retrouvez l'ensemble de nos formations, nos conditions d'admission et les
+informations pratiques de l'université dans notre brochure officielle.
+
+> Points listés
+- Présentation des 2 facultés et des 4 licences
+- Conditions d'admission et pièces à fournir
+- Coordonnées et localisation du campus
+
+> Statut
+Aucun PDF n'a été fourni à ce jour `[À CONFIRMER — brochure PDF à
+transmettre par le client]`. La section reste en place et affiche
+"Brochure disponible prochainement" (pas de lien mort) ; brancher un
+vrai PDF via `UP2A_BROCHURE_URL` dès qu'il existe (voir
+wordpress/README.md).
 
 ## Home — Chiffres clés `[À CONFIRMER — ne pas publier sans validation]`
 
