@@ -14,6 +14,10 @@
 - Slogan : *« Former aujourd'hui les élites de demain »*
 - Ville : Ouagadougou, Burkina Faso
 - Autorisation : MESRI n°2026-001647
+- Téléphone (confirmé, logo/en-tête officiel) : **+226 50 63 85 54**
+- Phrase d'accroche de l'en-tête (bandeau défilant, confirmée) :
+  *« Rejoignez dès aujourd'hui l'UNIVERSITÉ PRIVÉE AN-NAHDAH D'AFRIQUE
+  pour bâtir une carrière à la hauteur de vos ambitions »*
 
 ## Home — Hero
 
@@ -93,10 +97,10 @@ avec le même avertissement.
 *(Aucune étape de paiement — c'est volontaire et non négociable, voir
 CLAUDE.md §3.)*
 
-## Contact `[coordonnées à confirmer par le client]`
+## Contact `[adresse précise, e-mail et réseaux sociaux à confirmer]`
 
 - Adresse : `[À CONFIRMER]`, Ouagadougou, Burkina Faso
-- Téléphone : `[À CONFIRMER]`
+- Téléphone : **+226 50 63 85 54** (confirmé)
 - E-mail : `[À CONFIRMER]`
 - Réseaux sociaux : `[À CONFIRMER]`
 

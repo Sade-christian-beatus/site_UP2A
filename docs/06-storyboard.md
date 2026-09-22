@@ -5,6 +5,17 @@
 > `ScrollTrigger.matchMedia()`, voir docs/02 et docs/CLAUDE.md §7). Chaque
 > scène décrit : le contenu (renvoi à docs/05), la mise en scène, et les
 > classes `js-*` à poser dans Elementor pour que `up2a-core` s'y accroche.
+>
+> **Statut (2026-09-22)** : l'en-tête (hors scènes, persistant sur toutes
+> les pages) est construit et testé dans `up2a-core` (voir
+> `wordpress/plugins/up2a-core/inc/header.php`). La home elle-même est
+> construite comme un **template de page fourni par `up2a-core`**
+> (sélectionnable dans wp-admin), plutôt qu'assemblée manuellement dans
+> Elementor — plus rapide et plus fiable pour des scènes animées
+> complexes, voir `wordpress/README.md`. Les scènes 4 (chiffres clés) et
+> 6 (actualités) sont **reportées** : elles dépendent de données réelles
+> (chiffres validés, articles publiés) qui n'existent pas encore —
+> inutile de publier des nombres inventés ou une actualité vide.
 
 ## Scène 0 — Chargement / intro (optionnel, léger)
 

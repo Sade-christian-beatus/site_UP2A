@@ -81,11 +81,39 @@ de cette page tant qu'on n'en a pas besoin).
 
    | Nom | Valeur |
    |---|---|
-   | Primary | `#0B4D3C` |
-   | Primary Dark | `#083A2D` |
-   | Accent | `#C9A227` |
-   | Ink | `#14202B` |
-   | Background | `#F7F5F0` |
+   | Primary | `#0B2A5B` |
+   | Primary Dark | `#061A3D` |
+   | Accent | `#FDB41B` |
+   | Ink | `#0F1B2E` |
+   | Background | `#FFFFFF` |
+
+## Étape 3 bis — Activer l'en-tête et la home (onepage)
+
+`up2a-core` fournit désormais, en plus de la couche d'animation :
+
+- **L'en-tête du site** (bandeau + logo + menu + bouton "Espace étudiant"),
+  affiché automatiquement sur toutes les pages dès que le plugin est
+  actif — rien à faire de plus. Le menu ("Accueil", "Formations",
+  "Admissions"...) se configure dans **Apparence → Menus** : créer un
+  menu, y ajouter les pages/liens souhaités, puis lui assigner
+  l'emplacement **"Menu principal UP-2A"**.
+- **Un modèle de page "Accueil UP-2A (onepage)"** avec les sections Hero,
+  Valeurs, Formations, Admissions et pied de page (voir
+  docs/06-storyboard.md). Pour l'activer :
+  1. **Pages → Ajouter** (ou éditer la page existante prévue comme
+     accueil).
+  2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
+     choisir **"Accueil UP-2A (onepage)"**.
+  3. Publier la page.
+  4. **Réglages → Lecture** → "Une page statique" → sélectionner cette
+     page comme **Page d'accueil**.
+- Sections volontairement absentes pour l'instant : "chiffres clés" (pas
+  de chiffres validés par le client) et "actualités" (pas encore
+  d'articles) — voir docs/06-storyboard.md.
+- L'image du bâtiment (docs/CLAUDE.md §3) n'est pas encore intégrée : le
+  Hero utilise un dégradé de secours. Pour la brancher une fois
+  disponible, ajouter dans `wp-config.php` :
+  `define('UP2A_HERO_IMAGE_URL', 'https://.../batiment.webp');`
 
 ## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
 
@@ -107,7 +135,7 @@ pour ne pas laisser cette capacité ouverte en permanence.
 
 | Plugin | Rôle | Statut |
 |---|---|---|
-| `up2a-core` | GSAP/ScrollTrigger/SplitText/Lenis + tokens design system | Prêt (`up2a-core.zip` fourni) |
+| `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) |
 | `up2a-preinscription` | Formulaire préinscription → Supabase, sans paiement | Squelette (`up2a-preinscription.zip` fourni), logique complète en phase 5 |
 
 ## Checklist de vérification
@@ -115,6 +143,8 @@ pour ne pas laisser cette capacité ouverte en permanence.
 - [ ] Sauvegarde de l'ancien site effectuée et téléchargée
 - [ ] Ancien contenu (articles, pages, médias, plugins, thèmes) supprimé
 - [ ] Hello Elementor + Elementor installés et activés
-- [ ] `up2a-core` installé et activé, variables CSS visibles en front
+- [ ] `up2a-core` installé et activé, en-tête visible sur le site
+- [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
+- [ ] Page "Accueil UP-2A (onepage)" créée, modèle assigné, définie comme page d'accueil (Réglages → Lecture)
 - [ ] `up2a-preinscription` installé et activé (avertissement admin normal)
 - [ ] Couleurs globales Elementor renseignées
