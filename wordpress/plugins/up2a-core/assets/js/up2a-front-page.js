@@ -226,6 +226,57 @@
 })();
 
 /**
+ * Décor de section — suivi léger du curseur (wordpress/plugins/up2a-core/
+ * inc/front-page.php, up2a_core_decor()). Indépendant de GSAP : purement
+ * cosmétique, desktop uniquement (voir CLAUDE.md §7), respecte
+ * prefers-reduced-motion. Déplace le conteneur `.js-decor` en entier (pas
+ * les formes individuelles, animées séparément au scroll par GSAP plus
+ * bas) pour ne jamais entrer en conflit avec le parallaxe de scroll.
+ */
+(function () {
+  "use strict";
+
+  var decorSections = document.querySelectorAll(".js-decor");
+  if (!decorSections.length) {
+    return;
+  }
+
+  var prefersReducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var isDesktop = window.matchMedia && window.matchMedia("(min-width: 960px)").matches;
+
+  if (prefersReducedMotion || !isDesktop) {
+    return;
+  }
+
+  decorSections.forEach(function (decor) {
+    var parent = decor.parentElement;
+    if (!parent) {
+      return;
+    }
+
+    var raf = null;
+
+    parent.addEventListener("mousemove", function (event) {
+      if (raf) {
+        return;
+      }
+      raf = requestAnimationFrame(function () {
+        var rect = parent.getBoundingClientRect();
+        var x = (event.clientX - rect.left) / rect.width - 0.5;
+        var y = (event.clientY - rect.top) / rect.height - 0.5;
+        decor.style.transform = "translate(" + (x * 24).toFixed(1) + "px, " + (y * 24).toFixed(1) + "px)";
+        raf = null;
+      });
+    });
+
+    parent.addEventListener("mouseleave", function () {
+      decor.style.transform = "";
+    });
+  });
+})();
+
+/**
  * Animations du template "Accueil UP-2A (onepage)".
  * S'appuie sur window.UP2A (voir up2a-core.js) : ne fait rien si GSAP n'a
  * pas pu se charger (ex. CDN indisponible) — le contenu reste visible et
