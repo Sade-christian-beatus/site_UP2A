@@ -1,4 +1,64 @@
 /**
+ * Slider du Hero (wordpress/plugins/up2a-core/inc/front-page.php).
+ * Indépendant de GSAP (même logique que up2a-header.js) : la rotation des
+ * diapositives ne doit pas dépendre d'un CDN externe qui peut échouer.
+ */
+(function () {
+  "use strict";
+
+  var slides = document.querySelectorAll(".up2a-hero__slide");
+  var dots = document.querySelectorAll(".js-hero-dots button");
+
+  if (slides.length < 2) {
+    return;
+  }
+
+  var current = 0;
+  var prefersReducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function goTo(index) {
+    slides[current].classList.remove("is-active");
+    dots[current] && dots[current].classList.remove("is-active");
+    current = index % slides.length;
+    slides[current].classList.add("is-active");
+    dots[current] && dots[current].classList.add("is-active");
+  }
+
+  dots.forEach(function (dot) {
+    dot.addEventListener("click", function () {
+      goTo(parseInt(dot.dataset.slide, 10) || 0);
+    });
+  });
+
+  if (!prefersReducedMotion) {
+    setInterval(function () {
+      goTo(current + 1);
+    }, 6500);
+  }
+})();
+
+/**
+ * Cartes flip des formations (wordpress/plugins/up2a-core/inc/front-page.php).
+ * Le survol (:hover) suffit sur desktop (CSS pur) ; ce script ajoute le
+ * support tactile (tap pour retourner) — indépendant de GSAP.
+ */
+(function () {
+  "use strict";
+
+  var cards = document.querySelectorAll(".up2a-formations__card");
+
+  cards.forEach(function (card) {
+    card.addEventListener("click", function (event) {
+      if (event.target.closest("a")) {
+        return; // laisse le lien de la face arrière fonctionner normalement
+      }
+      card.classList.toggle("is-flipped");
+    });
+  });
+})();
+
+/**
  * Animations du template "Accueil UP-2A (onepage)".
  * S'appuie sur window.UP2A (voir up2a-core.js) : ne fait rien si GSAP n'a
  * pas pu se charger (ex. CDN indisponible) — le contenu reste visible et

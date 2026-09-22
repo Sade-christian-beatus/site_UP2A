@@ -20,8 +20,8 @@
   background: var(--up2a-color-primary-dark);
   color: #ffffff;
   padding: 0 24px;
-  height: 44px;
-  font-size: 0.8125rem;
+  height: 48px;
+  font-size: 0.875rem;
   overflow: hidden;
 }
 
@@ -95,7 +95,7 @@ a.up2a-topbar__contact:hover {
   align-items: center;
   gap: 16px;
   background: var(--up2a-color-surface);
-  padding: 18px 24px;
+  padding: 22px 32px;
   border-bottom: 1px solid var(--up2a-color-border);
 }
 
@@ -132,7 +132,7 @@ a.up2a-topbar__contact:hover {
 }
 
 .up2a-mainbar__logo img {
-  height: 58px;
+  height: 72px;
   width: auto;
   display: block;
 }
@@ -145,10 +145,10 @@ a.up2a-topbar__contact:hover {
   background: var(--up2a-color-primary);
   color: #ffffff;
   text-decoration: none;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  padding: 13px 22px;
+  padding: 15px 26px;
   border-radius: 999px;
   white-space: nowrap;
   transition: background-color var(--up2a-motion-fast) ease;
@@ -217,7 +217,7 @@ a.up2a-topbar__contact:hover {
   }
 
   .up2a-mainbar__logo img {
-    height: 38px;
+    height: 46px;
   }
 
   .up2a-mainbar__cta span {

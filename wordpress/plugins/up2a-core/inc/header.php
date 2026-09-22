@@ -23,6 +23,15 @@ function up2a_core_header_location(): string {
 	return apply_filters( 'up2a_core_header_location', 'Ouagadougou, Burkina Faso' );
 }
 
+/**
+ * Adresse complète (quartier inclus), utilisée dans la section Contact et
+ * le pied de page — plus précise que up2a_core_header_location() qui
+ * reste courte pour la barre supérieure.
+ */
+function up2a_core_header_address(): string {
+	return apply_filters( 'up2a_core_header_address', 'Ouagadougou - Balkuy, Burkina Faso' );
+}
+
 function up2a_core_header_marquee_text(): string {
 	return apply_filters(
 		'up2a_core_header_marquee_text',
