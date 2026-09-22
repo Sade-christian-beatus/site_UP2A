@@ -20,6 +20,7 @@ get_header();
 	up2a_core_render_pourquoi();
 	up2a_core_render_valeurs();
 	up2a_core_render_formations();
+	up2a_core_render_galerie();
 	up2a_core_render_admissions();
 	up2a_core_render_cta_final();
 	up2a_core_render_contact();

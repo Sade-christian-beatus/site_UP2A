@@ -8,19 +8,24 @@
 >
 > **Statut (2026-09-22)** : l'en-tête (hors scènes, persistant sur toutes
 > les pages) est construit et testé dans `up2a-core` (voir
-> `wordpress/plugins/up2a-core/inc/header.php`). La home elle-même est
-> construite comme un **template de page fourni par `up2a-core`**
-> (sélectionnable dans wp-admin), plutôt qu'assemblée manuellement dans
-> Elementor — plus rapide et plus fiable pour des scènes animées
-> complexes, voir `wordpress/README.md`. Le Hero utilise désormais un
-> **slider de vraies photos de campus** (fournies par le client) avec
-> rotation automatique et points de navigation ; les cartes Formations
-> se retournent au survol/tap ("flip cards") pour révéler la description
-> au dos. L'adresse complète (Ouagadougou - Balkuy) est intégrée dans la
-> section Contact et le pied de page. Les scènes 4 (chiffres clés) et 6
-> (actualités) restent **reportées** : elles dépendent de données réelles
-> (chiffres validés, articles publiés) qui n'existent pas encore —
-> inutile de publier des nombres inventés ou une actualité vide.
+> `wordpress/plugins/up2a-core/inc/header.php`) — logo agrandi pour une
+> meilleure visibilité, palette officielle (primaire `#082E6C`, secondaire
+> `#FE931A`, extra `#E83527`/`#4B81A0`). La home elle-même est construite
+> comme un **template de page fourni par `up2a-core`** (sélectionnable
+> dans wp-admin), plutôt qu'assemblée manuellement dans Elementor — plus
+> rapide et plus fiable pour des scènes animées complexes, voir
+> `wordpress/README.md`. Le Hero utilise désormais un **slider de vraies
+> photos de campus** (fournies par le client) avec rotation automatique et
+> points de navigation ; les cartes Formations se retournent au
+> survol/tap ("flip cards") pour révéler la description au dos ; une
+> **scène 3 bis "Galerie"** (grille + lightbox) a été ajoutée après les
+> formations. L'adresse complète (Ouagadougou - Balkuy) est intégrée dans
+> la barre supérieure, la section Contact et le pied de page, désormais
+> **cliquable vers Google Maps** (géolocalisation par adresse, aucune
+> coordonnée GPS fixe n'ayant été fournie). Les scènes 4 (chiffres clés)
+> et 6 (actualités) restent **reportées** : elles dépendent de données
+> réelles (chiffres validés, articles publiés) qui n'existent pas encore
+> — inutile de publier des nombres inventés ou une actualité vide.
 
 ## Scène 0 — Chargement / intro (optionnel, léger)
 
@@ -60,6 +65,19 @@
   arbitrage phase Home ; animation d'entrée en fondu + translation Y,
   pas de pin.
 - Classes : `js-formations`, `js-formations-card`.
+
+## Scène 3 bis — Galerie
+
+- Contenu : grille de photos du campus et de la vie étudiante (les mêmes
+  photos réelles que le Hero/Pourquoi, réutilisées ici), cliquables pour
+  ouvrir en grand dans une lightbox (fermeture, navigation précédent/suivant
+  au clic ou au clavier). Filtrable (`up2a_core_gallery_images`) pour
+  accueillir de nouvelles photos sans toucher au code, au fil de leur
+  arrivée (voir CLAUDE.md §3).
+- Mise en scène : grille responsive (une vignette plus grande en tête),
+  léger zoom au survol, apparition en fondu + translation Y au scroll —
+  pas de pin, pas d'effet 3D.
+- Classes : `js-galerie`, `js-galerie-item`, `js-galerie-lightbox`.
 
 ## Scène 4 — Chiffres clés / repères institutionnels
 

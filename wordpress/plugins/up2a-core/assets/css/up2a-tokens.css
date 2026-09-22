@@ -1,16 +1,16 @@
 /*
  * Tokens du design system UP-2A (docs/02-design-system.md).
- * Statut : palette confirmée par le logo réel (mise à jour 2026-09-22).
+ * Statut : palette officielle confirmée par le client (mise à jour 2026-09-22).
  * Doivent rester identiques aux tokens de app-etudiant/app/globals.css
  * pour une cohérence visuelle vitrine / espace étudiant.
  */
 :root {
-  --up2a-color-primary: #0b2a5b;
-  --up2a-color-primary-dark: #061a3d;
-  --up2a-color-accent: #fdb41b;
-  --up2a-color-accent-light: #ffd873;
-  --up2a-color-teal: #0d6b83;
-  --up2a-color-red: #d60b30;
+  --up2a-color-primary: #082e6c;
+  --up2a-color-primary-dark: #03122a;
+  --up2a-color-accent: #fe931a;
+  --up2a-color-accent-light: #fec380;
+  --up2a-color-teal: #4b81a0;
+  --up2a-color-red: #e83527;
   --up2a-color-ink: #0f1b2e;
   --up2a-color-ink-soft: #45526b;
   --up2a-color-bg: #ffffff;
@@ -18,7 +18,7 @@
   --up2a-color-surface-alt: #f5f7fa;
   --up2a-color-border: #e2e5ec;
   --up2a-color-success: #2e7d32;
-  --up2a-color-error: #d60b30;
+  --up2a-color-error: #e83527;
   --up2a-color-warning: #fd7503;
 
   --up2a-font-heading: ui-serif, Georgia, "Times New Roman", serif;

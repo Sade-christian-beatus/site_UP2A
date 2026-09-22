@@ -81,9 +81,9 @@ de cette page tant qu'on n'en a pas besoin).
 
    | Nom | Valeur |
    |---|---|
-   | Primary | `#0B2A5B` |
-   | Primary Dark | `#061A3D` |
-   | Accent | `#FDB41B` |
+   | Primary | `#082E6C` |
+   | Primary Dark | `#03122A` |
+   | Accent | `#FE931A` |
    | Ink | `#0F1B2E` |
    | Background | `#FFFFFF` |
 
@@ -100,9 +100,10 @@ de cette page tant qu'on n'en a pas besoin).
 - **Un modèle de page "Accueil UP-2A (onepage)"** avec un Hero en slider
   (photos de campus, rotation automatique), une section "Pourquoi choisir
   l'UP-2A", les Valeurs, les Formations en cartes qui se retournent au
-  survol/tap ("flip cards", avec la description au dos), les Admissions,
-  un CTA final, la section Contact et un pied de page multi-colonnes
-  (voir docs/06-storyboard.md). Pour l'activer :
+  survol/tap ("flip cards", avec la description au dos), une **Galerie
+  photo** (grille + lightbox), les Admissions, un CTA final, la section
+  Contact et un pied de page multi-colonnes (voir docs/06-storyboard.md).
+  Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -135,6 +136,25 @@ define('UP2A_LIFE_IMAGE_URL', 'https://.../vie-etudiante.webp');
 sans cette constante, la photo par défaut reste utilisée — plus jamais
 l'illustration vectorielle, gardée uniquement comme filet de sécurité si
 le fichier venait à manquer).
+
+La **Galerie** réutilise par défaut ces mêmes photos. Pour ajouter
+d'autres photos à la galerie sans toucher au code, utiliser le filtre
+`up2a_core_gallery_images` depuis un mu-plugin (même logique que
+`up2a_core_hero_slides` ci-dessus), ou demander une mise à jour du plugin.
+
+### Localisation
+
+La barre supérieure, la section Contact et le pied de page affichent
+désormais l'adresse (Ouagadougou - Balkuy) comme un **lien cliquable**
+qui ouvre Google Maps (recherche par adresse — aucune coordonnée GPS
+précise n'a été fournie par le client à ce jour). Pour utiliser des
+coordonnées GPS exactes une fois connues, ajouter dans `wp-config.php` :
+
+```php
+add_filter('up2a_core_header_maps_url', function () {
+    return 'https://www.google.com/maps?q=12.3456,-1.5678';
+});
+```
 
 ## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
 

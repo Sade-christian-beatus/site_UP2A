@@ -59,6 +59,76 @@
 })();
 
 /**
+ * Galerie photo — grille + lightbox (wordpress/plugins/up2a-core/inc/front-page.php).
+ * Indépendant de GSAP : ouverture/fermeture/navigation doivent fonctionner
+ * même si le CDN GSAP est indisponible.
+ */
+(function () {
+  "use strict";
+
+  var items = document.querySelectorAll(".js-galerie-item");
+  var lightbox = document.querySelector(".js-galerie-lightbox");
+
+  if (!items.length || !lightbox) {
+    return;
+  }
+
+  var img = lightbox.querySelector(".js-galerie-lightbox-img");
+  var closeBtn = lightbox.querySelector(".js-galerie-close");
+  var prevBtn = lightbox.querySelector(".js-galerie-prev");
+  var nextBtn = lightbox.querySelector(".js-galerie-next");
+  var current = 0;
+
+  function open(index) {
+    current = (index + items.length) % items.length;
+    var item = items[current];
+    img.src = item.dataset.full;
+    img.alt = item.dataset.alt || "";
+    lightbox.classList.add("is-open");
+    lightbox.setAttribute("aria-hidden", "false");
+  }
+
+  function close() {
+    lightbox.classList.remove("is-open");
+    lightbox.setAttribute("aria-hidden", "true");
+    img.src = "";
+  }
+
+  items.forEach(function (item, index) {
+    item.addEventListener("click", function () {
+      open(index);
+    });
+  });
+
+  closeBtn.addEventListener("click", close);
+  prevBtn.addEventListener("click", function () {
+    open(current - 1);
+  });
+  nextBtn.addEventListener("click", function () {
+    open(current + 1);
+  });
+
+  lightbox.addEventListener("click", function (event) {
+    if (event.target === lightbox) {
+      close();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (!lightbox.classList.contains("is-open")) {
+      return;
+    }
+    if (event.key === "Escape") {
+      close();
+    } else if (event.key === "ArrowLeft") {
+      open(current - 1);
+    } else if (event.key === "ArrowRight") {
+      open(current + 1);
+    }
+  });
+})();
+
+/**
  * Animations du template "Accueil UP-2A (onepage)".
  * S'appuie sur window.UP2A (voir up2a-core.js) : ne fait rien si GSAP n'a
  * pas pu se charger (ex. CDN indisponible) — le contenu reste visible et
@@ -158,6 +228,23 @@
           stagger: 0.1,
           ease: "power2.out",
           scrollTrigger: { trigger: ".js-formations", start: "top 75%" },
+        });
+      },
+    });
+  }
+
+  // Scène 3 bis — Galerie : vignettes en fondu + translation.
+  var galerieItems = document.querySelectorAll(".js-galerie-item");
+  if (galerieItems.length && registerScrollEffect) {
+    registerScrollEffect({
+      desktop: function () {
+        gsap.from(galerieItems, {
+          opacity: 0,
+          y: 24,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: { trigger: ".js-galerie", start: "top 75%" },
         });
       },
     });

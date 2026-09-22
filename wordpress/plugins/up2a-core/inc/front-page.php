@@ -383,6 +383,86 @@ function up2a_core_render_formations(): void {
 }
 
 // --------------------------------------------------------------------
+// Scène 3 bis — Galerie
+// --------------------------------------------------------------------
+// Photos disponibles à ce jour (campus + vie étudiante, fournies par le
+// client). D'autres arriveront progressivement (voir CLAUDE.md §3) : ce
+// tableau est filtrable via `up2a_core_gallery_images` pour en ajouter
+// sans toucher au code du plugin.
+
+function up2a_core_gallery_images(): array {
+	$defaults = array(
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-1.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-1-mobile.webp',
+			'alt'     => __( "Le campus de l'UP-2A", 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-2.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-2-mobile.webp',
+			'alt'     => __( "Le bâtiment de l'UP-2A", 'up2a-core' ),
+		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/pourquoi-photo.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/pourquoi-photo-mobile.webp',
+			'alt'     => __( "Étudiants devant le campus de l'UP-2A", 'up2a-core' ),
+		),
+	);
+
+	return apply_filters( 'up2a_core_gallery_images', $defaults );
+}
+
+/**
+ * Galerie photo (grille + lightbox tactile). N'affiche rien si aucune
+ * image n'est disponible (jamais de cadre vide) — voir
+ * up2a_core_gallery_images() pour ajouter des photos sans coder.
+ */
+function up2a_core_render_galerie(): void {
+	$images = up2a_core_gallery_images();
+	if ( empty( $images ) ) {
+		return;
+	}
+	?>
+	<section id="up2a-galerie" class="up2a-galerie js-galerie">
+		<div class="up2a-section-inner">
+			<h2 class="up2a-section-title"><?php esc_html_e( 'Galerie', 'up2a-core' ); ?></h2>
+			<p class="up2a-galerie__hint"><?php esc_html_e( "Un aperçu du campus et de la vie étudiante à l'UP-2A", 'up2a-core' ); ?></p>
+			<div class="up2a-galerie__grid">
+				<?php foreach ( $images as $i => $img ) : ?>
+					<button
+						type="button"
+						class="up2a-galerie__item js-galerie-item"
+						data-index="<?php echo (int) $i; ?>"
+						data-full="<?php echo esc_url( $img['desktop'] ); ?>"
+						data-alt="<?php echo esc_attr( $img['alt'] ); ?>"
+					>
+						<picture>
+							<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
+							<img
+								src="<?php echo esc_url( $img['desktop'] ); ?>"
+								alt="<?php echo esc_attr( $img['alt'] ); ?>"
+								loading="lazy"
+								width="600"
+								height="450"
+							>
+						</picture>
+						<span class="up2a-galerie__zoom" aria-hidden="true"><?php echo up2a_core_content_icon( 'globe' ); ?></span>
+					</button>
+				<?php endforeach; ?>
+			</div>
+		</div>
+
+		<div class="up2a-galerie__lightbox js-galerie-lightbox" aria-hidden="true">
+			<button type="button" class="up2a-galerie__lightbox-close js-galerie-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-core' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
+			<button type="button" class="up2a-galerie__lightbox-nav up2a-galerie__lightbox-nav--prev js-galerie-prev" aria-label="<?php esc_attr_e( 'Image précédente', 'up2a-core' ); ?>">‹</button>
+			<img class="up2a-galerie__lightbox-img js-galerie-lightbox-img" src="" alt="">
+			<button type="button" class="up2a-galerie__lightbox-nav up2a-galerie__lightbox-nav--next js-galerie-next" aria-label="<?php esc_attr_e( 'Image suivante', 'up2a-core' ); ?>">›</button>
+		</div>
+	</section>
+	<?php
+}
+
+// --------------------------------------------------------------------
 // Scène 5 — Admissions
 // --------------------------------------------------------------------
 
@@ -446,7 +526,7 @@ function up2a_core_render_contact(): void {
 				<div class="up2a-contact__card">
 					<div class="up2a-contact__icon"><?php echo up2a_core_icon( 'pin' ); ?></div>
 					<h3><?php esc_html_e( 'Adresse', 'up2a-core' ); ?></h3>
-					<p><?php echo esc_html( up2a_core_header_address() ); ?></p>
+					<a href="<?php echo esc_url( up2a_core_header_maps_url() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( up2a_core_header_address() ); ?></a>
 				</div>
 				<div class="up2a-contact__card">
 					<div class="up2a-contact__icon"><?php echo up2a_core_content_icon( 'clock' ); ?></div>
@@ -467,6 +547,7 @@ function up2a_core_render_footer(): void {
 	$liens = array(
 		'#up2a-hero'       => __( 'Accueil', 'up2a-core' ),
 		'#up2a-formations' => __( 'Formations', 'up2a-core' ),
+		'#up2a-galerie'    => __( 'Galerie', 'up2a-core' ),
 		'#up2a-admissions' => __( 'Admissions', 'up2a-core' ),
 		'#up2a-contact'    => __( 'Contact', 'up2a-core' ),
 	);
@@ -482,7 +563,10 @@ function up2a_core_render_footer(): void {
 			<div class="up2a-footer__col up2a-footer__col--brand">
 				<p class="up2a-footer__brand">Université Privée<br>An-Nahdah d'Afrique</p>
 				<p class="up2a-footer__slogan"><?php esc_html_e( 'Former aujourd\'hui les élites de demain.', 'up2a-core' ); ?></p>
-				<p class="up2a-footer__contact-line"><?php echo up2a_core_icon( 'pin' ); ?> <?php echo esc_html( up2a_core_header_address() ); ?></p>
+				<p class="up2a-footer__contact-line">
+					<?php echo up2a_core_icon( 'pin' ); ?>
+					<a href="<?php echo esc_url( up2a_core_header_maps_url() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( up2a_core_header_address() ); ?></a>
+				</p>
 				<p class="up2a-footer__contact-line">
 					<?php echo up2a_core_icon( 'phone' ); ?>
 					<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', up2a_core_header_phone() ) ); ?>"><?php echo esc_html( up2a_core_header_phone() ); ?></a>
