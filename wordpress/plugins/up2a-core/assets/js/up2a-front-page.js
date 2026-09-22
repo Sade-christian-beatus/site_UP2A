@@ -101,16 +101,45 @@
   }
 
   var content = modal.querySelector(".js-formation-modal-content");
-  var closeTriggers = modal.querySelectorAll(".js-formation-modal-close");
+  var mainImg = modal.querySelector(".js-formation-modal-mainimg");
+  var thumbs = modal.querySelectorAll(".js-formation-modal-thumb");
+  var prevBtn = modal.querySelector(".js-formation-modal-prev");
+  var nextBtn = modal.querySelector(".js-formation-modal-next");
   var lastFocused = null;
+  var currentPhoto = 0;
 
-  function open(slug) {
+  var photos = [];
+  thumbs.forEach(function (thumb) {
+    photos.push({ src: thumb.dataset.src, alt: thumb.dataset.alt });
+  });
+
+  function setPhoto(index) {
+    if (!mainImg || !photos.length) {
+      return;
+    }
+    currentPhoto = (index + photos.length) % photos.length;
+    var photo = photos[currentPhoto];
+    mainImg.src = photo.src;
+    mainImg.alt = photo.alt;
+    thumbs.forEach(function (thumb, i) {
+      thumb.classList.toggle("is-active", i === currentPhoto);
+    });
+  }
+
+  function open(card) {
+    var slug = card.dataset.formation;
     var tpl = document.querySelector('.js-formation-template[data-formation="' + slug + '"]');
     if (!tpl) {
       return;
     }
     content.innerHTML = "";
     content.appendChild(tpl.content.cloneNode(true));
+
+    var startIndex = photos.findIndex(function (photo) {
+      return photo.src === card.dataset.image;
+    });
+    setPhoto(startIndex >= 0 ? startIndex : 0);
+
     lastFocused = document.activeElement;
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
@@ -126,16 +155,30 @@
 
   cards.forEach(function (card) {
     card.addEventListener("click", function () {
-      open(card.dataset.formation);
+      open(card);
     });
   });
 
-  closeTriggers.forEach(function (trigger) {
-    trigger.addEventListener("click", close);
+  thumbs.forEach(function (thumb, index) {
+    thumb.addEventListener("click", function () {
+      setPhoto(index);
+    });
   });
 
-  content.addEventListener("click", function (event) {
-    if (event.target.closest(".js-formation-modal-cta")) {
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function () {
+      setPhoto(currentPhoto - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      setPhoto(currentPhoto + 1);
+    });
+  }
+
+  modal.addEventListener("click", function (event) {
+    if (event.target.closest(".js-formation-modal-close") || event.target.closest(".js-formation-modal-cta")) {
       close();
     }
   });

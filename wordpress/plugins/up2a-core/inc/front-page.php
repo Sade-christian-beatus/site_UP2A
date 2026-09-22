@@ -525,6 +525,7 @@ function up2a_core_formations(): array {
 
 function up2a_core_render_formations(): void {
 	$formations = up2a_core_formations();
+	$photos     = up2a_core_gallery_images();
 	?>
 	<section id="up2a-formations" class="up2a-formations js-formations">
 		<?php echo up2a_core_decor( 'formations' ); ?>
@@ -537,6 +538,8 @@ function up2a_core_render_formations(): void {
 						type="button"
 						class="up2a-formations__card js-formations-card"
 						data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
+						data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+						data-image-alt="<?php echo esc_attr( $f['nom'] ); ?>"
 					>
 						<picture class="up2a-formations__card-media">
 							<source srcset="<?php echo esc_url( $f['image']['mobile'] ); ?>" media="(max-width: 640px)">
@@ -561,17 +564,23 @@ function up2a_core_render_formations(): void {
 
 		<?php foreach ( $formations as $f ) : ?>
 			<template class="js-formation-template" data-formation="<?php echo esc_attr( $f['slug'] ); ?>">
-				<div class="up2a-formation-modal__icon"><?php echo up2a_core_content_icon( $f['icone'] ); ?></div>
-				<p class="up2a-formation-modal__faculte"><?php echo esc_html( $f['faculte_full'] ); ?></p>
+				<span class="up2a-formation-modal__badge up2a-formation-modal__badge--<?php echo esc_attr( strtolower( $f['faculte'] ) ); ?>"><?php echo esc_html( $f['faculte'] ); ?></span>
 				<h3><?php echo esc_html( $f['nom'] ); ?></h3>
+				<p class="up2a-formation-modal__highlight"><?php echo up2a_core_content_icon( $f['icone'] ); ?> <?php esc_html_e( 'Licence · 3 ans', 'up2a-core' ); ?></p>
+				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_icon( 'cap' ); ?> <?php echo esc_html( $f['faculte_full'] ); ?></p>
+				<hr class="up2a-formation-modal__divider">
+				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Description', 'up2a-core' ); ?></p>
 				<p class="up2a-formation-modal__intro"><?php echo esc_html( $f['intro'] ); ?></p>
-				<p class="up2a-formation-modal__debouches-title"><?php esc_html_e( 'Débouchés', 'up2a-core' ); ?></p>
+				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Débouchés', 'up2a-core' ); ?></p>
 				<ul class="up2a-formation-modal__debouches">
 					<?php foreach ( $f['debouches'] as $debouche ) : ?>
 						<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
 					<?php endforeach; ?>
 				</ul>
-				<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+				<div class="up2a-formation-modal__actions">
+					<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+					<button type="button" class="up2a-formation-modal__back js-formation-modal-close"><?php esc_html_e( 'Retour aux formations', 'up2a-core' ); ?></button>
+				</div>
 			</template>
 		<?php endforeach; ?>
 
@@ -579,6 +588,25 @@ function up2a_core_render_formations(): void {
 			<div class="up2a-formation-modal__backdrop js-formation-modal-close"></div>
 			<div class="up2a-formation-modal__panel" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Détail de la formation', 'up2a-core' ); ?>">
 				<button type="button" class="up2a-formation-modal__close js-formation-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-core' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
+				<div class="up2a-formation-modal__gallery">
+					<div class="up2a-formation-modal__main">
+						<img class="js-formation-modal-mainimg" src="" alt="">
+						<button type="button" class="up2a-formation-modal__nav up2a-formation-modal__nav--prev js-formation-modal-prev" aria-label="<?php esc_attr_e( 'Photo précédente', 'up2a-core' ); ?>">‹</button>
+						<button type="button" class="up2a-formation-modal__nav up2a-formation-modal__nav--next js-formation-modal-next" aria-label="<?php esc_attr_e( 'Photo suivante', 'up2a-core' ); ?>">›</button>
+					</div>
+					<div class="up2a-formation-modal__thumbs js-formation-modal-thumbs">
+						<?php foreach ( $photos as $pi => $photo ) : ?>
+							<button
+								type="button"
+								class="up2a-formation-modal__thumb js-formation-modal-thumb"
+								data-src="<?php echo esc_url( $photo['desktop'] ); ?>"
+								data-alt="<?php echo esc_attr( $photo['alt'] ); ?>"
+							>
+								<img src="<?php echo esc_url( $photo['mobile'] ); ?>" alt="" loading="lazy" decoding="async">
+							</button>
+						<?php endforeach; ?>
+					</div>
+				</div>
 				<div class="up2a-formation-modal__content js-formation-modal-content"></div>
 			</div>
 		</div>

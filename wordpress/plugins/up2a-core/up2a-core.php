@@ -6,7 +6,7 @@
  *                     pas le contenu éditorial des pages) pour UP-2A. Cible des classes
  *                     CSS `js-*` posées dans Elementor pour l'animation des pages (voir
  *                     docs/04-conventions.md et docs/06-storyboard.md).
- * Version:           0.8.0
+ * Version:           0.9.0
  * Requires PHP:      8.0
  * Text Domain:        up2a-core
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_CORE_VERSION', '0.8.0' );
+define( 'UP2A_CORE_VERSION', '0.9.0' );
 define( 'UP2A_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP2A_CORE_URL', plugin_dir_url( __FILE__ ) );
 

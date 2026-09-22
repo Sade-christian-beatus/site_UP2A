@@ -181,6 +181,18 @@ les CTA.
   sections gardent une identité plus institutionnelle/"action" que
   promotionnelle.
 
+## Modale Formation — refonte "fiche" (2026-09-22)
+
+La modale de détail d'une formation adopte désormais une mise en page à
+deux colonnes façon fiche immobilière (référence fournie par le client) :
+galerie photo à gauche (image principale + bande de vignettes, flèches
+précédent/suivant — réutilise les 7 photos de la section Galerie,
+`up2a_core_gallery_images()`, la photo de la carte cliquée étant
+sélectionnée en premier) et détails à droite (badge de faculté, titre,
+ligne de mise en avant "Licence · 3 ans", faculté complète, description,
+débouchés, CTA préinscription + lien "Retour aux formations"). Sur mobile,
+les deux colonnes s'empilent.
+
 ## Corrections et ajouts (2026-09-22)
 
 - **Formations** : les images de fond des cartes sont repassées en
