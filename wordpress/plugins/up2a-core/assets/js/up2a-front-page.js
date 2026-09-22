@@ -148,6 +148,56 @@
 })();
 
 /**
+ * Galerie photo — cadre agrandi (wordpress/plugins/up2a-core/inc/
+ * front-page.php). La grande case de la grille fait défiler toutes les
+ * photos de la galerie toutes les 10s (fondu enchaîné), indépendamment
+ * des vignettes fixes. Met aussi à jour les données de la carte
+ * (data-full/alt/legende) pour que la lightbox ouvre toujours la photo
+ * actuellement affichée. Indépendant de GSAP.
+ */
+(function () {
+  "use strict";
+
+  var featured = document.querySelector(".js-galerie-featured");
+  if (!featured) {
+    return;
+  }
+
+  var slides = featured.querySelectorAll(".up2a-galerie__featured-slide");
+  var captionText = featured.querySelector(".js-galerie-caption-text");
+
+  if (slides.length < 2) {
+    return;
+  }
+
+  var prefersReducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReducedMotion) {
+    return;
+  }
+
+  var current = 0;
+
+  function goTo(index) {
+    slides[current].classList.remove("is-active");
+    current = index % slides.length;
+    var slide = slides[current];
+    slide.classList.add("is-active");
+
+    featured.dataset.full = slide.dataset.full;
+    featured.dataset.alt = slide.dataset.alt;
+    featured.dataset.legende = slide.dataset.legende;
+    if (captionText) {
+      captionText.textContent = slide.dataset.legende || "";
+    }
+  }
+
+  setInterval(function () {
+    goTo(current + 1);
+  }, 10000);
+})();
+
+/**
  * Galerie photo — grille + lightbox (wordpress/plugins/up2a-core/inc/front-page.php).
  * Indépendant de GSAP : ouverture/fermeture/navigation doivent fonctionner
  * même si le CDN GSAP est indisponible.
@@ -318,6 +368,30 @@
       );
     };
     run();
+  }
+
+  // Scène 1 — Hero : arrière-plan en parallaxe (défile plus lentement que
+  // le contenu). Desktop uniquement — voir CLAUDE.md §7, la couche
+  // `.up2a-hero__slides` est surdimensionnée en CSS pour ce déplacement
+  // ne révèle jamais de bord vide.
+  var heroBg = document.querySelector(".js-hero-bg");
+  var heroSection = document.querySelector(".js-hero");
+  if (heroBg && heroSection && registerScrollEffect) {
+    registerScrollEffect({
+      desktop: function () {
+        gsap.to(heroBg, {
+          y: 90,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      },
+      mobile: function () {},
+    });
   }
 
   // Scène 1 bis — Pourquoi choisir l'UP-2A : texte + média en fondu.

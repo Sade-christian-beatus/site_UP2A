@@ -298,6 +298,7 @@ function up2a_core_render_hero(): void {
 	?>
 	<div class="up2a-hero__countdown-wrap">
 		<div class="up2a-hero__countdown js-hero-countdown" data-target="<?php echo esc_attr( gmdate( 'c', $rentree_ts ) ); ?>">
+			<div class="up2a-hero__countdown-icon" aria-hidden="true"><?php echo up2a_core_content_icon( 'clock' ); ?></div>
 			<div class="up2a-hero__countdown-label">
 				<span class="up2a-hero__countdown-eyebrow"><?php esc_html_e( 'Rentrée académique', 'up2a-core' ); ?></span>
 				<span class="up2a-hero__countdown-date"><?php echo esc_html( up2a_core_format_date_fr( $rentree_ts ) ); ?></span>
@@ -542,7 +543,6 @@ function up2a_core_render_formations(): void {
 							<img
 								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
 								alt=""
-								loading="lazy"
 								decoding="async"
 								width="600"
 								height="450"
@@ -663,24 +663,41 @@ function up2a_core_render_galerie(): void {
 				<?php foreach ( $images as $i => $img ) : ?>
 					<button
 						type="button"
-						class="up2a-galerie__item js-galerie-item"
+						class="up2a-galerie__item js-galerie-item<?php echo 0 === $i ? ' up2a-galerie__item--featured js-galerie-featured' : ''; ?>"
 						data-index="<?php echo (int) $i; ?>"
 						data-full="<?php echo esc_url( $img['desktop'] ); ?>"
 						data-alt="<?php echo esc_attr( $img['alt'] ); ?>"
 						data-legende="<?php echo esc_attr( $img['legende'] ?? '' ); ?>"
 					>
-						<picture>
-							<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
-							<img
-								src="<?php echo esc_url( $img['desktop'] ); ?>"
-								alt="<?php echo esc_attr( $img['alt'] ); ?>"
-								loading="lazy"
-								width="600"
-								height="450"
-							>
-						</picture>
+						<?php if ( 0 === $i ) : ?>
+							<div class="up2a-galerie__featured-stack js-galerie-featured-stack">
+								<?php foreach ( $images as $si => $simg ) : ?>
+									<img
+										class="up2a-galerie__featured-slide<?php echo 0 === $si ? ' is-active' : ''; ?>"
+										src="<?php echo esc_url( $simg['desktop'] ); ?>"
+										alt="<?php echo esc_attr( $simg['alt'] ); ?>"
+										data-full="<?php echo esc_url( $simg['desktop'] ); ?>"
+										data-alt="<?php echo esc_attr( $simg['alt'] ); ?>"
+										data-legende="<?php echo esc_attr( $simg['legende'] ?? '' ); ?>"
+										loading="<?php echo 0 === $si ? 'eager' : 'lazy'; ?>"
+										decoding="async"
+									>
+								<?php endforeach; ?>
+							</div>
+						<?php else : ?>
+							<picture>
+								<source srcset="<?php echo esc_url( $img['mobile'] ); ?>" media="(max-width: 640px)">
+								<img
+									src="<?php echo esc_url( $img['desktop'] ); ?>"
+									alt="<?php echo esc_attr( $img['alt'] ); ?>"
+									loading="lazy"
+									width="600"
+									height="450"
+								>
+							</picture>
+						<?php endif; ?>
 						<span class="up2a-galerie__caption">
-							<span class="up2a-galerie__caption-text"><?php echo esc_html( $img['legende'] ?? '' ); ?></span>
+							<span class="up2a-galerie__caption-text js-galerie-caption-text"><?php echo esc_html( $img['legende'] ?? '' ); ?></span>
 							<span class="up2a-galerie__zoom" aria-hidden="true"><?php echo up2a_core_content_icon( 'globe' ); ?></span>
 						</span>
 					</button>
@@ -795,7 +812,7 @@ function up2a_core_render_admissions(): void {
 				<div class="up2a-admissions__feature-text">
 					<h3><span class="up2a-admissions__number">1.</span> <?php echo esc_html( $premiere['titre'] ); ?></h3>
 					<p><?php echo esc_html( $premiere['texte'] ); ?></p>
-					<a href="#up2a-formations" class="up2a-hero__cta up2a-hero__cta--accent">
+					<a href="#up2a-formations" class="up2a-hero__cta up2a-hero__cta--primary">
 						<?php esc_html_e( 'Voir nos formations', 'up2a-core' ); ?>
 						<?php echo up2a_core_content_icon( 'arrow' ); ?>
 					</a>
@@ -899,7 +916,18 @@ function up2a_core_render_footer(): void {
 	<footer class="up2a-footer">
 		<div class="up2a-section-inner up2a-footer__grid">
 			<div class="up2a-footer__col up2a-footer__col--brand">
-				<p class="up2a-footer__brand">Université Privée<br>An-Nahdah d'Afrique</p>
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="up2a-footer__logo">
+					<picture>
+						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.webp' ); ?>" type="image/webp">
+						<img
+							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.png' ); ?>"
+							alt="<?php esc_attr_e( "UP-2A — Université Privée An-Nahdah d'Afrique", 'up2a-core' ); ?>"
+							loading="lazy"
+							width="677"
+							height="186"
+						>
+					</picture>
+				</a>
 				<p class="up2a-footer__slogan"><?php esc_html_e( 'Former aujourd\'hui les élites de demain.', 'up2a-core' ); ?></p>
 				<p class="up2a-footer__contact-line">
 					<?php echo up2a_core_icon( 'pin' ); ?>
