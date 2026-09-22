@@ -42,6 +42,23 @@
     run();
   }
 
+  // Scène 1 bis — Pourquoi choisir l'UP-2A : texte + média en fondu.
+  var pourquoi = document.querySelector(".js-pourquoi");
+  if (pourquoi && registerScrollEffect) {
+    registerScrollEffect({
+      desktop: function () {
+        gsap.from(pourquoi.querySelectorAll(".up2a-pourquoi__text > *, .up2a-pourquoi__media"), {
+          opacity: 0,
+          y: 20,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: { trigger: pourquoi, start: "top 75%" },
+        });
+      },
+    });
+  }
+
   // Scène 2 — Valeurs : cartes en stagger au scroll.
   var valueCards = document.querySelectorAll(".js-values-card");
   if (valueCards.length && registerScrollEffect) {

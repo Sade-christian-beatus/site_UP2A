@@ -31,6 +31,36 @@ intègres et prêts à servir leur pays et leur continent.
 > CTA
 Faire ma préinscription
 
+> Badges de confiance (sous le CTA)
+Préinscription 100% en ligne · Aucun frais de dossier · 4 facultés, Ouagadougou
+
+## Home — Pourquoi choisir l'UP-2A
+
+> Titre
+Pourquoi choisir l'UP-2A
+
+> Paragraphe 1
+Fondée par une association engagée pour l'éducation, l'Université Privée
+An-Nahdah d'Afrique accompagne chaque étudiant vers l'excellence
+académique et professionnelle, dans un cadre exigeant et bienveillant.
+
+> Paragraphe 2
+À Ouagadougou, au cœur du Burkina Faso, nous formons une nouvelle
+génération de diplômés capables de répondre aux défis économiques,
+sociaux et technologiques de l'Afrique de demain.
+
+> Points forts
+- Encadrement pédagogique de proximité, en petits effectifs
+- Formations connectées aux besoins concrets du marché du travail
+- Préinscription entièrement en ligne, sans frais de dossier
+- Une communauté étudiante ouverte sur l'Afrique et le monde
+
+> Visuel
+Pas de photo disponible à ce jour (voir CLAUDE.md §3) — illustration de
+marque (`assets/img/motif-communaute.svg`) utilisée en attendant. À
+remplacer par une vraie photo de vie étudiante dès qu'elle existe (voir
+wordpress/README.md, constante `UP2A_LIFE_IMAGE_URL`).
+
 ## Home — Valeurs
 
 **Excellence** — Une exigence académique constante, portée par un corps
@@ -103,6 +133,7 @@ CLAUDE.md §3.)*
 - Téléphone : **+226 50 63 85 54** (confirmé)
 - E-mail : `[À CONFIRMER]`
 - Réseaux sociaux : `[À CONFIRMER]`
+- Horaires : `[À CONFIRMER — "Lundi – Vendredi, 8h – 17h" utilisé comme placeholder plausible sur la home]`
 
 ## Mentions légales (footer)
 
