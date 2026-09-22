@@ -2,17 +2,17 @@
 
 /*
  * Tokens du design system UP-2A (docs/02-design-system.md).
- * Statut : palette confirmée par le logo réel (mise à jour 2026-09-22).
+ * Statut : palette officielle confirmée par le client (mise à jour 2026-09-22).
  * Tailwind v4 étant "CSS-first", ces tokens sont déclarés ici plutôt que
  * dans un tailwind.config.ts (voir docs/04-conventions.md).
  */
 :root {
-  --color-primary: #0b2a5b;
-  --color-primary-dark: #061a3d;
-  --color-accent: #fdb41b;
-  --color-accent-light: #ffd873;
-  --color-teal: #0d6b83;
-  --color-red: #d60b30;
+  --color-primary: #082e6c;
+  --color-primary-dark: #03122a;
+  --color-accent: #fe931a;
+  --color-accent-light: #fec380;
+  --color-teal: #4b81a0;
+  --color-red: #e83527;
   --color-ink: #0f1b2e;
   --color-ink-soft: #45526b;
   --color-bg: #ffffff;
@@ -20,7 +20,7 @@
   --color-surface-alt: #f5f7fa;
   --color-border: #e2e5ec;
   --color-success: #2e7d32;
-  --color-error: #d60b30;
+  --color-error: #e83527;
   --color-warning: #fd7503;
 
   --font-heading: ui-serif, Georgia, "Times New Roman", serif;

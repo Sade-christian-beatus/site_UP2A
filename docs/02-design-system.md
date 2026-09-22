@@ -1,29 +1,29 @@
 # 02 — Design system
 
-> **Statut : palette confirmée par le logo réel** (extraite le
-> 2026-09-22 d'une capture d'écran d'en-tête fournie par le client,
-> montrant le logo officiel UP-2A). Remplace la proposition initiale
-> (vert/or) qui n'était qu'une hypothèse de départ. Typographie, échelle
-> et composants restent des propositions à valider.
+> **Statut : palette officielle confirmée par le client** (mise à jour
+> 2026-09-22 — couleur primaire, secondaire et couleurs extra fournies
+> directement, remplace la palette précédente extraite du logo qui n'en
+> était qu'une approximation). Typographie, échelle et composants
+> restent des propositions à valider.
 
 ## Principe directeur
 
 Une identité qui évoque le sérieux académique et les valeurs de
 l'association fondatrice (excellence, savoir, intégrité) : bleu marine
-institutionnel (couleur dominante du logo et de l'en-tête officiel),
-rehaussé par les couleurs du blason (or/orange, rouge, sarcelle) en
-touches d'accent — sans vocabulaire confessionnel visuel appuyé.
+institutionnel en couleur dominante, rehaussé par un orange chaleureux en
+accent principal, et deux couleurs extra (rouge, bleu sarcelle) en touches
+secondaires — sans vocabulaire confessionnel visuel appuyé.
 
-## Palette (extraite du logo officiel)
+## Palette (couleurs officielles du client)
 
 | Token | Valeur | Usage |
 |---|---|---|
-| `--color-primary` | `#0B2A5B` (bleu marine) | Couleur de marque principale : header, boutons primaires (ex. "Espace étudiant"), liens |
-| `--color-primary-dark` | `#061A3D` | Hover/actif sur primaire, fond de la barre supérieure |
-| `--color-accent` | `#FDB41B` (or/orange) | Accents de prestige : soulignés, badges, séparateurs, détails |
-| `--color-accent-light` | `#FFD873` | Hover sur accent, fonds subtils |
-| `--color-teal` | `#0D6B83` (sarcelle, blason) | Accent secondaire (icônes, illustrations liées au blason) |
-| `--color-red` | `#D60B30` (rouge, blason) | Accent secondaire (icônes, illustrations liées au blason) |
+| `--color-primary` | `#082E6C` (bleu marine) | Couleur de marque principale : header, boutons primaires (ex. "Espace étudiant"), liens |
+| `--color-primary-dark` | `#03122A` | Hover/actif sur primaire, fond de la barre supérieure |
+| `--color-accent` | `#FE931A` (orange, couleur secondaire) | Accents de prestige : CTA, soulignés, badges, séparateurs, détails |
+| `--color-accent-light` | `#FEC380` | Hover sur accent, fonds subtils |
+| `--color-teal` | `#4B81A0` (couleur extra) | Accent secondaire (icônes, illustrations) |
+| `--color-red` | `#E83527` (couleur extra) | Accent secondaire (icônes, illustrations) |
 | `--color-ink` | `#0F1B2E` (encre bleu-nuit) | Texte principal |
 | `--color-ink-soft` | `#45526B` | Texte secondaire |
 | `--color-bg` | `#FFFFFF` | Fond de page par défaut (blanc, comme l'en-tête officiel) |
@@ -31,14 +31,15 @@ touches d'accent — sans vocabulaire confessionnel visuel appuyé.
 | `--color-surface-alt` | `#F5F7FA` | Fond de section alterné (léger gris-bleu) |
 | `--color-border` | `#E2E5EC` | Séparateurs, bordures discrètes |
 | `--color-success` | `#2E7D32` | Confirmations (ex. préinscription envoyée) |
-| `--color-error` | `#D60B30` (= `--color-red`) | Erreurs de formulaire |
+| `--color-error` | `#E83527` (= `--color-red`) | Erreurs de formulaire |
 | `--color-warning` | `#FD7503` | Avertissements |
 
 Contraste vérifié AA minimum pour `--color-ink` sur `--color-bg`/`--color-surface`,
 et pour le texte blanc sur `--color-primary`.
 
-> Les anciennes valeurs vert/or (`#0B4D3C` / `#C9A227`) sont abandonnées.
-> Si vous retrouvez ces couleurs quelque part (ancienne capture d'écran,
+> Les anciennes valeurs (bleu `#0B2A5B`/or `#FDB41B` extraits du logo, et
+> avant elles le vert/or `#0B4D3C`/`#C9A227`) sont abandonnées. Si vous
+> retrouvez ces couleurs quelque part (ancienne capture d'écran,
 > brouillon), elles sont obsolètes.
 
 ## Typographie

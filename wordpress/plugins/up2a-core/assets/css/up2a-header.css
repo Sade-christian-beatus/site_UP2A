@@ -95,7 +95,7 @@ a.up2a-topbar__contact:hover {
   align-items: center;
   gap: 16px;
   background: var(--up2a-color-surface);
-  padding: 22px 32px;
+  padding: 14px 32px;
   border-bottom: 1px solid var(--up2a-color-border);
 }
 
@@ -132,7 +132,7 @@ a.up2a-topbar__contact:hover {
 }
 
 .up2a-mainbar__logo img {
-  height: 72px;
+  height: 104px;
   width: auto;
   display: block;
 }
@@ -217,7 +217,7 @@ a.up2a-topbar__contact:hover {
   }
 
   .up2a-mainbar__logo img {
-    height: 46px;
+    height: 60px;
   }
 
   .up2a-mainbar__cta span {

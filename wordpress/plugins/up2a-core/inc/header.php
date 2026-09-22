@@ -32,6 +32,20 @@ function up2a_core_header_address(): string {
 	return apply_filters( 'up2a_core_header_address', 'Ouagadougou - Balkuy, Burkina Faso' );
 }
 
+/**
+ * Lien de géolocalisation (Google Maps) vers l'adresse ci-dessus. On
+ * s'appuie sur une recherche par adresse plutôt que des coordonnées GPS
+ * figées dans le code : aucune coordonnée précise n'a été fournie par le
+ * client, et un lien de recherche reste correct même si l'adresse est
+ * affinée plus tard (voir docs/05-contenus.md, "adresse précise ... à
+ * confirmer"). Remplaçable par un lien à coordonnées exactes via le
+ * filtre si besoin.
+ */
+function up2a_core_header_maps_url(): string {
+	$url = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( up2a_core_header_address() );
+	return apply_filters( 'up2a_core_header_maps_url', $url );
+}
+
 function up2a_core_header_marquee_text(): string {
 	return apply_filters(
 		'up2a_core_header_marquee_text',
@@ -89,10 +103,15 @@ function up2a_core_render_header(): void {
 					<?php echo up2a_core_icon( 'phone' ); ?>
 					<span><?php echo esc_html( $phone_raw ); ?></span>
 				</a>
-				<span class="up2a-topbar__contact">
+				<a
+					class="up2a-topbar__contact"
+					href="<?php echo esc_url( up2a_core_header_maps_url() ); ?>"
+					target="_blank"
+					rel="noopener"
+				>
 					<?php echo up2a_core_icon( 'pin' ); ?>
 					<span><?php echo esc_html( up2a_core_header_location() ); ?></span>
-				</span>
+				</a>
 			</div>
 		</div>
 

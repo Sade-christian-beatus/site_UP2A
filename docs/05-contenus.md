@@ -82,6 +82,21 @@ accueillante pour tous les profils d'étudiants.
 *(4ᵉ valeur "Ouverture" proposée pour équilibrer la grille de 4 cartes —
 [À CONFIRMER] avec le client, qui peut préférer un autre intitulé.)*
 
+## Home — Galerie
+
+> Titre
+Galerie
+
+> Sous-titre
+Un aperçu du campus et de la vie étudiante à l'UP-2A
+
+> Images (grille + lightbox au clic)
+Les 3 photos réelles déjà fournies par le client (`hero-slide-1.webp`,
+`hero-slide-2.webp`, `pourquoi-photo.webp`) — les mêmes qu'ailleurs sur la
+home, réutilisées ici en grille. D'autres photos viendront s'y ajouter au
+fil de l'eau via le filtre `up2a_core_gallery_images` (voir
+wordpress/README.md), sans qu'il soit nécessaire de toucher au code.
+
 ## Home — Chiffres clés `[À CONFIRMER — ne pas publier sans validation]`
 
 - Année de création : `[À CONFIRMER]`
