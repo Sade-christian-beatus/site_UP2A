@@ -60,10 +60,10 @@ sociaux et technologiques de l'Afrique de demain.
 - Une communauté étudiante ouverte sur l'Afrique et le monde
 
 > Visuel
-Pas de photo disponible à ce jour (voir CLAUDE.md §3) — illustration de
-marque (`assets/img/motif-communaute.svg`) utilisée en attendant. À
-remplacer par une vraie photo de vie étudiante dès qu'elle existe (voir
-wordpress/README.md, constante `UP2A_LIFE_IMAGE_URL`).
+Photo fournie par le client (bâtiment + étudiants devant le campus,
+`assets/img/pourquoi-photo.webp`). Remplaçable par une autre photo via la
+constante `UP2A_LIFE_IMAGE_URL` (voir wordpress/README.md) sans toucher
+au code.
 
 ## Home — Valeurs
 

@@ -123,15 +123,18 @@ points. Pour remplacer ou ajouter des diapositives sans toucher au code,
 utiliser le filtre `up2a_core_hero_slides` depuis un mu-plugin, ou
 demander une mise à jour du plugin.
 
-La section "Pourquoi choisir l'UP-2A" utilise par défaut une illustration
-vectorielle de marque (`assets/img/motif-communaute.svg`). Pour la
-remplacer par une vraie photo, ajouter dans `wp-config.php` :
+La section "Pourquoi choisir l'UP-2A" affiche par défaut une photo fournie
+par le client (`assets/img/pourquoi-photo.webp`). Pour la remplacer, ajouter
+dans `wp-config.php` :
 
 ```php
 define('UP2A_LIFE_IMAGE_URL', 'https://.../vie-etudiante.webp');
 ```
 
-(remplacer l'URL par celle du média une fois téléversé dans **Médias**).
+(remplacer l'URL par celle du média une fois téléversé dans **Médias** ;
+sans cette constante, la photo par défaut reste utilisée — plus jamais
+l'illustration vectorielle, gardée uniquement comme filet de sécurité si
+le fichier venait à manquer).
 
 ## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
 
@@ -156,13 +159,46 @@ pour ne pas laisser cette capacité ouverte en permanence.
 | `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) |
 | `up2a-preinscription` | Formulaire préinscription → Supabase, sans paiement | Squelette (`up2a-preinscription.zip` fourni), logique complète en phase 5 |
 
+## Dépannage — "rien ne s'affiche comme voulu"
+
+Dans l'ordre le plus probable :
+
+1. **Le modèle de page n'est pas assigné.** L'en-tête (bandeau + logo +
+   menu) s'affiche automatiquement dès que `up2a-core` est actif, mais le
+   contenu de la home (Hero, formations, etc.) n'apparaît **que sur la
+   page à laquelle vous avez assigné le modèle "Accueil UP-2A (onepage)"**
+   (Pages → [votre page] → Attributs de page → Modèle). Une page sans ce
+   modèle reste une page WordPress vide/normale.
+2. **Cette page n'est pas définie comme page d'accueil.** Même avec le bon
+   modèle assigné, si **Réglages → Lecture** n'est pas réglé sur "Une page
+   statique" pointant vers cette page, vous verrez le flux d'articles par
+   défaut de WordPress à la place.
+3. **Le zip installé n'est pas la dernière version.** `up2a-core` a été
+   mis à jour plusieurs fois (slider, cartes flip, nouvelle photo...).
+   Vérifiez la version dans **Extensions → Extensions installées** —
+   comparez avec `Version:` en tête de
+   `wordpress/plugins/up2a-core/up2a-core.php` dans ce dépôt. Si elle ne
+   correspond pas, téléversez le dernier `.zip` fourni (WordPress propose
+   de remplacer l'existant).
+4. **Le thème actif n'est pas Hello Elementor** (ou un thème qui n'appelle
+   pas `wp_body_open()`). Sans cet appel, l'en-tête de `up2a-core` ne peut
+   pas s'afficher — vérifiez **Apparence → Thèmes**.
+5. **Erreur PHP silencieuse.** Activez temporairement `WP_DEBUG` dans
+   `wp-config.php` (`define('WP_DEBUG', true);`) et rechargez la page pour
+   voir si un message d'erreur apparaît ; désactivez-le ensuite.
+
+Si le problème persiste après ces vérifications, une capture d'écran de
+ce que vous voyez (et de vos réglages Pages/Lecture) permettrait un
+diagnostic précis.
+
 ## Checklist de vérification
 
 - [ ] Sauvegarde de l'ancien site effectuée et téléchargée
 - [ ] Ancien contenu (articles, pages, médias, plugins, thèmes) supprimé
 - [ ] Hello Elementor + Elementor installés et activés
-- [ ] `up2a-core` installé et activé, en-tête visible sur le site
+- [ ] `up2a-core` installé et activé (dernière version), en-tête visible sur le site
 - [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
-- [ ] Page "Accueil UP-2A (onepage)" créée, modèle assigné, définie comme page d'accueil (Réglages → Lecture)
+- [ ] Page créée, modèle "Accueil UP-2A (onepage)" assigné (Attributs de page)
+- [ ] Cette page définie comme page d'accueil (Réglages → Lecture → "Une page statique")
 - [ ] `up2a-preinscription` installé et activé (avertissement admin normal)
 - [ ] Couleurs globales Elementor renseignées
