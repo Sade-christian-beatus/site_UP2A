@@ -39,22 +39,111 @@
 })();
 
 /**
- * Cartes flip des formations (wordpress/plugins/up2a-core/inc/front-page.php).
- * Le survol (:hover) suffit sur desktop (CSS pur) ; ce script ajoute le
- * support tactile (tap pour retourner) — indépendant de GSAP.
+ * Compte à rebours de la rentrée académique (wordpress/plugins/up2a-core/
+ * inc/front-page.php). Indépendant de GSAP : doit continuer à s'afficher
+ * même si le CDN GSAP échoue.
  */
 (function () {
   "use strict";
 
-  var cards = document.querySelectorAll(".up2a-formations__card");
+  var el = document.querySelector(".js-hero-countdown");
+  if (!el) {
+    return;
+  }
+
+  var target = new Date(el.dataset.target).getTime();
+  var daysEl = el.querySelector(".js-countdown-days");
+  var hoursEl = el.querySelector(".js-countdown-hours");
+  var minutesEl = el.querySelector(".js-countdown-minutes");
+  var secondsEl = el.querySelector(".js-countdown-seconds");
+  var timer = null;
+
+  function pad(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function tick() {
+    var diff = target - Date.now();
+    if (isNaN(target) || diff <= 0) {
+      daysEl.textContent = "00";
+      hoursEl.textContent = "00";
+      minutesEl.textContent = "00";
+      secondsEl.textContent = "00";
+      if (timer) {
+        clearInterval(timer);
+      }
+      return;
+    }
+    var totalSeconds = Math.floor(diff / 1000);
+    daysEl.textContent = pad(Math.floor(totalSeconds / 86400));
+    hoursEl.textContent = pad(Math.floor((totalSeconds % 86400) / 3600));
+    minutesEl.textContent = pad(Math.floor((totalSeconds % 3600) / 60));
+    secondsEl.textContent = pad(totalSeconds % 60);
+  }
+
+  tick();
+  timer = setInterval(tick, 1000);
+})();
+
+/**
+ * Modale de détail d'une formation (wordpress/plugins/up2a-core/inc/
+ * front-page.php). Chaque carte clone le contenu de son <template>
+ * associé (même `data-formation`) dans la modale — indépendant de GSAP.
+ */
+(function () {
+  "use strict";
+
+  var cards = document.querySelectorAll(".js-formations-card");
+  var modal = document.querySelector(".js-formation-modal");
+
+  if (!cards.length || !modal) {
+    return;
+  }
+
+  var content = modal.querySelector(".js-formation-modal-content");
+  var closeTriggers = modal.querySelectorAll(".js-formation-modal-close");
+  var lastFocused = null;
+
+  function open(slug) {
+    var tpl = document.querySelector('.js-formation-template[data-formation="' + slug + '"]');
+    if (!tpl) {
+      return;
+    }
+    content.innerHTML = "";
+    content.appendChild(tpl.content.cloneNode(true));
+    lastFocused = document.activeElement;
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function close() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    if (lastFocused && typeof lastFocused.focus === "function") {
+      lastFocused.focus();
+    }
+  }
 
   cards.forEach(function (card) {
-    card.addEventListener("click", function (event) {
-      if (event.target.closest("a")) {
-        return; // laisse le lien de la face arrière fonctionner normalement
-      }
-      card.classList.toggle("is-flipped");
+    card.addEventListener("click", function () {
+      open(card.dataset.formation);
     });
+  });
+
+  closeTriggers.forEach(function (trigger) {
+    trigger.addEventListener("click", close);
+  });
+
+  content.addEventListener("click", function (event) {
+    if (event.target.closest(".js-formation-modal-cta")) {
+      close();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && modal.classList.contains("is-open")) {
+      close();
+    }
   });
 })();
 

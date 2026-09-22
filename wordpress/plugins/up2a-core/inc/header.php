@@ -46,6 +46,18 @@ function up2a_core_header_maps_url(): string {
 	return apply_filters( 'up2a_core_header_maps_url', $url );
 }
 
+/**
+ * Variante "embed" de l'URL ci-dessus (carte intégrée en <iframe> dans la
+ * section Contact) — ne nécessite pas de clé API Google Maps, juste une
+ * recherche publique par adresse. Remplaçable par des coordonnées GPS
+ * exactes via le même filtre que up2a_core_header_maps_url() une fois
+ * connues (voir wordpress/README.md).
+ */
+function up2a_core_header_maps_embed_url(): string {
+	$url = 'https://www.google.com/maps?q=' . rawurlencode( up2a_core_header_address() ) . '&output=embed';
+	return apply_filters( 'up2a_core_header_maps_embed_url', $url );
+}
+
 function up2a_core_header_marquee_text(): string {
 	return apply_filters(
 		'up2a_core_header_marquee_text',

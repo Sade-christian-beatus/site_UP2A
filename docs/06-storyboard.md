@@ -14,18 +14,31 @@
 > comme un **template de page fourni par `up2a-core`** (sélectionnable
 > dans wp-admin), plutôt qu'assemblée manuellement dans Elementor — plus
 > rapide et plus fiable pour des scènes animées complexes, voir
-> `wordpress/README.md`. Le Hero utilise désormais un **slider de vraies
-> photos de campus** (fournies par le client) avec rotation automatique et
-> points de navigation ; les cartes Formations se retournent au
-> survol/tap ("flip cards") pour révéler la description au dos ; une
-> **scène 3 bis "Galerie"** (grille + lightbox) a été ajoutée après les
-> formations. L'adresse complète (Ouagadougou - Balkuy) est intégrée dans
-> la barre supérieure, la section Contact et le pied de page, désormais
-> **cliquable vers Google Maps** (géolocalisation par adresse, aucune
-> coordonnée GPS fixe n'ayant été fournie). Les scènes 4 (chiffres clés)
-> et 6 (actualités) restent **reportées** : elles dépendent de données
-> réelles (chiffres validés, articles publiés) qui n'existent pas encore
-> — inutile de publier des nombres inventés ou une actualité vide.
+> `wordpress/README.md`.
+>
+> **Ordre actuel de la page** (structure demandée par le client,
+> 2026-09-22) : Hero (slider + compte à rebours de la rentrée), Pourquoi
+> choisir l'UP-2A, Nos valeurs, Nos formations, Galerie, Comment
+> candidater, Contact (avec carte de géolocalisation), Footer. Les
+> sections "Documents" (brochure, voir plus bas) et "CTA final" existent
+> toujours dans le code (`up2a_core_render_documents()` /
+> `up2a_core_render_cta_final()`) mais **ne sont plus appelées** dans
+> `templates/front-page-onepage.php` — à réactiver d'une ligne si le
+> client les souhaite de nouveau dans le parcours.
+>
+> Le Hero utilise un **slider de vraies photos de campus** (fournies par
+> le client) avec rotation automatique et points de navigation, complété
+> d'un **compte à rebours vers la rentrée académique** (5 octobre par
+> défaut, voir `up2a_core_rentree_date()`). Les cartes Formations sont
+> désormais présentées façon "fiche" (photo de fond, badge de faculté,
+> lien "Voir la formation" au survol) et **ouvrent une modale** avec la
+> présentation complète au clic. La section "Pourquoi choisir l'UP-2A"
+> utilise un collage photo (image principale + photo secondaire
+> superposée) et une checklist à icônes rondes. "Comment candidater" met
+> en avant la première étape dans une grande carte avec CTA, les 3
+> suivantes dans des cartes plus petites. La section Contact intègre
+> désormais une **carte Google Maps** sous les coordonnées (géolocalisation
+> par adresse, aucune coordonnée GPS fixe n'ayant été fournie).
 
 ## Scène 0 — Chargement / intro (optionnel, léger)
 

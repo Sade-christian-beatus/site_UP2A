@@ -97,16 +97,16 @@ de cette page tant qu'on n'en a pas besoin).
   "Admissions"...) se configure dans **Apparence → Menus** : créer un
   menu, y ajouter les pages/liens souhaités, puis lui assigner
   l'emplacement **"Menu principal UP-2A"**.
-- **Un modèle de page "Accueil UP-2A (onepage)"** avec un Hero en slider
-  (photos de campus, rotation automatique), une section "Pourquoi choisir
-  l'UP-2A", les Valeurs, les Formations en cartes qui se retournent au
-  survol/tap ("flip cards", avec la description au dos), une **Galerie
-  photo** (grille + lightbox, 7 photos), une section **"Télécharger nos
-  documents"** (brochure), les Admissions, un CTA final, la section
-  Contact et un pied de page multi-colonnes (voir docs/06-storyboard.md).
-  Chaque section a désormais un léger décor de fond (formes discrètes aux
-  couleurs de la marque, avec un effet de parallaxe au scroll sur
-  desktop). Pour l'activer :
+- **Un modèle de page "Accueil UP-2A (onepage)"**, dans cet ordre : Hero
+  (slider de photos de campus + **compte à rebours de la rentrée**),
+  "Pourquoi choisir l'UP-2A" (collage photo + checklist), les Valeurs, les
+  Formations (cartes façon "fiche" qui **ouvrent une modale** de détail au
+  clic), une **Galerie photo** (grille + lightbox, 7 photos), "Comment
+  candidater" (grande carte pour la 1ère étape + 3 petites cartes), la
+  section Contact (coordonnées + **carte Google Maps intégrée**) et un
+  pied de page multi-colonnes (voir docs/06-storyboard.md). Chaque section
+  a un léger décor de fond (formes discrètes aux couleurs de la marque,
+  avec un effet de parallaxe au scroll sur desktop). Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -116,7 +116,21 @@ de cette page tant qu'on n'en a pas besoin).
      page comme **Page d'accueil**.
 - Sections volontairement absentes pour l'instant : "chiffres clés" (pas
   de chiffres validés par le client) et "actualités" (pas encore
-  d'articles) — voir docs/06-storyboard.md.
+  d'articles) — voir docs/06-storyboard.md. La section "Télécharger nos
+  documents" (brochure) et le bandeau "CTA final" existent aussi dans le
+  code mais ne sont plus dans le parcours de la page actuelle (structure
+  demandée par le client le 2026-09-22) — voir "Documents (brochure)"
+  ci-dessous pour les réactiver.
+
+### Compte à rebours de la rentrée
+
+Le Hero affiche un compte à rebours vers la date de rentrée (5 octobre
+par défaut, année courante ou suivante si déjà passée). Pour fixer une
+date précise, ajouter dans `wp-config.php` :
+
+```php
+define('UP2A_RENTREE_DATE', '2026-10-05 08:00:00');
+```
 
 ### Images
 
@@ -146,12 +160,16 @@ utiliser le filtre `up2a_core_gallery_images` depuis un mu-plugin (même
 logique que `up2a_core_hero_slides` ci-dessus), ou demander une mise à
 jour du plugin.
 
-### Documents (brochure)
+### Documents (brochure) — actuellement hors du parcours de la page
 
-La section **"Télécharger nos documents"** est prête mais aucun PDF n'a
-encore été fourni : elle affiche honnêtement "Brochure disponible
-prochainement" plutôt qu'un lien mort. Dès qu'une brochure PDF existe,
-la brancher via `wp-config.php` :
+La section **"Télécharger nos documents"** existe dans le code
+(`up2a_core_render_documents()`) mais n'est plus appelée dans
+`templates/front-page-onepage.php` (structure demandée par le client,
+2026-09-22). Pour la réintégrer, ajouter
+`up2a_core_render_documents();` dans ce fichier, à l'endroit souhaité.
+Aucun PDF n'a encore été fourni : elle affiche honnêtement "Brochure
+disponible prochainement" plutôt qu'un lien mort. Dès qu'une brochure
+PDF existe, la brancher via `wp-config.php` :
 
 ```php
 define('UP2A_BROCHURE_URL', 'https://.../brochure-up2a.pdf');
@@ -162,9 +180,11 @@ define('UP2A_BROCHURE_URL', 'https://.../brochure-up2a.pdf');
 ### Localisation
 
 La barre supérieure, la section Contact et le pied de page affichent
-désormais l'adresse (Ouagadougou - Balkuy) comme un **lien cliquable**
-qui ouvre Google Maps (recherche par adresse — aucune coordonnée GPS
-précise n'a été fournie par le client à ce jour). Pour utiliser des
+l'adresse (Ouagadougou - Balkuy) comme un **lien cliquable** qui ouvre
+Google Maps (recherche par adresse — aucune coordonnée GPS précise n'a
+été fournie par le client à ce jour), et la section Contact intègre en
+plus une **carte Google Maps intégrée** (même logique de recherche par
+adresse, `up2a_core_header_maps_embed_url()`). Pour utiliser des
 coordonnées GPS exactes une fois connues, ajouter dans `wp-config.php` :
 
 ```php
