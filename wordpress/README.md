@@ -193,15 +193,22 @@ add_filter('up2a_core_header_maps_url', function () {
 });
 ```
 
-## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
+## Étape 4 — Constantes Supabase (requis pour la préinscription)
 
-Quand `up2a-preinscription` sera construit (phase 5), il faudra ajouter
-dans `wp-config.php` :
+`up2a-preinscription` est maintenant construit (formulaire complet,
+voir plus bas). Pour qu'il puisse écrire dans Supabase, ajoutez dans
+`wp-config.php` (avant la ligne `/* That's all, stop editing! */`) :
 
 ```php
 define('UP2A_SUPABASE_URL', 'https://xxxxxxxxxxxx.supabase.co');
 define('UP2A_SUPABASE_SERVICE_ROLE_KEY', '...'); // secret serveur uniquement
 ```
+
+Ces deux valeurs se trouvent dans le tableau de bord Supabase du projet
+UP-2A → **Project Settings → API** (`URL` et `service_role` — jamais la
+clé `anon`). **Ne jamais** coller ces valeurs ailleurs que dans
+`wp-config.php` sur le serveur (jamais dans un fichier du dépôt, jamais
+dans une page/un article WordPress).
 
 Si vous n'avez pas d'accès SFTP/SSH pour éditer `wp-config.php`
 directement, deux options : demander l'accès au support de votre
@@ -209,12 +216,43 @@ hébergeur, ou installer un plugin d'édition de `wp-config.php` depuis
 wp-admin (ex. **WP Config File Editor**) — à désinstaller après usage
 pour ne pas laisser cette capacité ouverte en permanence.
 
+Tant que ces constantes ne sont pas définies, `up2a-preinscription`
+affiche un avertissement dans wp-admin (**Extensions**) et toute
+soumission du formulaire échoue proprement côté serveur (message
+d'erreur générique au visiteur, détail technique dans les logs PHP —
+jamais de clé exposée).
+
+## Étape 5 — Page de préinscription
+
+1. **Pages → Ajouter** une nouvelle page, titre libre (ex. "Préinscription").
+2. Dans le contenu, ajoutez le shortcode : `[up2a_preinscription]`
+   (bloc "Shortcode" dans l'éditeur, ou widget Elementor "Shortcode" si
+   vous préférez composer le reste de la page avec Elementor autour).
+3. **Réglages → Permaliens** : vérifiez que l'URL de cette page est bien
+   `/preinscription/` — c'est l'adresse par défaut vers laquelle
+   pointent tous les boutons "Faire ma préinscription" / "S'inscrire
+   maintenant" de la home. Si vous préférez un autre slug, publiez la
+   page puis ajustez dans `wp-config.php` :
+   ```php
+   add_filter('up2a_core_preinscription_url', function () {
+       return home_url('/votre-slug/');
+   });
+   ```
+4. Publiez. Le formulaire (4 étapes : informations, formation, pièces
+   jointes, envoi) s'affiche automatiquement avec le design du site.
+5. Testez une soumission complète (avec de vrais petits fichiers image/PDF)
+   et vérifiez dans le tableau Supabase **candidatures** qu'une nouvelle
+   ligne apparaît, et que l'e-mail de confirmation arrive bien (vérifiez
+   aussi les spams — dépend de la configuration SMTP de l'hébergeur, un
+   plugin SMTP comme **WP Mail SMTP** est recommandé pour la délivrabilité
+   en production).
+
 ## Statut des plugins maison
 
 | Plugin | Rôle | Statut |
 |---|---|---|
 | `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) |
-| `up2a-preinscription` | Formulaire préinscription → Supabase, sans paiement | Squelette (`up2a-preinscription.zip` fourni), logique complète en phase 5 |
+| `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"
 
@@ -295,5 +333,8 @@ diagnostic précis.
 - [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
 - [ ] Page créée, modèle "Accueil UP-2A (onepage)" assigné (Attributs de page)
 - [ ] Cette page définie comme page d'accueil (Réglages → Lecture → "Une page statique")
-- [ ] `up2a-preinscription` installé et activé (avertissement admin normal)
+- [ ] `up2a-preinscription` installé et activé
+- [ ] Constantes `UP2A_SUPABASE_URL` / `UP2A_SUPABASE_SERVICE_ROLE_KEY` ajoutées dans `wp-config.php` (Étape 4)
+- [ ] Page "Préinscription" créée avec le shortcode `[up2a_preinscription]`, publiée à `/preinscription/` (Étape 5)
+- [ ] Soumission de test effectuée : ligne visible dans Supabase (table `candidatures`) + e-mail de confirmation reçu
 - [ ] Couleurs globales Elementor renseignées

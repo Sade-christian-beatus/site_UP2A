@@ -52,15 +52,23 @@
 - [ ] Une page détail par licence (contenu depuis docs/05, structure
       commune).
 
-## Phase 5 — Préinscription
+## Phase 5 — Préinscription (2026-09-23)
 
-- [ ] Finaliser `up2a-preinscription` : formulaire multi-étapes, upload
-      des pièces, appel serveur → Supabase (`service_role`), e-mail de
-      confirmation.
-- [ ] **Aucun paiement.** Vérifier qu'aucune étape ne mentionne de frais à
-      régler en ligne.
-- [ ] Tests : soumission complète, gestion des erreurs réseau, validation
-      des champs obligatoires côté serveur (pas seulement côté client).
+- [x] Finaliser `up2a-preinscription` : formulaire multi-étapes (4
+      étapes : informations, formation, pièces jointes, envoi), upload
+      des pièces vers Supabase Storage, appel serveur → Supabase
+      (`service_role`), e-mail de confirmation (`wp_mail`).
+- [x] **Aucun paiement.** Aucune étape ne mentionne de frais à régler en
+      ligne — vérifié dans le shortcode et les e-mails envoyés.
+- [x] Validation des champs obligatoires côté serveur (route REST
+      `up2a/v1/preinscription`, indépendante de la validation JS qui
+      n'est qu'un confort visiteur) — voir
+      `wordpress/plugins/up2a-preinscription/inc/rest.php`.
+- [ ] Tests avec de vrais identifiants Supabase une fois
+      `UP2A_SUPABASE_URL`/`UP2A_SUPABASE_SERVICE_ROLE_KEY` configurés en
+      production (le développement a validé le rendu et la navigation
+      entre étapes en local, pas un appel Supabase réel — voir
+      wordpress/README.md Étape 4/5).
 
 ## Phase 6 — Espace étudiant (app-etudiant)
 

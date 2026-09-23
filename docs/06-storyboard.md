@@ -253,6 +253,20 @@ que `up2a_core_formations()` (voir plus haut) appliqué également ici.
 - **Style** : titres de colonne avec soulignement accent, puces animées sur
   les liens (léger décalage + couleur accent au survol).
 
+## Vrais CTA de préinscription (2026-09-23)
+
+Tous les boutons "Faire ma préinscription" / "S'inscrire maintenant" de
+la home (Hero, modale Formation, section Comment candidater — qui n'en
+avait pas jusqu'ici) pointent désormais vers `up2a_core_preinscription_url()`
+(par défaut `/preinscription/`, filtrable), au lieu de simplement défiler
+vers `#up2a-admissions`. Le CTA de la modale Formation passe en plus le
+slug de la licence cliquée en paramètre d'URL (`?formation=...`) pour
+présélectionner la bonne formation dans le formulaire — voir
+`wordpress/plugins/up2a-preinscription`. Les slugs de formation de
+`up2a_core_formations()` ont été alignés sur ceux de
+`supabase/migrations/0003_seed.sql` (préfixe `licence-`) pour que le
+formulaire puisse résoudre la bonne ligne côté Supabase.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc

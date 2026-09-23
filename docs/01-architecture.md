@@ -37,9 +37,14 @@
    - uploader les pièces jointes dans Supabase Storage (bucket
      `candidatures`) ;
    - insérer la ligne dans `public.candidatures` (statut `nouvelle`).
-3. Un e-mail de confirmation est envoyé au candidat (SMTP côté WordPress ou
-   fonction Supabase Edge — à trancher en phase préinscription, voir
-   roadmap).
+3. Un e-mail de confirmation est envoyé au candidat via `wp_mail()` (SMTP
+   côté WordPress) — tranché en phase 5 : plus simple qu'une fonction
+   Supabase Edge, pas de dépendance supplémentaire à opérer. Une
+   notification interne (e-mail admin, adresse filtrable via
+   `up2a_preinscription_notify_email`) part en parallèle. Pour une bonne
+   délivrabilité en production, configurer un plugin SMTP (ex. **WP Mail
+   SMTP**) plutôt que le `mail()` PHP par défaut — voir
+   wordpress/README.md Étape 5.
 4. **Aucun paiement n'intervient à aucune étape.**
 5. Le candidat n'a pas de compte à ce stade : il n'est pas dans
    `auth.users`. C'est l'admin qui, plus tard, transforme la candidature en

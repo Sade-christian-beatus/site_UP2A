@@ -146,6 +146,21 @@ function up2a_core_life_image_accent(): array {
 }
 
 /**
+ * URL de la page de préinscription réelle (plugin `up2a-preinscription`,
+ * shortcode `[up2a_preinscription]`) — vers laquelle pointent tous les CTA
+ * "Faire ma préinscription" / "S'inscrire maintenant" de la home. Par
+ * défaut la page `/preinscription/`, remplaçable via le filtre
+ * `up2a_core_preinscription_url` si le client choisit un autre slug.
+ */
+function up2a_core_preinscription_url( string $formation_slug = '' ): string {
+	$url = apply_filters( 'up2a_core_preinscription_url', home_url( '/preinscription/' ) );
+	if ( '' !== $formation_slug ) {
+		$url = add_query_arg( 'formation', $formation_slug, $url );
+	}
+	return $url;
+}
+
+/**
  * Date de rentrée académique, affichée en compte à rebours dans le Hero.
  * Par défaut 5 octobre (année courante avancée automatiquement si la date
  * est déjà passée), remplaçable via la constante `UP2A_RENTREE_DATE`
@@ -275,7 +290,7 @@ function up2a_core_render_hero(): void {
 					<?php esc_html_e( 'Découvrir nos formations', 'up2a-core' ); ?>
 					<?php echo up2a_core_content_icon( 'arrow' ); ?>
 				</a>
-				<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--outline js-hero-cta">
+				<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--outline js-hero-cta">
 					<?php echo up2a_core_content_icon( 'file' ); ?>
 					<?php esc_html_e( "S'inscrire maintenant", 'up2a-core' ); ?>
 					<?php echo up2a_core_content_icon( 'arrow' ); ?>
@@ -451,7 +466,7 @@ function up2a_core_render_valeurs(): void {
 function up2a_core_formations(): array {
 	$defaults = array(
 		array(
-			'slug'         => 'droit-public',
+			'slug'         => 'licence-droit-public',
 			'icone'        => 'scale',
 			'nom'          => __( 'Licence en Droit Public', 'up2a-core' ),
 			'faculte'      => 'SJPA',
@@ -468,7 +483,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'droit-prive',
+			'slug'         => 'licence-droit-prive',
 			'icone'        => 'users',
 			'nom'          => __( 'Licence en Droit Privé', 'up2a-core' ),
 			'faculte'      => 'SJPA',
@@ -485,7 +500,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'logistique-internationale',
+			'slug'         => 'licence-logistique-internationale',
 			'icone'        => 'truck',
 			'nom'          => __( 'Licence en Logistique Internationale', 'up2a-core' ),
 			'faculte'      => 'SEG',
@@ -502,7 +517,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'marketing-communication',
+			'slug'         => 'licence-marketing-communication',
 			'icone'        => 'megaphone',
 			'nom'          => __( 'Licence en Marketing Communication', 'up2a-core' ),
 			'faculte'      => 'SEG',
@@ -588,7 +603,7 @@ function up2a_core_render_formations(): void {
 					<?php endforeach; ?>
 				</ul>
 				<div class="up2a-formation-modal__actions">
-					<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+					<a href="<?php echo esc_url( up2a_core_preinscription_url( $f['slug'] ) ); ?>" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
 					<button type="button" class="up2a-formation-modal__back js-formation-modal-close"><?php esc_html_e( 'Retour aux formations', 'up2a-core' ); ?></button>
 				</div>
 			</template>
@@ -882,6 +897,13 @@ function up2a_core_render_admissions(): void {
 					</div>
 				<?php endforeach; ?>
 			</div>
+
+			<div class="up2a-admissions__cta">
+				<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--accent">
+					<?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?>
+					<?php echo up2a_core_content_icon( 'arrow' ); ?>
+				</a>
+			</div>
 		</div>
 	</section>
 	<?php
@@ -897,7 +919,7 @@ function up2a_core_render_cta_final(): void {
 		<?php echo up2a_core_decor( 'cta-final' ); ?>
 		<div class="up2a-section-inner up2a-cta-final__inner">
 			<h2><?php esc_html_e( 'Prêt·e à construire votre avenir ?', 'up2a-core' ); ?></h2>
-			<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?></a>
+			<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--accent"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?></a>
 		</div>
 	</section>
 	<?php

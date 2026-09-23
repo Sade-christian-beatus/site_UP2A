@@ -1632,6 +1632,11 @@
   font-size: 0.9375rem;
 }
 
+.up2a-admissions__cta {
+  text-align: center;
+  margin-top: 48px;
+}
+
 @media (max-width: 760px) {
   .up2a-admissions__feature {
     grid-template-columns: 1fr;
