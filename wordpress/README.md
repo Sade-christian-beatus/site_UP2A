@@ -231,8 +231,16 @@ jamais de clé exposée).
 3. **Réglages → Permaliens** : vérifiez que l'URL de cette page est bien
    `/preinscription/` — c'est l'adresse par défaut vers laquelle
    pointent tous les boutons "Faire ma préinscription" / "S'inscrire
-   maintenant" de la home. Si vous préférez un autre slug, publiez la
-   page puis ajustez dans `wp-config.php` :
+   maintenant" de la home. **Si l'URL affiche `/index.php/preinscription/`
+   au lieu de `/preinscription/`** (page introuvable sur l'adresse
+   propre), les règles de réécriture d'URL de WordPress ne sont pas à
+   jour côté serveur : allez dans **Réglages → Permaliens** et cliquez
+   sur **Enregistrer les modifications** (sans rien changer) — ça force
+   WordPress à régénérer ces règles. Si le problème revient après un
+   redémarrage du serveur, contactez votre hébergeur : `mod_rewrite`
+   (Apache) doit être activé et le `.htaccess` accessible en écriture.
+   Si vous préférez un autre slug, publiez la page puis ajustez dans
+   `wp-config.php` :
    ```php
    add_filter('up2a_core_preinscription_url', function () {
        return home_url('/votre-slug/');
@@ -255,6 +263,16 @@ jamais de clé exposée).
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"
+
+> **Cause confirmée sur ce projet (2026-09-23)** : les sections
+> "Nos formations" et "Galerie" sont restées vides pendant plusieurs
+> mises à jour du plugin alors que le code était correct — la cause
+> réelle était le **cache CSS "optimisé" d'Elementor**, généré à un
+> instant antérieur à l'ajout de ces sections au template. Si une
+> section reste vide malgré un plugin à jour : **Elementor → Outils →
+> onglet Général → "Régénérer les fichiers CSS et les données"**, puis
+> rechargez la page (Ctrl+Maj+R). À essayer **avant** tout le reste
+> ci-dessous.
 
 Dans l'ordre le plus probable :
 

@@ -200,6 +200,12 @@
  * des vignettes fixes. Met aussi à jour les données de la carte
  * (data-full/alt/legende) pour que la lightbox ouvre toujours la photo
  * actuellement affichée. Indépendant de GSAP.
+ *
+ * Perf (CLAUDE.md §7) : seuls 2 calques <img> existent dans le DOM (pas
+ * un par photo) — à chaque fondu enchaîné, le calque qui vient de passer
+ * en arrière-plan reçoit la src de la photo SUIVANTE, chargée à l'avance
+ * mais une seule à la fois, plutôt que les 8 photos d'un coup au
+ * chargement de la page.
  */
 (function () {
   "use strict";
@@ -209,10 +215,22 @@
     return;
   }
 
-  var slides = featured.querySelectorAll(".up2a-galerie__featured-slide");
+  var stack = featured.querySelector(".js-galerie-featured-stack");
+  if (!stack) {
+    return;
+  }
+
+  var layers = stack.querySelectorAll(".up2a-galerie__featured-slide");
   var captionText = featured.querySelector(".js-galerie-caption-text");
 
-  if (slides.length < 2) {
+  var photos = [];
+  try {
+    photos = JSON.parse(stack.dataset.photos || "[]");
+  } catch (e) {
+    photos = [];
+  }
+
+  if (layers.length < 2 || photos.length < 2) {
     return;
   }
 
@@ -222,24 +240,35 @@
     return;
   }
 
-  var current = 0;
+  var activeLayer = 0;
+  var currentPhoto = 0;
 
-  function goTo(index) {
-    slides[current].classList.remove("is-active");
-    current = index % slides.length;
-    var slide = slides[current];
-    slide.classList.add("is-active");
-
-    featured.dataset.full = slide.dataset.full;
-    featured.dataset.alt = slide.dataset.alt;
-    featured.dataset.legende = slide.dataset.legende;
+  function updateMeta(photo) {
+    featured.dataset.full = photo.src;
+    featured.dataset.alt = photo.alt;
+    featured.dataset.legende = photo.legende;
     if (captionText) {
-      captionText.textContent = slide.dataset.legende || "";
+      captionText.textContent = photo.legende || "";
     }
   }
 
+  updateMeta(photos[0]);
+
   setInterval(function () {
-    goTo(current + 1);
+    var nextLayer = (activeLayer + 1) % 2;
+    var nextPhoto = (currentPhoto + 1) % photos.length;
+
+    layers[activeLayer].classList.remove("is-active");
+    layers[nextLayer].classList.add("is-active");
+    updateMeta(photos[nextPhoto]);
+
+    activeLayer = nextLayer;
+    currentPhoto = nextPhoto;
+
+    var hiddenLayer = layers[(activeLayer + 1) % 2];
+    var upcomingPhoto = photos[(currentPhoto + 1) % photos.length];
+    hiddenLayer.src = upcomingPhoto.src;
+    hiddenLayer.alt = upcomingPhoto.alt;
   }, 10000);
 })();
 

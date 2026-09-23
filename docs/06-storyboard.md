@@ -267,6 +267,28 @@ présélectionner la bonne formation dans le formulaire — voir
 `supabase/migrations/0003_seed.sql` (préfixe `licence-`) pour que le
 formulaire puisse résoudre la bonne ligne côté Supabase.
 
+## Formations en 2×2, survol Valeurs, perf galerie (2026-09-23)
+
+- **Nos formations** : grille fixée à 2 colonnes × 2 lignes (au lieu
+  d'un `auto-fit` qui passait à 4 colonnes sur grand écran) — 1 colonne
+  sous 480px.
+- **Nos valeurs** : effet de survol (léger soulèvement + ombre + icône
+  qui pivote/grossit) sur chaque carte.
+- **Cause racine enfin identifiée pour "Formations/Galerie vides"** :
+  ce n'était ni un bug de données ni un bug JS — Elementor mettait en
+  cache son propre CSS "optimisé" à partir d'un instantané antérieur à
+  l'ajout de ces sections, donc leur style ne s'appliquait jamais tant
+  que ce cache n'était pas régénéré (**Elementor → Outils → Régénérer
+  les fichiers CSS et les données**). Documenté dans
+  `wordpress/README.md` Dépannage.
+- **Perf galerie** : la case "cadre agrandi" ne charge plus les 8
+  photos d'un coup au chargement de la page — seuls 2 calques `<img>`
+  existent dans le DOM, le JS charge la photo suivante à l'avance (une
+  seule à la fois) juste avant chaque fondu enchaîné de 10s. Les cartes
+  Formations repassent en `loading="lazy"` (le vrai bug d'affichage
+  n'ayant jamais été le lazy loading, contrairement à ce qu'on pensait
+  lors d'un précédent diagnostic — voir ci-dessus).
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc

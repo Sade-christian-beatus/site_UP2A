@@ -571,6 +571,7 @@ function up2a_core_render_formations(): void {
 							<img
 								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
 								alt=""
+								loading="lazy"
 								decoding="async"
 								width="600"
 								height="450"
@@ -737,19 +738,39 @@ function up2a_core_render_galerie(): void {
 						data-legende="<?php echo esc_attr( $img['legende'] ?? '' ); ?>"
 					>
 						<?php if ( 0 === $i ) : ?>
-							<div class="up2a-galerie__featured-stack js-galerie-featured-stack">
-								<?php foreach ( $images as $si => $simg ) : ?>
-									<img
-										class="up2a-galerie__featured-slide<?php echo 0 === $si ? ' is-active' : ''; ?>"
-										src="<?php echo esc_url( $simg['desktop'] ); ?>"
-										alt="<?php echo esc_attr( $simg['alt'] ); ?>"
-										data-full="<?php echo esc_url( $simg['desktop'] ); ?>"
-										data-alt="<?php echo esc_attr( $simg['alt'] ); ?>"
-										data-legende="<?php echo esc_attr( $simg['legende'] ?? '' ); ?>"
-										loading="<?php echo 0 === $si ? 'eager' : 'lazy'; ?>"
-										decoding="async"
-									>
-								<?php endforeach; ?>
+							<?php
+							// Seuls 2 calques image sont rendus (au lieu d'une par
+							// photo) : le JS fait défiler le contenu du calque
+							// caché avant chaque fondu enchaîné, pour ne charger
+							// qu'une photo à l'avance plutôt que les 8 d'un coup
+							// (voir CLAUDE.md §7 — mobile/4G).
+							$featured_photos = array_map(
+								function ( $p ) {
+									return array(
+										'src'     => $p['desktop'],
+										'alt'     => $p['alt'],
+										'legende' => $p['legende'] ?? '',
+									);
+								},
+								$images
+							);
+							$second = $images[1] ?? $images[0];
+							?>
+							<div class="up2a-galerie__featured-stack js-galerie-featured-stack" data-photos="<?php echo esc_attr( wp_json_encode( $featured_photos ) ); ?>">
+								<img
+									class="up2a-galerie__featured-slide is-active"
+									src="<?php echo esc_url( $img['desktop'] ); ?>"
+									alt="<?php echo esc_attr( $img['alt'] ); ?>"
+									loading="eager"
+									decoding="async"
+								>
+								<img
+									class="up2a-galerie__featured-slide"
+									src="<?php echo esc_url( $second['desktop'] ); ?>"
+									alt=""
+									loading="lazy"
+									decoding="async"
+								>
 							</div>
 						<?php else : ?>
 							<picture>
