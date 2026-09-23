@@ -154,7 +154,10 @@
   }
 
   cards.forEach(function (card) {
-    card.addEventListener("click", function () {
+    card.addEventListener("click", function (event) {
+      if (card.tagName === "A") {
+        event.preventDefault();
+      }
       open(card);
     });
   });

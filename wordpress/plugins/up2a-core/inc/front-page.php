@@ -328,7 +328,7 @@ function up2a_core_render_pourquoi(): void {
 		__( 'Une communauté étudiante ouverte sur l\'Afrique et le monde', 'up2a-core' ),
 	);
 	?>
-	<section class="up2a-pourquoi js-pourquoi">
+	<section id="up2a-pourquoi" class="up2a-pourquoi js-pourquoi">
 		<?php echo up2a_core_decor( 'pourquoi' ); ?>
 		<div class="up2a-section-inner up2a-pourquoi__grid">
 			<div class="up2a-pourquoi__media">
@@ -422,7 +422,7 @@ function up2a_core_render_valeurs(): void {
 		),
 	);
 	?>
-	<section class="up2a-values js-values">
+	<section id="up2a-valeurs" class="up2a-values js-values">
 		<?php echo up2a_core_decor( 'valeurs' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Nos valeurs', 'up2a-core' ); ?></h2>
@@ -953,17 +953,14 @@ function up2a_core_render_contact(): void {
 function up2a_core_render_footer(): void {
 	$liens = array(
 		'#up2a-hero'       => __( 'Accueil', 'up2a-core' ),
+		'#up2a-pourquoi'   => __( "Pourquoi l'UP-2A", 'up2a-core' ),
+		'#up2a-valeurs'    => __( 'Nos valeurs', 'up2a-core' ),
 		'#up2a-formations' => __( 'Formations', 'up2a-core' ),
 		'#up2a-galerie'    => __( 'Galerie', 'up2a-core' ),
 		'#up2a-admissions' => __( 'Admissions', 'up2a-core' ),
 		'#up2a-contact'    => __( 'Contact', 'up2a-core' ),
 	);
-	$formations_liens = array(
-		__( 'Licence en Droit Public', 'up2a-core' ),
-		__( 'Licence en Droit Privé', 'up2a-core' ),
-		__( 'Licence en Logistique Internationale', 'up2a-core' ),
-		__( 'Licence en Marketing Communication', 'up2a-core' ),
-	);
+	$formations = up2a_core_formations();
 	?>
 	<footer class="up2a-footer">
 		<div class="up2a-section-inner up2a-footer__grid">
@@ -1001,8 +998,15 @@ function up2a_core_render_footer(): void {
 			<div class="up2a-footer__col">
 				<p class="up2a-footer__title"><?php esc_html_e( 'Nos formations', 'up2a-core' ); ?></p>
 				<ul class="up2a-footer__list">
-					<?php foreach ( $formations_liens as $label ) : ?>
-						<li><a href="#up2a-formations"><?php echo esc_html( $label ); ?></a></li>
+					<?php foreach ( $formations as $f ) : ?>
+						<li>
+							<a
+								href="#up2a-formations"
+								class="js-formations-card"
+								data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
+								data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+							><?php echo esc_html( $f['nom'] ); ?></a>
+						</li>
 					<?php endforeach; ?>
 				</ul>
 			</div>

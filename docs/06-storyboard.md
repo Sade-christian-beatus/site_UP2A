@@ -239,6 +239,20 @@ Ajout d'une 8e photo à `up2a_core_gallery_images()` (groupe d'étudiants
 devant le campus, fournie par le client), avec la même garde-fou anti-liste-vide
 que `up2a_core_formations()` (voir plus haut) appliqué également ici.
 
+## Footer enrichi (2026-09-23)
+
+- **Liens rapides** : ajout de "Pourquoi l'UP-2A" et "Nos valeurs" (ces deux
+  sections ont maintenant un `id` — `up2a-pourquoi` / `up2a-valeurs` — pour
+  être ciblables en ancre, ce qui n'était pas le cas avant).
+- **Nos formations** : les 4 liens ouvrent désormais directement la modale
+  de détail de la formation (comme les cartes de la section Formations),
+  au lieu de simplement faire défiler vers la section — réutilise le même
+  mécanisme JS (`js-formations-card`), aucune duplication de logique.
+  Dégradation propre : reste un vrai lien `#up2a-formations` si JS
+  indisponible.
+- **Style** : titres de colonne avec soulignement accent, puces animées sur
+  les liens (léger décalage + couleur accent au survol).
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc
