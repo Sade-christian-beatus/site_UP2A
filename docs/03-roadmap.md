@@ -79,13 +79,18 @@
 - [ ] Chaque écran = requêtes Supabase filtrées par RLS, pas de logique
       d'autorisation dupliquée côté client.
 
-## Phase 7 — Back-office
+## Phase 7 — Back-office (2026-09-23, MVP candidatures fait)
 
-- [ ] Écrans admin : liste des candidatures + changement de statut,
-      transformation candidature → étudiant (crée compte `auth.users` via
-      route API serveur avec `service_role`), saisie académique
-      (formations, emplois du temps, examens, résultats), publication
-      d'annonces et de supports de cours.
+- [x] Écrans admin : liste des candidatures (filtre par statut) +
+      changement de statut, transformation candidature → étudiant (crée
+      compte `auth.users` via `supabase.auth.admin.inviteUserByEmail`,
+      exécuté dans une Server Action plutôt qu'une route API dédiée — même
+      garantie de sécurité, `service_role` toujours server-only, cohérent
+      avec le reste du code qui utilise déjà des Server Actions partout).
+      Voir `app-etudiant/README.md` "Back-office — candidatures".
+- [ ] Saisie académique (formations, emplois du temps, examens,
+      résultats), publication d'annonces et de supports de cours — pas
+      encore construit.
 
 ## Phase 8 — Optimisation & tests
 

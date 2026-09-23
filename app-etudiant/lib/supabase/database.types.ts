@@ -45,6 +45,7 @@ export interface Database {
           telephone?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       facultes: {
         Row: {
@@ -68,6 +69,7 @@ export interface Database {
           description?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       formations: {
         Row: {
@@ -100,6 +102,7 @@ export interface Database {
           description?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       annees_academiques: {
         Row: {
@@ -126,6 +129,7 @@ export interface Database {
           est_courante?: boolean;
           created_at?: string;
         };
+        Relationships: [];
       };
       candidatures: {
         Row: {
@@ -185,6 +189,7 @@ export interface Database {
           statut?: Database["public"]["Enums"]["statut_candidature"];
           notes_admin?: string | null;
         };
+        Relationships: [];
       };
       etudiants: {
         Row: {
@@ -217,6 +222,7 @@ export interface Database {
           statut?: Database["public"]["Enums"]["statut_etudiant"];
           created_at?: string;
         };
+        Relationships: [];
       };
       emplois_du_temps: {
         Row: {
@@ -255,6 +261,7 @@ export interface Database {
           salle?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       supports_cours: {
         Row: {
@@ -290,6 +297,7 @@ export interface Database {
           created_by?: string | null;
           published_at?: string;
         };
+        Relationships: [];
       };
       examens: {
         Row: {
@@ -328,6 +336,7 @@ export interface Database {
           salle?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       resultats: {
         Row: {
@@ -357,6 +366,7 @@ export interface Database {
           publie?: boolean;
           created_at?: string;
         };
+        Relationships: [];
       };
       documents: {
         Row: {
@@ -383,6 +393,7 @@ export interface Database {
           genere_le?: string;
           created_by?: string | null;
         };
+        Relationships: [];
       };
       annonces: {
         Row: {
@@ -415,6 +426,7 @@ export interface Database {
           created_by?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<never, never>;
