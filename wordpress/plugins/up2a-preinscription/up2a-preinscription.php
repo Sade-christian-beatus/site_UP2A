@@ -2,11 +2,10 @@
 /**
  * Plugin Name:       UP-2A — Préinscription
  * Description:       Formulaire de préinscription multi-étapes → Supabase, SANS
- *                     paiement (contrainte absolue, voir CLAUDE.md §3). Squelette
- *                     uniquement à ce stade : construction complète en phase 5 de
- *                     docs/03-roadmap.md (formulaire, upload des pièces, e-mail de
- *                     confirmation).
- * Version:           0.1.0
+ *                     paiement (contrainte absolue, voir CLAUDE.md §3). Shortcode
+ *                     `[up2a_preinscription]` à poser sur une page dédiée (voir
+ *                     wordpress/README.md).
+ * Version:           1.0.0
  * Requires PHP:      8.0
  * Text Domain:        up2a-preinscription
  */
@@ -15,8 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_PREINSCRIPTION_VERSION', '0.1.0' );
+define( 'UP2A_PREINSCRIPTION_VERSION', '1.0.0' );
 define( 'UP2A_PREINSCRIPTION_PATH', plugin_dir_path( __FILE__ ) );
+define( 'UP2A_PREINSCRIPTION_URL', plugin_dir_url( __FILE__ ) );
+
+require_once UP2A_PREINSCRIPTION_PATH . 'inc/data.php';
+require_once UP2A_PREINSCRIPTION_PATH . 'inc/shortcode.php';
+require_once UP2A_PREINSCRIPTION_PATH . 'inc/rest.php';
 
 /**
  * Vérifie à l'activation que les constantes Supabase sont bien définies
@@ -43,13 +47,44 @@ function up2a_preinscription_check_config(): void {
 add_action( 'admin_init', 'up2a_preinscription_check_config' );
 
 /**
- * TODO (phase 5, voir docs/03-roadmap.md) :
- * - Enregistrer le shortcode / bloc Elementor du formulaire multi-étapes.
- * - Enregistrer une route REST WordPress (namespace `up2a/v1`) qui reçoit
- *   la soumission finale, valide/sanitize côté serveur, upload les pièces
- *   jointes vers le bucket Supabase Storage `candidatures`, puis insère
- *   la ligne dans `public.candidatures` via l'API REST Supabase avec
- *   UP2A_SUPABASE_SERVICE_ROLE_KEY (jamais exposée au navigateur).
- * - Envoyer l'e-mail de confirmation.
- * - AUCUNE étape de paiement, à aucun moment (contrainte absolue).
+ * Charge les styles/scripts du formulaire uniquement sur les pages qui
+ * contiennent le shortcode — jamais sur le reste du site (perf mobile,
+ * voir CLAUDE.md §7).
  */
+function up2a_preinscription_enqueue_assets(): void {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+
+	$post = get_post();
+	if ( ! $post || ! has_shortcode( $post->post_content, 'up2a_preinscription' ) ) {
+		return;
+	}
+
+	$style_deps = wp_style_is( 'up2a-tokens', 'registered' ) ? array( 'up2a-tokens' ) : array();
+
+	wp_enqueue_style(
+		'up2a-preinscription',
+		UP2A_PREINSCRIPTION_URL . 'assets/css/up2a-preinscription.css',
+		$style_deps,
+		UP2A_PREINSCRIPTION_VERSION
+	);
+
+	wp_enqueue_script(
+		'up2a-preinscription',
+		UP2A_PREINSCRIPTION_URL . 'assets/js/up2a-preinscription.js',
+		array(),
+		UP2A_PREINSCRIPTION_VERSION,
+		true
+	);
+
+	wp_localize_script(
+		'up2a-preinscription',
+		'UP2A_PREINSCRIPTION_CONFIG',
+		array(
+			'endpoint' => esc_url_raw( rest_url( 'up2a/v1/preinscription' ) ),
+			'nonce'    => wp_create_nonce( 'wp_rest' ),
+		)
+	);
+}
+add_action( 'wp_enqueue_scripts', 'up2a_preinscription_enqueue_assets' );

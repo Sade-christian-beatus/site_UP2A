@@ -193,15 +193,22 @@ add_filter('up2a_core_header_maps_url', function () {
 });
 ```
 
-## Étape 4 — Constantes Supabase (à faire en phase 5, pas maintenant)
+## Étape 4 — Constantes Supabase (requis pour la préinscription)
 
-Quand `up2a-preinscription` sera construit (phase 5), il faudra ajouter
-dans `wp-config.php` :
+`up2a-preinscription` est maintenant construit (formulaire complet,
+voir plus bas). Pour qu'il puisse écrire dans Supabase, ajoutez dans
+`wp-config.php` (avant la ligne `/* That's all, stop editing! */`) :
 
 ```php
 define('UP2A_SUPABASE_URL', 'https://xxxxxxxxxxxx.supabase.co');
 define('UP2A_SUPABASE_SERVICE_ROLE_KEY', '...'); // secret serveur uniquement
 ```
+
+Ces deux valeurs se trouvent dans le tableau de bord Supabase du projet
+UP-2A → **Project Settings → API** (`URL` et `service_role` — jamais la
+clé `anon`). **Ne jamais** coller ces valeurs ailleurs que dans
+`wp-config.php` sur le serveur (jamais dans un fichier du dépôt, jamais
+dans une page/un article WordPress).
 
 Si vous n'avez pas d'accès SFTP/SSH pour éditer `wp-config.php`
 directement, deux options : demander l'accès au support de votre
@@ -209,14 +216,63 @@ hébergeur, ou installer un plugin d'édition de `wp-config.php` depuis
 wp-admin (ex. **WP Config File Editor**) — à désinstaller après usage
 pour ne pas laisser cette capacité ouverte en permanence.
 
+Tant que ces constantes ne sont pas définies, `up2a-preinscription`
+affiche un avertissement dans wp-admin (**Extensions**) et toute
+soumission du formulaire échoue proprement côté serveur (message
+d'erreur générique au visiteur, détail technique dans les logs PHP —
+jamais de clé exposée).
+
+## Étape 5 — Page de préinscription
+
+1. **Pages → Ajouter** une nouvelle page, titre libre (ex. "Préinscription").
+2. Dans le contenu, ajoutez le shortcode : `[up2a_preinscription]`
+   (bloc "Shortcode" dans l'éditeur, ou widget Elementor "Shortcode" si
+   vous préférez composer le reste de la page avec Elementor autour).
+3. **Réglages → Permaliens** : vérifiez que l'URL de cette page est bien
+   `/preinscription/` — c'est l'adresse par défaut vers laquelle
+   pointent tous les boutons "Faire ma préinscription" / "S'inscrire
+   maintenant" de la home. **Si l'URL affiche `/index.php/preinscription/`
+   au lieu de `/preinscription/`** (page introuvable sur l'adresse
+   propre), les règles de réécriture d'URL de WordPress ne sont pas à
+   jour côté serveur : allez dans **Réglages → Permaliens** et cliquez
+   sur **Enregistrer les modifications** (sans rien changer) — ça force
+   WordPress à régénérer ces règles. Si le problème revient après un
+   redémarrage du serveur, contactez votre hébergeur : `mod_rewrite`
+   (Apache) doit être activé et le `.htaccess` accessible en écriture.
+   Si vous préférez un autre slug, publiez la page puis ajustez dans
+   `wp-config.php` :
+   ```php
+   add_filter('up2a_core_preinscription_url', function () {
+       return home_url('/votre-slug/');
+   });
+   ```
+4. Publiez. Le formulaire (4 étapes : informations, formation, pièces
+   jointes, envoi) s'affiche automatiquement avec le design du site.
+5. Testez une soumission complète (avec de vrais petits fichiers image/PDF)
+   et vérifiez dans le tableau Supabase **candidatures** qu'une nouvelle
+   ligne apparaît, et que l'e-mail de confirmation arrive bien (vérifiez
+   aussi les spams — dépend de la configuration SMTP de l'hébergeur, un
+   plugin SMTP comme **WP Mail SMTP** est recommandé pour la délivrabilité
+   en production).
+
 ## Statut des plugins maison
 
 | Plugin | Rôle | Statut |
 |---|---|---|
 | `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) |
-| `up2a-preinscription` | Formulaire préinscription → Supabase, sans paiement | Squelette (`up2a-preinscription.zip` fourni), logique complète en phase 5 |
+| `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"
+
+> **Cause confirmée sur ce projet (2026-09-23)** : les sections
+> "Nos formations" et "Galerie" sont restées vides pendant plusieurs
+> mises à jour du plugin alors que le code était correct — la cause
+> réelle était le **cache CSS "optimisé" d'Elementor**, généré à un
+> instant antérieur à l'ajout de ces sections au template. Si une
+> section reste vide malgré un plugin à jour : **Elementor → Outils →
+> onglet Général → "Régénérer les fichiers CSS et les données"**, puis
+> rechargez la page (Ctrl+Maj+R). À essayer **avant** tout le reste
+> ci-dessous.
 
 Dans l'ordre le plus probable :
 
@@ -266,6 +322,21 @@ Dans l'ordre le plus probable :
       afficher le code source de la page (menu du navigateur → Code
       source) et chercher `up2a-front-page.css?ver=` — le numéro doit
       correspondre au `Version:` de `up2a-core.php` dans ce dépôt.
+7. **Une section précise reste vide alors que tout le reste de la page est
+   à jour** (diagnostiqué le 2026-09-22 sur "Nos formations" : le HTML et
+   le CSS les plus récents sont bien servis partout ailleurs sur la même
+   page, mais une seule section n'affiche aucun contenu et ne réagit pas
+   au clic). Ce n'est **pas** un souci de cache (qui affecterait toute la
+   page, pas une section isolée) — c'est le signe qu'une autre extension
+   active sur le site modifie ou vide les données de cette section via un
+   filtre WordPress (`up2a_core_formations`, `up2a_core_gallery_images`...).
+   Pour isoler la cause : désactivez temporairement toutes les extensions
+   sauf Elementor, Hello Elementor et `up2a-core`, rechargez la page ; si
+   la section réapparaît, réactivez les autres extensions une par une pour
+   trouver la responsable. Depuis la version 0.9.1, `up2a-core` ignore de
+   toute façon un filtre qui renverrait une liste vide et retombe sur le
+   contenu par défaut, donc ce cas précis ne devrait plus produire de
+   section vide.
 
 Si le problème persiste après ces vérifications, une capture d'écran de
 ce que vous voyez (et de vos réglages Pages/Lecture) permettrait un
@@ -280,5 +351,8 @@ diagnostic précis.
 - [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
 - [ ] Page créée, modèle "Accueil UP-2A (onepage)" assigné (Attributs de page)
 - [ ] Cette page définie comme page d'accueil (Réglages → Lecture → "Une page statique")
-- [ ] `up2a-preinscription` installé et activé (avertissement admin normal)
+- [ ] `up2a-preinscription` installé et activé
+- [ ] Constantes `UP2A_SUPABASE_URL` / `UP2A_SUPABASE_SERVICE_ROLE_KEY` ajoutées dans `wp-config.php` (Étape 4)
+- [ ] Page "Préinscription" créée avec le shortcode `[up2a_preinscription]`, publiée à `/preinscription/` (Étape 5)
+- [ ] Soumission de test effectuée : ligne visible dans Supabase (table `candidatures`) + e-mail de confirmation reçu
 - [ ] Couleurs globales Elementor renseignées

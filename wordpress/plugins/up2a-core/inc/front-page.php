@@ -146,6 +146,21 @@ function up2a_core_life_image_accent(): array {
 }
 
 /**
+ * URL de la page de préinscription réelle (plugin `up2a-preinscription`,
+ * shortcode `[up2a_preinscription]`) — vers laquelle pointent tous les CTA
+ * "Faire ma préinscription" / "S'inscrire maintenant" de la home. Par
+ * défaut la page `/preinscription/`, remplaçable via le filtre
+ * `up2a_core_preinscription_url` si le client choisit un autre slug.
+ */
+function up2a_core_preinscription_url( string $formation_slug = '' ): string {
+	$url = apply_filters( 'up2a_core_preinscription_url', home_url( '/preinscription/' ) );
+	if ( '' !== $formation_slug ) {
+		$url = add_query_arg( 'formation', $formation_slug, $url );
+	}
+	return $url;
+}
+
+/**
  * Date de rentrée académique, affichée en compte à rebours dans le Hero.
  * Par défaut 5 octobre (année courante avancée automatiquement si la date
  * est déjà passée), remplaçable via la constante `UP2A_RENTREE_DATE`
@@ -275,7 +290,7 @@ function up2a_core_render_hero(): void {
 					<?php esc_html_e( 'Découvrir nos formations', 'up2a-core' ); ?>
 					<?php echo up2a_core_content_icon( 'arrow' ); ?>
 				</a>
-				<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--outline js-hero-cta">
+				<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--outline js-hero-cta">
 					<?php echo up2a_core_content_icon( 'file' ); ?>
 					<?php esc_html_e( "S'inscrire maintenant", 'up2a-core' ); ?>
 					<?php echo up2a_core_content_icon( 'arrow' ); ?>
@@ -328,7 +343,7 @@ function up2a_core_render_pourquoi(): void {
 		__( 'Une communauté étudiante ouverte sur l\'Afrique et le monde', 'up2a-core' ),
 	);
 	?>
-	<section class="up2a-pourquoi js-pourquoi">
+	<section id="up2a-pourquoi" class="up2a-pourquoi js-pourquoi">
 		<?php echo up2a_core_decor( 'pourquoi' ); ?>
 		<div class="up2a-section-inner up2a-pourquoi__grid">
 			<div class="up2a-pourquoi__media">
@@ -422,7 +437,7 @@ function up2a_core_render_valeurs(): void {
 		),
 	);
 	?>
-	<section class="up2a-values js-values">
+	<section id="up2a-valeurs" class="up2a-values js-values">
 		<?php echo up2a_core_decor( 'valeurs' ); ?>
 		<div class="up2a-section-inner">
 			<h2 class="up2a-section-title"><?php esc_html_e( 'Nos valeurs', 'up2a-core' ); ?></h2>
@@ -451,7 +466,7 @@ function up2a_core_render_valeurs(): void {
 function up2a_core_formations(): array {
 	$defaults = array(
 		array(
-			'slug'         => 'droit-public',
+			'slug'         => 'licence-droit-public',
 			'icone'        => 'scale',
 			'nom'          => __( 'Licence en Droit Public', 'up2a-core' ),
 			'faculte'      => 'SJPA',
@@ -468,7 +483,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'droit-prive',
+			'slug'         => 'licence-droit-prive',
 			'icone'        => 'users',
 			'nom'          => __( 'Licence en Droit Privé', 'up2a-core' ),
 			'faculte'      => 'SJPA',
@@ -485,7 +500,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'logistique-internationale',
+			'slug'         => 'licence-logistique-internationale',
 			'icone'        => 'truck',
 			'nom'          => __( 'Licence en Logistique Internationale', 'up2a-core' ),
 			'faculte'      => 'SEG',
@@ -502,7 +517,7 @@ function up2a_core_formations(): array {
 			),
 		),
 		array(
-			'slug'         => 'marketing-communication',
+			'slug'         => 'licence-marketing-communication',
 			'icone'        => 'megaphone',
 			'nom'          => __( 'Licence en Marketing Communication', 'up2a-core' ),
 			'faculte'      => 'SEG',
@@ -520,7 +535,17 @@ function up2a_core_formations(): array {
 		),
 	);
 
-	return apply_filters( 'up2a_core_formations', $defaults );
+	$formations = apply_filters( 'up2a_core_formations', $defaults );
+
+	// Garde-fou : si un filtre externe (autre extension, code du thème)
+	// renvoie une valeur vide ou invalide, on retombe sur les 4 licences
+	// par défaut plutôt que d'afficher une section vide — voir
+	// docs/06-storyboard.md "Corrections et ajouts".
+	if ( ! is_array( $formations ) || empty( $formations ) ) {
+		return $defaults;
+	}
+
+	return $formations;
 }
 
 function up2a_core_render_formations(): void {
@@ -546,6 +571,7 @@ function up2a_core_render_formations(): void {
 							<img
 								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
 								alt=""
+								loading="lazy"
 								decoding="async"
 								width="600"
 								height="450"
@@ -578,7 +604,7 @@ function up2a_core_render_formations(): void {
 					<?php endforeach; ?>
 				</ul>
 				<div class="up2a-formation-modal__actions">
-					<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+					<a href="<?php echo esc_url( up2a_core_preinscription_url( $f['slug'] ) ); ?>" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
 					<button type="button" class="up2a-formation-modal__back js-formation-modal-close"><?php esc_html_e( 'Retour aux formations', 'up2a-core' ); ?></button>
 				</div>
 			</template>
@@ -666,9 +692,23 @@ function up2a_core_gallery_images(): array {
 			'alt'     => __( "Architecture du bâtiment de l'UP-2A", 'up2a-core' ),
 			'legende' => __( "L'architecture", 'up2a-core' ),
 		),
+		array(
+			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe.webp',
+			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe-mobile.webp',
+			'alt'     => __( "Groupe d'étudiants de l'UP-2A devant le campus", 'up2a-core' ),
+			'legende' => __( 'Nos étudiants sur le campus', 'up2a-core' ),
+		),
 	);
 
-	return apply_filters( 'up2a_core_gallery_images', $defaults );
+	$images = apply_filters( 'up2a_core_gallery_images', $defaults );
+
+	// Même garde-fou que up2a_core_formations() : un filtre externe qui
+	// renverrait une liste vide ne doit jamais vider la galerie.
+	if ( ! is_array( $images ) || empty( $images ) ) {
+		return $defaults;
+	}
+
+	return $images;
 }
 
 /**
@@ -698,19 +738,39 @@ function up2a_core_render_galerie(): void {
 						data-legende="<?php echo esc_attr( $img['legende'] ?? '' ); ?>"
 					>
 						<?php if ( 0 === $i ) : ?>
-							<div class="up2a-galerie__featured-stack js-galerie-featured-stack">
-								<?php foreach ( $images as $si => $simg ) : ?>
-									<img
-										class="up2a-galerie__featured-slide<?php echo 0 === $si ? ' is-active' : ''; ?>"
-										src="<?php echo esc_url( $simg['desktop'] ); ?>"
-										alt="<?php echo esc_attr( $simg['alt'] ); ?>"
-										data-full="<?php echo esc_url( $simg['desktop'] ); ?>"
-										data-alt="<?php echo esc_attr( $simg['alt'] ); ?>"
-										data-legende="<?php echo esc_attr( $simg['legende'] ?? '' ); ?>"
-										loading="<?php echo 0 === $si ? 'eager' : 'lazy'; ?>"
-										decoding="async"
-									>
-								<?php endforeach; ?>
+							<?php
+							// Seuls 2 calques image sont rendus (au lieu d'une par
+							// photo) : le JS fait défiler le contenu du calque
+							// caché avant chaque fondu enchaîné, pour ne charger
+							// qu'une photo à l'avance plutôt que les 8 d'un coup
+							// (voir CLAUDE.md §7 — mobile/4G).
+							$featured_photos = array_map(
+								function ( $p ) {
+									return array(
+										'src'     => $p['desktop'],
+										'alt'     => $p['alt'],
+										'legende' => $p['legende'] ?? '',
+									);
+								},
+								$images
+							);
+							$second = $images[1] ?? $images[0];
+							?>
+							<div class="up2a-galerie__featured-stack js-galerie-featured-stack" data-photos="<?php echo esc_attr( wp_json_encode( $featured_photos ) ); ?>">
+								<img
+									class="up2a-galerie__featured-slide is-active"
+									src="<?php echo esc_url( $img['desktop'] ); ?>"
+									alt="<?php echo esc_attr( $img['alt'] ); ?>"
+									loading="eager"
+									decoding="async"
+								>
+								<img
+									class="up2a-galerie__featured-slide"
+									src="<?php echo esc_url( $second['desktop'] ); ?>"
+									alt=""
+									loading="lazy"
+									decoding="async"
+								>
 							</div>
 						<?php else : ?>
 							<picture>
@@ -858,6 +918,13 @@ function up2a_core_render_admissions(): void {
 					</div>
 				<?php endforeach; ?>
 			</div>
+
+			<div class="up2a-admissions__cta">
+				<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--accent">
+					<?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?>
+					<?php echo up2a_core_content_icon( 'arrow' ); ?>
+				</a>
+			</div>
 		</div>
 	</section>
 	<?php
@@ -873,7 +940,7 @@ function up2a_core_render_cta_final(): void {
 		<?php echo up2a_core_decor( 'cta-final' ); ?>
 		<div class="up2a-section-inner up2a-cta-final__inner">
 			<h2><?php esc_html_e( 'Prêt·e à construire votre avenir ?', 'up2a-core' ); ?></h2>
-			<a href="#up2a-admissions" class="up2a-hero__cta up2a-hero__cta--accent"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?></a>
+			<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--accent"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?></a>
 		</div>
 	</section>
 	<?php
@@ -929,30 +996,27 @@ function up2a_core_render_contact(): void {
 function up2a_core_render_footer(): void {
 	$liens = array(
 		'#up2a-hero'       => __( 'Accueil', 'up2a-core' ),
+		'#up2a-pourquoi'   => __( "Pourquoi l'UP-2A", 'up2a-core' ),
+		'#up2a-valeurs'    => __( 'Nos valeurs', 'up2a-core' ),
 		'#up2a-formations' => __( 'Formations', 'up2a-core' ),
 		'#up2a-galerie'    => __( 'Galerie', 'up2a-core' ),
 		'#up2a-admissions' => __( 'Admissions', 'up2a-core' ),
 		'#up2a-contact'    => __( 'Contact', 'up2a-core' ),
 	);
-	$formations_liens = array(
-		__( 'Licence en Droit Public', 'up2a-core' ),
-		__( 'Licence en Droit Privé', 'up2a-core' ),
-		__( 'Licence en Logistique Internationale', 'up2a-core' ),
-		__( 'Licence en Marketing Communication', 'up2a-core' ),
-	);
+	$formations = up2a_core_formations();
 	?>
 	<footer class="up2a-footer">
 		<div class="up2a-section-inner up2a-footer__grid">
 			<div class="up2a-footer__col up2a-footer__col--brand">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="up2a-footer__logo">
 					<picture>
-						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.webp' ); ?>" type="image/webp">
+						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.webp' ); ?>" type="image/webp">
 						<img
-							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a.png' ); ?>"
+							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.png' ); ?>"
 							alt="<?php esc_attr_e( "UP-2A — Université Privée An-Nahdah d'Afrique", 'up2a-core' ); ?>"
 							loading="lazy"
-							width="677"
-							height="186"
+							width="480"
+							height="134"
 						>
 					</picture>
 				</a>
@@ -977,8 +1041,15 @@ function up2a_core_render_footer(): void {
 			<div class="up2a-footer__col">
 				<p class="up2a-footer__title"><?php esc_html_e( 'Nos formations', 'up2a-core' ); ?></p>
 				<ul class="up2a-footer__list">
-					<?php foreach ( $formations_liens as $label ) : ?>
-						<li><a href="#up2a-formations"><?php echo esc_html( $label ); ?></a></li>
+					<?php foreach ( $formations as $f ) : ?>
+						<li>
+							<a
+								href="#up2a-formations"
+								class="js-formations-card"
+								data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
+								data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+							><?php echo esc_html( $f['nom'] ); ?></a>
+						</li>
 					<?php endforeach; ?>
 				</ul>
 			</div>

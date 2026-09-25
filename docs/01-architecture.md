@@ -37,9 +37,14 @@
    - uploader les pièces jointes dans Supabase Storage (bucket
      `candidatures`) ;
    - insérer la ligne dans `public.candidatures` (statut `nouvelle`).
-3. Un e-mail de confirmation est envoyé au candidat (SMTP côté WordPress ou
-   fonction Supabase Edge — à trancher en phase préinscription, voir
-   roadmap).
+3. Un e-mail de confirmation est envoyé au candidat via `wp_mail()` (SMTP
+   côté WordPress) — tranché en phase 5 : plus simple qu'une fonction
+   Supabase Edge, pas de dépendance supplémentaire à opérer. Une
+   notification interne (e-mail admin, adresse filtrable via
+   `up2a_preinscription_notify_email`) part en parallèle. Pour une bonne
+   délivrabilité en production, configurer un plugin SMTP (ex. **WP Mail
+   SMTP**) plutôt que le `mail()` PHP par défaut — voir
+   wordpress/README.md Étape 5.
 4. **Aucun paiement n'intervient à aucune étape.**
 5. Le candidat n'a pas de compte à ce stade : il n'est pas dans
    `auth.users`. C'est l'admin qui, plus tard, transforme la candidature en
@@ -75,9 +80,13 @@ WP dédiée), qui lui seul parle à Supabase.
    examens, résultats, publier des annonces et supports de cours.
 4. La clé `service_role` peut être nécessaire pour certaines opérations que
    la RLS ne permet pas côté client (ex. création de compte `auth.users`
-   depuis le back-office). Ces opérations passent par une **route API
-   serveur Next.js** (`app/api/.../route.ts`, exécutée côté serveur), jamais
-   par du code exécuté dans le navigateur.
+   depuis le back-office). Ces opérations passent par du code **exécuté
+   côté serveur uniquement** — en pratique une Server Action (`"use
+   server"`, cohérent avec le reste du code, voir
+   `app-etudiant/lib/admin/actions.ts`) plutôt qu'une route API dédiée :
+   les deux offrent la même garantie (jamais de code exécuté dans le
+   navigateur), la Server Action évite juste d'introduire un deuxième
+   pattern dans le projet.
 
 ## Modèle d'autorisation
 

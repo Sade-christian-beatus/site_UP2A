@@ -213,6 +213,82 @@ les deux colonnes s'empilent.
   distinguer comme case "dynamique" — indépendant de GSAP, s'arrête sous
   `prefers-reduced-motion: reduce`.
 
+## Formations — garde-fou contre une section vide (2026-09-22)
+
+Diagnostiqué sur le site réel : toutes les sections de la home affichaient
+la dernière version (HTML et CSS à jour, vérifié dans le code source),
+sauf "Nos formations" qui restait totalement vide et ne réagissait pas au
+clic. Comme le reste de la page (Galerie, Comment candidater, Contact,
+Footer — tous rendus par la même requête, après Formations) s'affichait
+correctement, ce n'était ni un cache ni une erreur PHP fatale, mais très
+probablement une autre extension du site qui intercepte le filtre
+`up2a_core_formations` et renvoie une liste vide. `up2a_core_formations()`
+ignore désormais un résultat de filtre vide/invalide et retombe sur les 4
+licences par défaut (voir `wordpress/README.md`, Dépannage §7).
+
+## Nouveau logo footer + 8e photo galerie (2026-09-22)
+
+Le client a fourni un nouveau lockup logo (fond marine, texte/emblème
+blancs, `assets/img/logo-up2a-footer.webp`/`.png`) pensé pour un fond
+sombre — remplace l'ancien logo + chip blanc dans le footer, qui utilisait
+un fond blanc pour rester lisible (`up2a_core_render_footer()`). Fond
+détouré (transparence) pour se fondre directement dans le footer marine,
+sans bloc blanc autour.
+
+Ajout d'une 8e photo à `up2a_core_gallery_images()` (groupe d'étudiants
+devant le campus, fournie par le client), avec la même garde-fou anti-liste-vide
+que `up2a_core_formations()` (voir plus haut) appliqué également ici.
+
+## Footer enrichi (2026-09-23)
+
+- **Liens rapides** : ajout de "Pourquoi l'UP-2A" et "Nos valeurs" (ces deux
+  sections ont maintenant un `id` — `up2a-pourquoi` / `up2a-valeurs` — pour
+  être ciblables en ancre, ce qui n'était pas le cas avant).
+- **Nos formations** : les 4 liens ouvrent désormais directement la modale
+  de détail de la formation (comme les cartes de la section Formations),
+  au lieu de simplement faire défiler vers la section — réutilise le même
+  mécanisme JS (`js-formations-card`), aucune duplication de logique.
+  Dégradation propre : reste un vrai lien `#up2a-formations` si JS
+  indisponible.
+- **Style** : titres de colonne avec soulignement accent, puces animées sur
+  les liens (léger décalage + couleur accent au survol).
+
+## Vrais CTA de préinscription (2026-09-23)
+
+Tous les boutons "Faire ma préinscription" / "S'inscrire maintenant" de
+la home (Hero, modale Formation, section Comment candidater — qui n'en
+avait pas jusqu'ici) pointent désormais vers `up2a_core_preinscription_url()`
+(par défaut `/preinscription/`, filtrable), au lieu de simplement défiler
+vers `#up2a-admissions`. Le CTA de la modale Formation passe en plus le
+slug de la licence cliquée en paramètre d'URL (`?formation=...`) pour
+présélectionner la bonne formation dans le formulaire — voir
+`wordpress/plugins/up2a-preinscription`. Les slugs de formation de
+`up2a_core_formations()` ont été alignés sur ceux de
+`supabase/migrations/0003_seed.sql` (préfixe `licence-`) pour que le
+formulaire puisse résoudre la bonne ligne côté Supabase.
+
+## Formations en 2×2, survol Valeurs, perf galerie (2026-09-23)
+
+- **Nos formations** : grille fixée à 2 colonnes × 2 lignes (au lieu
+  d'un `auto-fit` qui passait à 4 colonnes sur grand écran) — 1 colonne
+  sous 480px.
+- **Nos valeurs** : effet de survol (léger soulèvement + ombre + icône
+  qui pivote/grossit) sur chaque carte.
+- **Cause racine enfin identifiée pour "Formations/Galerie vides"** :
+  ce n'était ni un bug de données ni un bug JS — Elementor mettait en
+  cache son propre CSS "optimisé" à partir d'un instantané antérieur à
+  l'ajout de ces sections, donc leur style ne s'appliquait jamais tant
+  que ce cache n'était pas régénéré (**Elementor → Outils → Régénérer
+  les fichiers CSS et les données**). Documenté dans
+  `wordpress/README.md` Dépannage.
+- **Perf galerie** : la case "cadre agrandi" ne charge plus les 8
+  photos d'un coup au chargement de la page — seuls 2 calques `<img>`
+  existent dans le DOM, le JS charge la photo suivante à l'avance (une
+  seule à la fois) juste avant chaque fondu enchaîné de 10s. Les cartes
+  Formations repassent en `loading="lazy"` (le vrai bug d'affichage
+  n'ayant jamais été le lazy loading, contrairement à ce qu'on pensait
+  lors d'un précédent diagnostic — voir ci-dessus).
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc
