@@ -548,6 +548,20 @@ function up2a_core_formations(): array {
 	return $formations;
 }
 
+/**
+ * Retrouve une formation par son slug dans up2a_core_formations(), pour la
+ * page de détail (voir inc/formation-detail.php) — évite de dupliquer la
+ * boucle de recherche à chaque usage.
+ */
+function up2a_core_find_formation( string $slug ): ?array {
+	foreach ( up2a_core_formations() as $formation ) {
+		if ( $formation['slug'] === $slug ) {
+			return $formation;
+		}
+	}
+	return null;
+}
+
 function up2a_core_render_formations(): void {
 	$formations = up2a_core_formations();
 	$photos     = up2a_core_gallery_images();
@@ -605,6 +619,7 @@ function up2a_core_render_formations(): void {
 				</ul>
 				<div class="up2a-formation-modal__actions">
 					<a href="<?php echo esc_url( up2a_core_preinscription_url( $f['slug'] ) ); ?>" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-core' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
+					<a href="<?php echo esc_url( home_url( '/formations/' . $f['slug'] . '/' ) ); ?>" class="up2a-hero__cta up2a-hero__cta--outline"><?php esc_html_e( 'Voir la fiche complète', 'up2a-core' ); ?></a>
 					<button type="button" class="up2a-formation-modal__back js-formation-modal-close"><?php esc_html_e( 'Retour aux formations', 'up2a-core' ); ?></button>
 				</div>
 			</template>

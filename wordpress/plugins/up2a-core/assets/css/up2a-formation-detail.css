@@ -1,0 +1,211 @@
+/*
+ * Page de détail formation (/formations/{slug}/). Réutilise les tokens
+ * (up2a-tokens.css) et plusieurs classes de up2a-front-page.css
+ * (.up2a-section-inner, .up2a-formation-modal__*, .up2a-hero__cta) pour
+ * rester visuellement cohérent avec la home sans dupliquer le style.
+ */
+
+.up2a-formation-page {
+  background: var(--up2a-color-bg);
+}
+
+/* --- Fil d'Ariane --- */
+
+.up2a-formation-page__breadcrumb {
+  padding: 18px 0;
+  font-size: 0.8125rem;
+  color: var(--up2a-color-ink-soft);
+  border-bottom: 1px solid var(--up2a-color-border);
+}
+
+.up2a-formation-page__breadcrumb a {
+  color: var(--up2a-color-ink-soft);
+  text-decoration: none;
+}
+
+.up2a-formation-page__breadcrumb a:hover {
+  color: var(--up2a-color-primary);
+  text-decoration: underline;
+}
+
+.up2a-formation-page__breadcrumb span[aria-hidden] {
+  margin: 0 8px;
+  opacity: 0.5;
+}
+
+.up2a-formation-page__breadcrumb [aria-current] {
+  color: var(--up2a-color-ink);
+  font-weight: 600;
+}
+
+/* --- Bannière --- */
+
+.up2a-formation-page__banner {
+  padding: 48px 0;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-formation-page__banner-grid {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+.up2a-formation-page__banner-media {
+  border-radius: var(--up2a-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--up2a-shadow-md);
+  aspect-ratio: 4 / 3;
+}
+
+.up2a-formation-page__banner-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.up2a-formation-page__banner-text h1 {
+  font-family: var(--up2a-font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  color: var(--up2a-color-ink);
+  line-height: 1.15;
+  margin: 0 0 14px;
+}
+
+.up2a-formation-page__lead {
+  color: var(--up2a-color-ink-soft);
+  line-height: 1.65;
+  margin: 0 0 24px;
+  font-size: 1.0625rem;
+}
+
+/* --- Corps --- */
+
+.up2a-formation-page__body {
+  padding: 56px 0 72px;
+}
+
+.up2a-formation-page__body-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.up2a-formation-page__main h2 {
+  margin-top: 36px;
+}
+
+.up2a-formation-page__main h2:first-child {
+  margin-top: 0;
+}
+
+.up2a-formation-page__placeholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--up2a-color-ink-soft);
+  font-style: italic;
+  background: var(--up2a-color-surface-alt);
+  border-radius: var(--up2a-radius-md);
+  padding: 14px 18px;
+  margin: 0 0 20px;
+}
+
+.up2a-formation-page__placeholder svg {
+  flex-shrink: 0;
+  color: var(--up2a-color-ink-soft);
+}
+
+.up2a-formation-page__steps {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  color: var(--up2a-color-ink-soft);
+  line-height: 1.7;
+}
+
+.up2a-formation-page__steps li {
+  margin-bottom: 6px;
+}
+
+.up2a-formation-page__note {
+  font-size: 0.875rem;
+  color: var(--up2a-color-success);
+  font-weight: 600;
+  margin: 0 0 28px;
+}
+
+/* --- Autres formations (aside) --- */
+
+.up2a-formation-page__aside-title {
+  font-family: var(--up2a-font-heading);
+  font-size: 1.125rem;
+  color: var(--up2a-color-ink);
+  margin: 0 0 16px;
+}
+
+.up2a-formation-page__related {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.up2a-formation-page__related a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: var(--up2a-radius-md);
+  background: var(--up2a-color-surface-alt);
+  text-decoration: none;
+  transition: background var(--up2a-motion-fast) ease, transform var(--up2a-motion-fast) ease;
+}
+
+.up2a-formation-page__related a:hover {
+  background: var(--up2a-color-accent-light);
+  transform: translateX(4px);
+}
+
+.up2a-formation-page__related picture,
+.up2a-formation-page__related img {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--up2a-radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.up2a-formation-page__related strong {
+  display: block;
+  color: var(--up2a-color-ink);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+}
+
+.up2a-formation-page__related small {
+  display: block;
+  color: var(--up2a-color-ink-soft);
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+/* --- Desktop --- */
+
+@media (min-width: 900px) {
+  .up2a-formation-page__banner-grid {
+    grid-template-columns: 1fr 1.1fr;
+  }
+
+  .up2a-formation-page__body-grid {
+    grid-template-columns: 1fr 300px;
+    align-items: start;
+  }
+
+  .up2a-formation-page__aside {
+    position: sticky;
+    top: 24px;
+  }
+}

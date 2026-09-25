@@ -289,6 +289,31 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   n'ayant jamais été le lazy loading, contrairement à ce qu'on pensait
   lors d'un précédent diagnostic — voir ci-dessus).
 
+## Pages détail formation (2026-09-25)
+
+- Décision technique (phase 4, docs/03-roadmap.md) : ni CPT WordPress, ni
+  montage Elementor — une règle de réécriture `/formations/{slug}/`
+  (`up2a-core/inc/formation-detail.php`) + un template codé
+  (`templates/formation-detail.php`) qui relit `up2a_core_formations()`,
+  déjà la source unique du contenu des 4 licences (nom, faculté, intro,
+  débouchés, image), synchronisée avec `supabase/migrations/0003_seed.sql`.
+  Un CPT aurait dupliqué cette source pour seulement 4 pages fixes.
+- Contenu affiché : uniquement ce qui est confirmé (voir
+  docs/05-contenus.md) — nom, faculté, description, débouchés (dérivés de
+  la même phrase confirmée). Le programme détaillé (matières, volumes
+  horaires) n'existe pas encore : affiché honnêtement comme "sera publié
+  prochainement" plutôt qu'inventé (voir CLAUDE.md §3).
+- Les "conditions d'admission" reprises sur la page sont le même
+  processus générique déjà affiché sur la home (section Admissions), pas
+  un contenu spécifique par licence.
+- Modale Formation (home) : bouton "Voir la fiche complète" ajouté à côté
+  de "Faire ma préinscription", vers la page dédiée.
+- Filet anti-404 : comme pour `/preinscription/` (voir README
+  "Dépannage"), un changement de règle de réécriture nécessite un flush
+  WordPress. Un filet de sécurité compare le numéro de version du plugin
+  à une option stockée et relance `flush_rewrite_rules()` automatiquement
+  si elle a changé, en plus du flush à l'activation.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc
