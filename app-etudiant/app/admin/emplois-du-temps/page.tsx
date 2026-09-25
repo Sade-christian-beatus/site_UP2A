@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   listFormations,
   listAnneesAcademiques,
@@ -8,6 +9,8 @@ import { deleteCreneau } from "@/lib/admin/academique-actions";
 import { FormationAnneeFilter } from "@/lib/admin/formation-annee-filter";
 import { DeleteButton } from "@/lib/admin/delete-button";
 import { CreneauForm } from "./creneau-form";
+
+export const metadata: Metadata = { title: "Emplois du temps — Back-office UP-2A" };
 import { JOURS_SEMAINE, JOUR_LABELS, formatHeure } from "@/lib/academique/constants";
 
 export default async function EmploisDuTempsPage({

@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { getMesCreneaux } from "@/lib/etudiant/data";
 import { JOURS_SEMAINE, JOUR_LABELS, formatHeure } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Emploi du temps — Espace étudiant UP-2A" };
 
 export default async function EmploiDuTempsPage() {
   const creneaux = await getMesCreneaux();

@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { getMesAnnonces } from "@/lib/etudiant/data";
 import { formatDateFr } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Annonces — Espace étudiant UP-2A" };
 
 export default async function AnnoncesPage() {
   const annonces = await getMesAnnonces();

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -7,6 +8,8 @@ import {
 } from "@/lib/admin/academique";
 import { TYPE_EXAMEN_LABELS, formatDateFr } from "@/lib/academique/constants";
 import { ResultatsForm } from "./resultats-form";
+
+export const metadata: Metadata = { title: "Saisie des résultats — Back-office UP-2A" };
 
 export default async function ResultatsExamenPage({
   params,

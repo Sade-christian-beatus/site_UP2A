@@ -222,6 +222,16 @@ soumission du formulaire échoue proprement côté serveur (message
 d'erreur générique au visiteur, détail technique dans les logs PHP —
 jamais de clé exposée).
 
+## Étape 4 bis — Lien "Espace étudiant" (requis)
+
+Le bouton "ESPACE ÉTUDIANT" du header (et tout autre lien vers l'espace
+étudiant) pointe par défaut vers une ancre vide (`#up2a-espace-etudiant`)
+tant que cette constante n'est pas définie. Ajoutez dans `wp-config.php` :
+
+```php
+define('UP2A_ESPACE_ETUDIANT_URL', 'https://espace.bdo-burkina.com/');
+```
+
 ## Étape 5 — Page de préinscription
 
 1. **Pages → Ajouter** une nouvelle page, titre libre (ex. "Préinscription").
@@ -259,7 +269,7 @@ jamais de clé exposée).
 
 | Plugin | Rôle | Statut |
 |---|---|---|
-| `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
+| `up2a-core` | Animation GSAP/Lenis (self-hostées, `assets/js/vendor/`), tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"

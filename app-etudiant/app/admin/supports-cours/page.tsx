@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   listFormations,
   listAnneesAcademiques,
@@ -8,6 +9,8 @@ import {
 import { deleteSupport } from "@/lib/admin/academique-actions";
 import { FormationAnneeFilter } from "@/lib/admin/formation-annee-filter";
 import { DeleteButton } from "@/lib/admin/delete-button";
+
+export const metadata: Metadata = { title: "Supports de cours — Back-office UP-2A" };
 import { SupportForm } from "./support-form";
 import { formatDateFr } from "@/lib/academique/constants";
 

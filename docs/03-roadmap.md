@@ -121,13 +121,23 @@
       construit, non prioritaire vu la fréquence de changement quasi
       nulle de ces données (2 facultés, 4 licences fixes).
 
-## Phase 8 — Optimisation & tests
+## Phase 8 — Optimisation & tests (démarrée 2026-09-25)
 
 - [ ] Audit Lighthouse mobile (cible : performance ≥ 90 sur les pages
-      vitrine).
-- [ ] Images en AVIF/WebP, lazy loading, vidéos compressées avec poster.
-- [ ] Test réel sur Android milieu de gamme + 3G/4G.
-- [ ] Minification/concaténation JS en prod, self-host (pas de multi-CDN).
+      vitrine) — nécessite le site en ligne, pas exécutable depuis cet
+      environnement (sandbox sans accès réseau au domaine live).
+- [x] Images en AVIF/WebP, lazy loading — fait au fil des sections
+      construites. Pas encore de vidéo dans le projet (aucune fournie à
+      ce jour), donc rien à compresser pour l'instant.
+- [ ] Test réel sur Android milieu de gamme + 3G/4G — nécessite un
+      appareil physique, à faire par le client/l'équipe.
+- [x] Self-host GSAP/ScrollTrigger/SplitText/Lenis (`up2a-core` v0.13.0,
+      `assets/js/vendor/`, voir `VERSIONS.md` du dossier) — plus aucun
+      CDN externe chargé par le site.
+- [ ] Minification/concaténation du JS **propre au projet**
+      (`up2a-core.js`, `up2a-front-page.js`, `up2a-header.js`,
+      `up2a-preinscription.js` — actuellement non minifiés). Les
+      bibliothèques vendorisées (GSAP, Lenis) le sont déjà nativement.
 
 ---
 

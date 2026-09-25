@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { listAnnonces, listFormations, listAnneesAcademiques } from "@/lib/admin/academique";
 import { deleteAnnonce } from "@/lib/admin/academique-actions";
 import { DeleteButton } from "@/lib/admin/delete-button";
 import { AnnonceForm } from "./annonce-form";
 import { formatDateFr } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Annonces — Back-office UP-2A" };
 
 export default async function AnnoncesPage() {
   const [annonces, formations, annees] = await Promise.all([

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { listCandidatures } from "@/lib/admin/candidatures";
 import {
@@ -5,6 +6,8 @@ import {
   STATUT_LABELS,
   type StatutCandidature,
 } from "@/lib/admin/constants";
+
+export const metadata: Metadata = { title: "Candidatures — Back-office UP-2A" };
 
 const STATUT_BADGE_CLASSES: Record<StatutCandidature, string> = {
   nouvelle: "bg-accent-light text-ink",

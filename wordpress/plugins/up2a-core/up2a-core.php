@@ -6,7 +6,7 @@
  *                     pas le contenu éditorial des pages) pour UP-2A. Cible des classes
  *                     CSS `js-*` posées dans Elementor pour l'animation des pages (voir
  *                     docs/04-conventions.md et docs/06-storyboard.md).
- * Version:           0.12.0
+ * Version:           0.13.0
  * Requires PHP:      8.0
  * Text Domain:        up2a-core
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_CORE_VERSION', '0.12.0' );
+define( 'UP2A_CORE_VERSION', '0.13.0' );
 define( 'UP2A_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP2A_CORE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -43,8 +43,11 @@ register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
  * Charge les tokens du design system (docs/02-design-system.md) et la
  * couche d'animation sur le front-end public.
  *
- * GSAP est chargé depuis un CDN pour ce scaffold ; à self-hoster en
- * production (voir docs/CLAUDE.md §7 — pas de multi-CDN en prod).
+ * GSAP/ScrollTrigger/SplitText/Lenis sont self-hostés depuis
+ * assets/js/vendor/ (voir CLAUDE.md §7 — pas de multi-CDN en production).
+ * Fichiers copiés tels quels depuis les paquets npm officiels (gsap@3,
+ * lenis@1) ; voir assets/js/vendor/VERSIONS.md pour les versions exactes
+ * et la procédure de mise à jour.
  */
 function up2a_core_enqueue_assets(): void {
 	if ( is_admin() ) {
@@ -75,33 +78,33 @@ function up2a_core_enqueue_assets(): void {
 
 	wp_enqueue_script(
 		'gsap',
-		'https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js',
+		UP2A_CORE_URL . 'assets/js/vendor/gsap.min.js',
 		array(),
-		null,
+		UP2A_CORE_VERSION,
 		true
 	);
 
 	wp_enqueue_script(
 		'gsap-scrolltrigger',
-		'https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js',
+		UP2A_CORE_URL . 'assets/js/vendor/ScrollTrigger.min.js',
 		array( 'gsap' ),
-		null,
+		UP2A_CORE_VERSION,
 		true
 	);
 
 	wp_enqueue_script(
 		'gsap-splittext',
-		'https://cdn.jsdelivr.net/npm/gsap@3/dist/SplitText.min.js',
+		UP2A_CORE_URL . 'assets/js/vendor/SplitText.min.js',
 		array( 'gsap' ),
-		null,
+		UP2A_CORE_VERSION,
 		true
 	);
 
 	wp_enqueue_script(
 		'lenis',
-		'https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js',
+		UP2A_CORE_URL . 'assets/js/vendor/lenis.min.js',
 		array(),
-		null,
+		UP2A_CORE_VERSION,
 		true
 	);
 
