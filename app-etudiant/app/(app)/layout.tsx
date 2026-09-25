@@ -32,15 +32,15 @@ export default async function EtudiantLayout({
         <SidebarNav items={NAV_ITEMS} />
 
         <div className="mt-auto flex flex-col gap-3 border-t border-border p-4">
-          <div className="flex items-center gap-3">
+          <Link href="/profil" className="flex items-center gap-3 rounded-lg p-1 transition-colors hover:bg-surface-alt">
             <Avatar prenom={profile.prenom} nom={profile.nom} />
             <div className="flex min-w-0 flex-col">
               <span className="truncate text-sm font-medium text-ink">
                 {profile.prenom} {profile.nom}
               </span>
-              <span className="text-xs text-ink-soft">Étudiant·e</span>
+              <span className="text-xs text-ink-soft">Mon compte</span>
             </div>
-          </div>
+          </Link>
           <LogoutButton />
         </div>
       </aside>
@@ -52,7 +52,9 @@ export default async function EtudiantLayout({
             <span className="font-heading text-base text-ink">UP-2A</span>
             <span className="text-xs text-ink-soft">Espace étudiant</span>
           </Link>
-          <Avatar prenom={profile.prenom} nom={profile.nom} taille="sm" />
+          <Link href="/profil">
+            <Avatar prenom={profile.prenom} nom={profile.nom} taille="sm" />
+          </Link>
         </header>
         <MobileNav items={NAV_ITEMS} />
 

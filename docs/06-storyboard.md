@@ -314,6 +314,32 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   à une option stockée et relance `flush_rewrite_rules()` automatiquement
   si elle a changé, en plus du flush à l'activation.
 
+## Correctif ScrollTrigger — Formations/Galerie invisibles au scroll normal (2026-09-25)
+
+- **Symptôme rapporté** : sur desktop, la section Formations ne
+  s'affichait qu'en arrivant directement sur `#up2a-formations`, jamais
+  en scrollant normalement depuis le haut de la page ; la Galerie ne
+  s'affichait pas du tout. Sur mobile, tout s'affichait normalement.
+- **Cause** : `up2a-core.js` enregistre Lenis (scroll fluide) et relie
+  son événement `scroll` à `ScrollTrigger.update()`, mais ne
+  recalculait jamais les positions de déclenchement une fois la page
+  entièrement chargée. Les triggers de "Formations" et "Galerie" (créés
+  tôt, avec `scrollTrigger: { start: "top 75%" }`) pouvaient donc rester
+  calés sur un seuil obsolète si la mise en page bougeait après leur
+  création — un scroll normal ne le recroisait alors jamais, alors
+  qu'un saut direct via ancre (`#up2a-formations`) pouvait, lui,
+  satisfaire immédiatement la condition.
+- **Correctif** : `ScrollTrigger.refresh()` appelé sur l'événement
+  `window.load`, qui recalcule toutes les positions de déclenchement
+  une fois la page (et ses ressources visibles) chargée — pratique
+  standard recommandée par GSAP/Lenis pour ce type d'intégration. Voir
+  `up2a-core.js`.
+- **Si le problème persiste après mise à jour du plugin** : vérifier
+  d'abord le cache CSS "optimisé" d'Elementor (cause historique de ce
+  projet pour des sections qui n'apparaissent pas du tout, voir
+  wordpress/README.md "Dépannage") — les deux causes peuvent se
+  superposer.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc

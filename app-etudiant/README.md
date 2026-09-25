@@ -42,7 +42,8 @@ app/
     ├── examens/
     ├── resultats/
     ├── documents/
-    └── annonces/
+    ├── annonces/
+    └── profil/                 changement de mot de passe self-service
 
 lib/
 ├── supabase/
@@ -89,6 +90,12 @@ Tous filtrés par RLS (`lib/etudiant/data.ts`) :
   passe — voir docs/03-roadmap.md).
 - **Annonces** (`/annonces`) : liste triée par date de publication, déjà
   filtrée par la RLS (globales + celles ciblant sa formation/année).
+- **Mon compte** (`/profil`) : changement de mot de passe self-service
+  (`supabase.auth.updateUser`). Utile en particulier pour remplacer le
+  mot de passe temporaire généré par l'admin lors de la transformation
+  de candidature (voir `back-office/README.md` "Candidatures" — pas
+  d'e-mail d'invitation tant que le SMTP n'est pas configuré). Accessible
+  depuis l'avatar (sidebar desktop ou barre du haut mobile).
 
 ## Présentation (2026-09-25)
 

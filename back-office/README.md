@@ -84,21 +84,28 @@ signées, 10 min), changement de statut, et transformation d'une
 candidature **acceptée** en compte étudiant.
 
 La transformation (`lib/actions.ts` → `transformerEnEtudiant`) :
-1. Invite le candidat par e-mail (`supabase.auth.admin.inviteUserByEmail`)
-   — crée le compte `auth.users` et lui envoie un lien pour choisir son
-   mot de passe. C'est la **seule** étape qui utilise la clé
-   `service_role` (`lib/supabase/admin.ts`) ; tout le reste passe par le
-   client `anon` + RLS, comme le reste de l'admin.
+1. Crée le compte `auth.users` avec un **mot de passe temporaire généré
+   côté serveur** (`supabase.auth.admin.createUser`, e-mail déjà
+   confirmé) — pas d'e-mail d'invitation envoyé : le SMTP du projet
+   n'est pas configuré (voir `wordpress/README.md`), un compte qui en
+   dépendrait serait inutilisable tant que ça reste le cas. Le mot de
+   passe est renvoyé une seule fois à l'écran (jamais stocké en clair
+   côté applicatif) pour que l'admin le communique lui-même à
+   l'étudiant (téléphone, en personne...). L'étudiant peut le changer
+   ensuite depuis l'espace étudiant (`/profil`). C'est la **seule**
+   étape qui utilise la clé `service_role` (`lib/supabase/admin.ts`) ;
+   tout le reste passe par le client `anon` + RLS, comme le reste de
+   l'admin.
 2. Crée les lignes `profiles` (role=etudiant) et `etudiants` (matricule
    généré `UP2A-{année}-{séquence}`, convention volontairement simple
    en l'absence de format imposé — à ajuster dans `genererMatricule()`
    si besoin).
 3. Marque la candidature `transformee`.
 
-**Important** : l'envoi de l'e-mail d'invitation nécessite le SMTP
-Supabase configuré (Authentication → Emails dans le dashboard du
-projet) — sans ça, `inviteUserByEmail` peut réussir côté base sans que
-l'e-mail parte réellement. À vérifier avant la mise en production.
+**Si le SMTP est configuré plus tard**, on pourra revenir à
+`inviteUserByEmail` (ou ajouter un envoi d'e-mail informatif en plus du
+mot de passe affiché) — non fait pour l'instant, pas la peine de
+construire sur une dépendance qui ne fonctionne pas encore.
 
 ## Saisie académique (phase 7)
 
