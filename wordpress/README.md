@@ -259,7 +259,7 @@ jamais de clé exposée).
 
 | Plugin | Rôle | Statut |
 |---|---|---|
-| `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) |
+| `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"
@@ -273,6 +273,17 @@ jamais de clé exposée).
 > onglet Général → "Régénérer les fichiers CSS et les données"**, puis
 > rechargez la page (Ctrl+Maj+R). À essayer **avant** tout le reste
 > ci-dessous.
+
+> **Pages formation (`/formations/{slug}/`) en 404 après mise à jour**
+> (2026-09-25) : ces pages sont servies par une règle de réécriture
+> ajoutée par `up2a-core`, pas par une vraie page WordPress. Si elles ne
+> se chargent pas après avoir remplacé le zip du plugin (même symptôme
+> déjà rencontré sur `/preinscription/`, voir plus bas) : **Réglages →
+> Permaliens → Enregistrer les modifications**, sans rien changer — cela
+> force WordPress à regénérer ses règles. Un filet de sécurité dans le
+> code le fait aussi automatiquement à la prochaine visite si le numéro
+> de version du plugin a changé, mais un flush manuel reste plus rapide
+> si vous voulez tester tout de suite.
 
 Dans l'ordre le plus probable :
 

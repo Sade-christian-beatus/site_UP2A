@@ -6,7 +6,7 @@
  *                     pas le contenu éditorial des pages) pour UP-2A. Cible des classes
  *                     CSS `js-*` posées dans Elementor pour l'animation des pages (voir
  *                     docs/04-conventions.md et docs/06-storyboard.md).
- * Version:           0.11.1
+ * Version:           0.12.0
  * Requires PHP:      8.0
  * Text Domain:        up2a-core
  */
@@ -15,12 +15,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_CORE_VERSION', '0.11.1' );
+define( 'UP2A_CORE_VERSION', '0.12.0' );
 define( 'UP2A_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP2A_CORE_URL', plugin_dir_url( __FILE__ ) );
 
 require_once UP2A_CORE_PATH . 'inc/header.php';
 require_once UP2A_CORE_PATH . 'inc/front-page.php';
+require_once UP2A_CORE_PATH . 'inc/formation-detail.php';
+
+/**
+ * Enregistre la règle de réécriture des pages formation puis force un
+ * flush au moment de l'activation, pour qu'elle fonctionne immédiatement
+ * sans dépendre du filet de sécurité par version (voir
+ * inc/formation-detail.php).
+ */
+register_activation_hook(
+	__FILE__,
+	function (): void {
+		up2a_core_register_formation_rewrite();
+		flush_rewrite_rules();
+	}
+);
+
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
 
 /**
  * Charge les tokens du design system (docs/02-design-system.md) et la

@@ -10,9 +10,11 @@
 
 - [x] CLAUDE.md + docs/00 à 06 rédigés.
 - [x] Revue des migrations SQL 0001/0002/0003.
-- [ ] Validation du client sur : palette/design system, textes de
-      docs/05-contenus.md, noms réels des 4 licences (actuellement
-      placeholders dans le seed).
+- [x] Noms réels des 4 licences confirmés par le client (2026-09-22, voir
+      docs/05-contenus.md) et alignés partout : seed Supabase, plugin
+      `up2a-core`, plugin `up2a-preinscription`.
+- [ ] Validation du client sur : palette/design system, reste des textes
+      de docs/05-contenus.md (chiffres clés, contact précis...).
 
 ## Phase 1 — Supabase
 
@@ -45,12 +47,20 @@
 - [ ] `ScrollTrigger.matchMedia()` pour désactiver les effets lourds sur
       mobile ; respect de `prefers-reduced-motion`.
 
-## Phase 4 — Formations
+## Phase 4 — Formations (2026-09-25)
 
-- [ ] Custom Post Type "Formation" (ou pages statiques si CPT jugé
-      excessif pour 4 licences — à trancher en phase, cf. docs/04).
-- [ ] Une page détail par licence (contenu depuis docs/05, structure
-      commune).
+- [x] Décision : ni CPT ni montage Elementor — une règle de réécriture
+      `/formations/{slug}/` + un template codé (`up2a-core`), qui relit
+      `up2a_core_formations()` (déjà la source unique du contenu des 4
+      licences, synchronisée avec `supabase/migrations/0003_seed.sql`) au
+      lieu de dupliquer ce contenu dans un CPT pour seulement 4 pages
+      fixes.
+- [x] Une page détail par licence (contenu réel uniquement — programme
+      détaillé marqué "à venir", rien d'inventé), structure commune :
+      fil d'Ariane, bannière, présentation, débouchés, conditions
+      d'admission, CTA préinscription préremplie, autres formations.
+- [x] Cartes/modale de la home reliées vers ces pages ("Voir la fiche
+      complète").
 
 ## Phase 5 — Préinscription (2026-09-23)
 
