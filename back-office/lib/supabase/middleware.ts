@@ -7,14 +7,15 @@ const ROUTES_PUBLIQUES = ["/connexion"];
  * Rafraîchit la session Supabase à chaque requête et applique une garde
  * d'authentification "optimiste" (présence d'une session uniquement).
  *
- * Cette app étant désormais mono-usage (espace étudiant uniquement,
- * depuis la séparation du back-office en application distincte), toute
- * route qui n'est pas `/connexion` est protégée.
+ * Cette app étant désormais mono-usage (back-office uniquement, depuis
+ * la séparation de l'espace étudiant en application distincte), toute
+ * route qui n'est pas `/connexion` est protégée — pas besoin d'une
+ * liste explicite comme quand app-etudiant portait les deux espaces.
  *
  * Volontairement PAS de vérification de rôle ici : le Proxy s'exécute
  * sur (quasiment) toutes les requêtes, y compris les prefetchs, et ne
  * doit donc faire que des vérifications bon marché (cookie de session).
- * La vérification de rôle "sûre" (étudiant) se fait plus près de la
+ * La vérification de rôle "sûre" (admin) se fait plus près de la
  * donnée, dans lib/auth/dal.ts, appelée depuis app/(app)/layout.tsx.
  */
 export async function updateSession(request: NextRequest) {

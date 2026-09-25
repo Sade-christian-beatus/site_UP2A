@@ -52,7 +52,8 @@ Client réalisé par **LUPORA Group**.
 | Animation | GSAP + ScrollTrigger + SplitText + Lenis (plugin `up2a-core`) |
 | Préinscription | Plugin `up2a-preinscription` (PHP → Supabase REST) |
 | Base de données / Auth | Supabase (PostgreSQL + Auth + Storage + RLS) |
-| Espace étudiant + Back-office | **Next.js + @supabase/supabase-js** (recommandé) sur sous-domaine. *Alternative acceptable : FastAPI si préférence Python — le schéma SQL reste identique.* |
+| Espace étudiant | **Next.js + @supabase/supabase-js** (`app-etudiant/`), sous-domaine dédié (espace.bdo-burkina.com). Lecture seule, rôle `etudiant` uniquement. |
+| Back-office | **Next.js + @supabase/supabase-js** (`back-office/`), application **séparée** avec son propre sous-domaine (ex. admin.bdo-burkina.com), depuis la scission des deux espaces (2026-09-25). Rôle `admin` uniquement. |
 
 ## 5. Carte du dépôt
 
@@ -76,9 +77,16 @@ up2a/
 │   └── plugins/
 │       ├── up2a-core/            couche animation (GSAP/Lenis)
 │       └── up2a-preinscription/  formulaire → Supabase (sans paiement)
-└── app-etudiant/
-    └── README.md                 spec de l'app Next.js + Supabase
+├── app-etudiant/                 espace étudiant (Next.js, lecture seule)
+│   └── README.md
+└── back-office/                  back-office admin (Next.js, app séparée)
+    └── README.md
 ```
+
+Deux applications Next.js **distinctes** (deux projets Vercel, deux
+sous-domaines) depuis la scission du 2026-09-25 : un compte étudiant qui
+atterrit sur le back-office (ou inversement) est redirigé vers l'autre
+application plutôt que de voir une section qui ne le concerne pas.
 
 ## 6. Ordre de travail recommandé
 
