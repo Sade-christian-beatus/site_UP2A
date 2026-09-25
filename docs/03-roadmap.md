@@ -80,16 +80,29 @@
       entre étapes en local, pas un appel Supabase réel — voir
       wordpress/README.md Étape 4/5).
 
-## Phase 6 — Espace étudiant (app-etudiant)
+## Phase 6 — Espace étudiant (app-etudiant, 2026-09-25)
 
-- [ ] Scaffold déjà posé en Phase 1 bis (voir ci-dessous) : auth,
+- [x] Scaffold déjà posé en Phase 1 bis (voir ci-dessous) : auth,
       routage par rôle, design system.
-- [ ] Écrans étudiant (lecture) : tableau de bord, emploi du temps,
-      supports de cours, examens, résultats, documents, annonces.
-- [ ] Chaque écran = requêtes Supabase filtrées par RLS, pas de logique
-      d'autorisation dupliquée côté client.
+- [x] Écrans étudiant (lecture) : tableau de bord, emploi du temps,
+      supports de cours, examens, résultats, documents, annonces. Voir
+      `app-etudiant/README.md` "Espace étudiant".
+- [x] Chaque écran = requêtes Supabase filtrées par RLS (`lib/etudiant/data.ts`),
+      pas de logique d'autorisation dupliquée côté client — les policies
+      `*_select_self_or_admin` filtrent déjà les lignes, la plupart des
+      requêtes n'ont même pas besoin d'un `.eq(...)` explicite.
+- [x] Accès étudiant en lecture aux supports de cours de sa propre
+      formation/année (`supabase/migrations/0005_storage_student_supports.sql`,
+      basé sur la convention de chemin `{formation_id}/{annee_id}/...`).
+- [ ] Documents administratifs : l'écran existe (lecture seule, URLs
+      signées) mais rien ne dépose encore de fichier dans
+      `documents-etudiants` — pas de fonctionnalité de génération de
+      document construite dans cette passe (hors périmètre explicite de
+      cette phase). Affiche honnêtement "Aucun document disponible" tant
+      que ce n'est pas construit, plutôt que de fabriquer un écran qui
+      ment sur l'état réel.
 
-## Phase 7 — Back-office (2026-09-23, MVP candidatures fait)
+## Phase 7 — Back-office (2026-09-25, MVP complet)
 
 - [x] Écrans admin : liste des candidatures (filtre par statut) +
       changement de statut, transformation candidature → étudiant (crée
@@ -98,9 +111,15 @@
       garantie de sécurité, `service_role` toujours server-only, cohérent
       avec le reste du code qui utilise déjà des Server Actions partout).
       Voir `app-etudiant/README.md` "Back-office — candidatures".
-- [ ] Saisie académique (formations, emplois du temps, examens,
-      résultats), publication d'annonces et de supports de cours — pas
-      encore construit.
+- [x] Saisie académique : emplois du temps, examens, résultats (saisie
+      groupée par examen + publication/dépublication en masse), supports
+      de cours (upload vers Storage), annonces (ciblage formation/année
+      optionnel). Voir `app-etudiant/README.md` "Back-office — saisie
+      académique".
+- [ ] Gestion des formations/facultés/années académiques elles-mêmes
+      depuis l'admin (aujourd'hui : SQL Editor Supabase uniquement) — pas
+      construit, non prioritaire vu la fréquence de changement quasi
+      nulle de ces données (2 facultés, 4 licences fixes).
 
 ## Phase 8 — Optimisation & tests
 
@@ -116,11 +135,10 @@
 
 Réalisée sans écrans métier, juste le socle technique :
 
-- [ ] Next.js + TypeScript + Tailwind + `@supabase/supabase-js`.
-- [ ] Design system (docs/02) intégré comme tokens Tailwind.
-- [ ] Garde d'authentification (middleware / layout protégé).
-- [ ] Routage par rôle (`/etudiant/*`, `/admin/*`) — pages vides pour
-      l'instant, pas d'écran métier.
+- [x] Next.js + TypeScript + Tailwind + `@supabase/supabase-js`.
+- [x] Design system (docs/02) intégré comme tokens Tailwind.
+- [x] Garde d'authentification (proxy + layout protégé).
+- [x] Routage par rôle (`/etudiant/*`, `/admin/*`).
 
 ## Hors périmètre tant que non explicitement ajouté à cette roadmap
 

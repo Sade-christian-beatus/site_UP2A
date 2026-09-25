@@ -138,12 +138,16 @@ RLS sur `storage.objects` dans `supabase/migrations/0004_storage_policies.sql` :
 
 - `candidatures` — pièces jointes des préinscriptions (accès restreint aux
   admins ; upload réel server-side via `service_role`, qui bypass la RLS).
-- `supports-cours` — documents pédagogiques. RLS admin uniquement pour
-  l'instant ; l'accès étudiant fin (lecture de sa propre formation/année)
-  sera ajouté en phase 6 une fois la convention de chemin des objets
-  arrêtée avec les écrans réels.
-- `documents-etudiants` — documents administratifs générés. Même
-  remarque : RLS admin uniquement pour l'instant, affinée en phase 6.
+- `supports-cours` — documents pédagogiques. Écriture admin uniquement ;
+  lecture ouverte à l'étudiant pour sa propre formation/année depuis la
+  phase 6 (`supabase/migrations/0005_storage_student_supports.sql`),
+  basée sur la convention de chemin `{formation_id}/{annee_academique_id}/{uuid}.{ext}`
+  (voir `app-etudiant/lib/admin/academique-actions.ts` → `createSupport`).
+- `documents-etudiants` — documents administratifs générés. RLS admin
+  uniquement pour l'instant : aucune fonctionnalité ne génère encore de
+  document (hors périmètre de la phase 6 telle que construite, voir
+  docs/03-roadmap.md) — l'accès étudiant fin sera ajouté avec cette
+  fonctionnalité, une fois sa convention de chemin arrêtée.
 
 ## Ce que WordPress ne fait jamais
 

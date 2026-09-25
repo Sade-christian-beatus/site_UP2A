@@ -3,11 +3,20 @@
 Espace étudiant + back-office UP-2A. Next.js (App Router) + TypeScript +
 Tailwind CSS v4 + `@supabase/supabase-js` / `@supabase/ssr`.
 
-> **Statut (2026-09-23)** : authentification + routage par rôle en place.
-> Back-office candidatures construit (phase 7, périmètre MVP — voir
-> "Back-office" ci-dessous). Espace étudiant (phase 6) et le reste du
-> back-office (saisie académique, annonces) restent à construire.
-> Voir docs/01-architecture.md pour le modèle d'autorisation complet.
+> **Statut (2026-09-25)** : authentification + routage par rôle en place.
+> Back-office complet (candidatures + saisie académique + annonces,
+> phases 7) et espace étudiant complet (phase 6, lecture seule) — voir
+> "Back-office" et "Espace étudiant" ci-dessous. Reste hors périmètre :
+> génération de documents administratifs (l'écran étudiant existe mais
+> rien ne dépose encore de fichier) et gestion des
+> formations/facultés/années académiques depuis l'admin (SQL Editor
+> Supabase pour l'instant). Voir docs/01-architecture.md pour le modèle
+> d'autorisation complet.
+>
+> **Avant de tester en local ou en prod** : appliquer
+> `supabase/migrations/0005_storage_student_supports.sql` (SQL Editor
+> Supabase) — sans elle, les étudiants ne peuvent pas télécharger leurs
+> supports de cours (RLS Storage).
 
 ## Démarrer
 
@@ -25,11 +34,23 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 app/
 ├── page.tsx              redirige vers /connexion ou /etudiant|/admin selon le rôle
 ├── connexion/             page + formulaire de connexion (Server Action)
-├── etudiant/              section protégée (rôle "etudiant"), vide pour l'instant
+├── etudiant/              section protégée (rôle "etudiant") — tableau de bord +
+│   ├── emploi-du-temps/    6 écrans de lecture (voir "Espace étudiant")
+│   ├── supports/
+│   ├── examens/
+│   ├── resultats/
+│   ├── documents/
+│   └── annonces/
 └── admin/                 section protégée (rôle "admin")
     ├── page.tsx            liste des candidatures (filtre par statut)
-    └── candidatures/[id]/  détail d'une candidature (pièces jointes,
-                             changement de statut, transformation en étudiant)
+    ├── candidatures/[id]/  détail d'une candidature (pièces jointes,
+    │                       changement de statut, transformation en étudiant)
+    ├── emplois-du-temps/   CRUD créneaux (filtre formation/année)
+    ├── examens/            CRUD examens (filtre formation/année)
+    ├── resultats/          choix d'un examen → saisie groupée
+    │   └── [examenId]/      saisie des notes + publication en masse
+    ├── supports-cours/     upload + liste (filtre formation/année)
+    └── annonces/           CRUD, ciblage formation/année optionnel
 
 lib/
 ├── supabase/
@@ -43,13 +64,28 @@ lib/
 │   ├── dal.ts               vérifications "sûres" (rôle) — utilisées par les layouts
 │   ├── actions.ts            Server Actions login/logout
 │   └── logout-button.tsx     bouton de déconnexion partagé
-└── admin/
-    ├── constants.ts          statuts de candidature (liste + libellés) —
-    │                         PAS de "server-only", importable côté client
-    ├── candidatures.ts       DAL back-office (server-only) : liste, détail,
-    │                         URLs signées des pièces jointes
-    └── actions.ts            Server Actions : changer un statut, transformer
-                              une candidature en compte étudiant
+├── academique/
+│   └── constants.ts          labels FR (jours, types examen/document) — PAS
+│                             de "server-only", importable côté client
+├── admin/
+│   ├── constants.ts          statuts de candidature (liste + libellés) —
+│   │                         PAS de "server-only", importable côté client
+│   ├── candidatures.ts       DAL back-office candidatures (server-only)
+│   ├── actions.ts            Server Actions candidatures
+│   ├── academique.ts         DAL back-office saisie académique (server-only) :
+│   │                         formations, années, créneaux, examens, résultats,
+│   │                         supports, annonces, URLs signées
+│   ├── academique-actions.ts Server Actions saisie académique (CRUD créneaux/
+│   │                         examens, upsert+publication résultats, upload
+│   │                         supports, CRUD annonces)
+│   ├── formation-annee-filter.tsx  barre de filtre réutilisée (emplois du
+│   │                                temps/examens/supports)
+│   └── delete-button.tsx     bouton de suppression générique (confirm())
+└── etudiant/
+    └── data.ts               DAL espace étudiant (server-only) — la plupart
+                              des requêtes n'ont pas besoin de `.eq(...)`
+                              explicite, la RLS filtre déjà par formation/
+                              année/étudiant connecté
 
 proxy.ts                   garde d'authentification "optimiste" (Next.js 16 :
                             remplace middleware.ts, voir docs/01-architecture.md)
@@ -79,9 +115,61 @@ Supabase configuré (Authentication → Emails dans le dashboard du
 projet) — sans ça, `inviteUserByEmail` peut réussir côté base sans que
 l'e-mail parte réellement. À vérifier avant la mise en production.
 
-**Non couvert par ce MVP** (reste de la phase 7, voir
-docs/03-roadmap.md) : saisie académique (emplois du temps, examens,
-résultats), publication d'annonces et de supports de cours.
+## Back-office — saisie académique (phase 7, 2026-09-25)
+
+Écrans construits, tous filtrés par formation/année académique (sauf
+Annonces, qui liste tout) via `FormationAnneeFilter` (barre de filtre GET,
+réutilisée sur les 3 écrans) :
+
+- **Emplois du temps** (`/admin/emplois-du-temps`) : liste des créneaux
+  triés jour/heure + formulaire de création + suppression.
+- **Examens** (`/admin/examens`) : liste triée par date + création +
+  suppression, avec un lien direct vers la saisie des résultats.
+- **Résultats** (`/admin/resultats` → `/admin/resultats/[examenId]`) :
+  choisir un examen liste tous les étudiants actifs de sa formation/année
+  (matricule + nom), avec un champ note (0-20) et mention par étudiant.
+  Les champs laissés vides ne créent ni ne modifient de résultat (pas de
+  note à 0 fabriquée). `upsertResultats` fait un `upsert` sur la
+  contrainte `(etudiant_id, examen_id)`. Un bouton publie/dépublie en
+  masse tous les résultats de l'examen — **un résultat non publié reste
+  invisible pour l'étudiant, même le sien** (RLS `resultats_select_self_or_admin`).
+- **Supports de cours** (`/admin/supports-cours`) : upload direct vers le
+  bucket Storage `supports-cours` (client `anon` + session admin — la
+  policy `up2a_admin_supports_cours` autorise l'admin authentifié, pas
+  besoin de `service_role`), chemin `{formation_id}/{annee_id}/{uuid}.{ext}`.
+  Liste avec URL signée (10 min) + suppression (fichier + ligne).
+- **Annonces** (`/admin/annonces`) : création/suppression, ciblage
+  formation et/ou année académique optionnel (vide = visible par tous,
+  voir `annonces.formation_id`/`annee_academique_id` dans le schéma).
+
+**Non couvert** (voir docs/03-roadmap.md phase 7) : gestion des
+formations/facultés/années académiques elles-mêmes depuis l'admin (2
+facultés et 4 licences fixes, peu de raison de changer souvent — SQL
+Editor Supabase reste suffisant pour l'instant).
+
+## Espace étudiant (phase 6, 2026-09-25)
+
+Écrans construits, tous en lecture seule, filtrés par RLS
+(`lib/etudiant/data.ts`) :
+
+- **Tableau de bord** (`/etudiant`) : identité (matricule, formation,
+  année, statut), prochains examens, dernières annonces.
+- **Emploi du temps** (`/etudiant/emploi-du-temps`) : créneaux groupés
+  par jour.
+- **Supports de cours** (`/etudiant/supports`) : liste + téléchargement
+  (URL signée).
+- **Examens** (`/etudiant/examens`) : liste triée par date.
+- **Résultats** (`/etudiant/resultats`) : uniquement les résultats
+  **publiés** (la RLS filtre `publie = true` en plus de
+  `etudiant_id = mon_etudiant_id()` — un étudiant ne peut jamais voir un
+  résultat non publié, même le sien).
+- **Documents** (`/etudiant/documents`) : écran prêt (URLs signées), mais
+  affiche "Aucun document disponible" tant qu'aucune fonctionnalité
+  admin ne dépose de fichier dans `documents-etudiants` (hors périmètre
+  de cette passe — voir docs/03-roadmap.md).
+- **Annonces** (`/etudiant/annonces`) : liste triée par date de
+  publication, déjà filtrée par la RLS (globales + celles ciblant sa
+  formation/année).
 
 ## Modèle de garde d'authentification (deux niveaux)
 
