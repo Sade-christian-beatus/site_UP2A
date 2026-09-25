@@ -259,7 +259,7 @@ jamais de clé exposée).
 
 | Plugin | Rôle | Statut |
 |---|---|---|
-| `up2a-core` | Animation GSAP/Lenis, tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
+| `up2a-core` | Animation GSAP/Lenis (self-hostées, `assets/js/vendor/`), tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 ## Dépannage — "rien ne s'affiche comme voulu"

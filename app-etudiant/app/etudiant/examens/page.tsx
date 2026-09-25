@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { getMesExamens } from "@/lib/etudiant/data";
 import { TYPE_EXAMEN_LABELS, formatDateFr, formatHeure } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Examens — Espace étudiant UP-2A" };
 
 export default async function ExamensPage() {
   const examens = await getMesExamens();

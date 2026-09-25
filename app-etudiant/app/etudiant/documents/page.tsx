@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { getMesDocuments } from "@/lib/etudiant/data";
 import { TYPE_DOCUMENT_LABELS, formatDateFr } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Documents — Espace étudiant UP-2A" };
 
 export default async function DocumentsPage() {
   const documents = await getMesDocuments();

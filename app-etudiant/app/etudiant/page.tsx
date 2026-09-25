@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getMonEtudiant, getMesAnnonces, getMesExamens } from "@/lib/etudiant/data";
 import { formatDateFr } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Tableau de bord — Espace étudiant UP-2A" };
 
 const STATUT_LABELS: Record<string, string> = {
   actif: "Actif",

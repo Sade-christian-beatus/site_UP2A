@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   listFormations,
@@ -8,6 +9,8 @@ import {
 import { deleteExamen } from "@/lib/admin/academique-actions";
 import { FormationAnneeFilter } from "@/lib/admin/formation-annee-filter";
 import { DeleteButton } from "@/lib/admin/delete-button";
+
+export const metadata: Metadata = { title: "Examens — Back-office UP-2A" };
 import { ExamenForm } from "./examen-form";
 import { TYPE_EXAMEN_LABELS, formatDateFr, formatHeure } from "@/lib/academique/constants";
 

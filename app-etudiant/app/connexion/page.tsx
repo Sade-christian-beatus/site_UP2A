@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
+
+export const metadata: Metadata = { title: "Connexion — UP-2A" };
 
 export default function ConnexionPage() {
   return (

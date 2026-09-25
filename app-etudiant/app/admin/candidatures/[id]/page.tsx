@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -7,6 +8,8 @@ import {
 } from "@/lib/admin/candidatures";
 import { StatutForm } from "./statut-form";
 import { TransformerButton } from "./transformer-button";
+
+export const metadata: Metadata = { title: "Détail candidature — Back-office UP-2A" };
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (

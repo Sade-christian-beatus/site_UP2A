@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { getMesSupports } from "@/lib/etudiant/data";
 import { formatDateFr } from "@/lib/academique/constants";
+
+export const metadata: Metadata = { title: "Supports de cours — Espace étudiant UP-2A" };
 
 export default async function SupportsPage() {
   const supports = await getMesSupports();

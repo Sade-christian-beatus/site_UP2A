@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth/dal";
 import { LogoutButton } from "@/lib/auth/logout-button";
+import { NavLinks } from "@/lib/nav-links";
 
 const NAV_LINKS = [
   { href: "/etudiant", label: "Tableau de bord" },
@@ -26,15 +27,7 @@ export default async function EtudiantLayout({
         <LogoutButton />
       </header>
       <nav className="flex flex-wrap gap-1 border-b border-border bg-surface-alt px-6 py-2">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:bg-border hover:text-ink"
-          >
-            {link.label}
-          </Link>
-        ))}
+        <NavLinks links={NAV_LINKS} />
       </nav>
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-6 py-8">
         {children}
