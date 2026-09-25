@@ -3,17 +3,17 @@
 ## Vue d'ensemble
 
 ```
-┌─────────────────────┐      ┌───────────────────────────┐      ┌─────────────────────┐
-│   WordPress          │      │        Supabase            │      │   Next.js            │
-│   (vitrine publique)  │      │  (source unique de vérité) │      │  app-etudiant         │
-│                       │      │                             │      │  (étudiant + admin)   │
-│ - Home cinématique     │      │ - PostgreSQL (schéma métier)│      │                       │
-│ - Pages formations     │      │ - Auth (comptes étudiant/   │      │ - Auth via            │
-│ - Admissions/Contact   │      │   admin)                    │      │   @supabase/ssr        │
-│ - up2a-core (GSAP)     │◄────►│ - Storage (pièces jointes,  │◄────►│ - Dashboard étudiant   │
-│ - up2a-preinscription  │ REST │   supports de cours, docs)  │  JS  │ - Back-office admin    │
-│   (PHP, server-side)   │      │ - RLS (contrôle d'accès)    │      │                       │
-└─────────────────────┘      └───────────────────────────┘      └─────────────────────┘
+┌─────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────┐
+│   WordPress          │      │        Supabase            │      │  app-etudiant (Next.js) │
+│   (vitrine publique)  │      │  (source unique de vérité) │      │  espace.bdo-burkina.com │
+│                       │      │                             │      │  rôle "etudiant" seul   │
+│ - Home cinématique     │      │ - PostgreSQL (schéma métier)│      └───────────────────────┘
+│ - Pages formations     │      │ - Auth (comptes étudiant/   │      ┌───────────────────────┐
+│ - Admissions/Contact   │◄────►│   admin)                    │◄────►│  back-office (Next.js)  │
+│ - up2a-core (GSAP)     │ REST │ - Storage (pièces jointes,  │  JS  │  admin.bdo-burkina.com  │
+│ - up2a-preinscription  │      │   supports de cours, docs)  │      │  rôle "admin" seul      │
+│   (PHP, server-side)   │      │ - RLS (contrôle d'accès)    │      └───────────────────────┘
+└─────────────────────┘      └───────────────────────────┘
 ```
 
 - **WordPress** ne connaît la logique métier qu'à travers un seul point
@@ -23,9 +23,20 @@
   candidature/étudiant/académique ne vit ailleurs, ne serait-ce que
   temporairement (pas de synchronisation à double sens, pas de cache
   MySQL WordPress qui ferait autorité).
-- **Next.js** ne fait que lire/écrire dans Supabase via `@supabase/supabase-js`
-  avec la clé `anon` + RLS. Aucune logique d'autorisation dupliquée côté
-  client : la RLS est la seule source de vérité pour "qui peut voir quoi".
+- **Deux applications Next.js séparées** (2026-09-25) : `app-etudiant`
+  (espace étudiant, lecture seule, rôle `etudiant` uniquement) et
+  `back-office` (gestion admin, rôle `admin` uniquement) — deux projets
+  Vercel distincts, deux sous-domaines, aucun code partagé au runtime
+  (chacune a sa propre copie des fichiers communs : clients Supabase,
+  DAL d'authentification, tokens du design system — voir la note "Piège
+  corrigé" de chaque README pour les garder synchronisés). Un compte du
+  mauvais rôle qui se connecte sur l'une des deux apps est redirigé vers
+  l'autre plutôt que de boucler ou de voir une section qui ne le
+  concerne pas (voir `lib/auth/dal.ts` de chaque app).
+- Chaque app Next.js ne fait que lire/écrire dans Supabase via
+  `@supabase/supabase-js` avec la clé `anon` + RLS. Aucune logique
+  d'autorisation dupliquée côté client : la RLS est la seule source de
+  vérité pour "qui peut voir quoi".
 
 ## Flux 1 — Préinscription (WordPress → Supabase)
 
@@ -83,7 +94,7 @@ WP dédiée), qui lui seul parle à Supabase.
    depuis le back-office). Ces opérations passent par du code **exécuté
    côté serveur uniquement** — en pratique une Server Action (`"use
    server"`, cohérent avec le reste du code, voir
-   `app-etudiant/lib/admin/actions.ts`) plutôt qu'une route API dédiée :
+   `back-office/lib/actions.ts`) plutôt qu'une route API dédiée :
    les deux offrent la même garantie (jamais de code exécuté dans le
    navigateur), la Server Action évite juste d'introduire un deuxième
    pattern dans le projet.
@@ -142,7 +153,7 @@ RLS sur `storage.objects` dans `supabase/migrations/0004_storage_policies.sql` :
   lecture ouverte à l'étudiant pour sa propre formation/année depuis la
   phase 6 (`supabase/migrations/0005_storage_student_supports.sql`),
   basée sur la convention de chemin `{formation_id}/{annee_academique_id}/{uuid}.{ext}`
-  (voir `app-etudiant/lib/admin/academique-actions.ts` → `createSupport`).
+  (voir `back-office/lib/academique-actions.ts` → `createSupport`).
 - `documents-etudiants` — documents administratifs générés. RLS admin
   uniquement pour l'instant : aucune fonctionnalité ne génère encore de
   document (hors périmètre de la phase 6 telle que construite, voir

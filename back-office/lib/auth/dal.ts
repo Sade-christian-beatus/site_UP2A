@@ -42,12 +42,12 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
 /**
  * À appeler dans app/(app)/layout.tsx. Redirige vers /connexion si non
  * authentifié. Si authentifié mais avec le mauvais rôle (un compte
- * admin qui atterrit sur l'espace étudiant), redirige vers le
- * back-office plutôt que vers une route interne : cette app est
- * maintenant mono-rôle (étudiant uniquement), donc rediriger vers "/"
+ * étudiant qui atterrit sur le back-office), redirige vers l'espace
+ * étudiant plutôt que vers une route interne : cette app est
+ * maintenant mono-rôle (admin uniquement), donc rediriger vers "/"
  * bouclerait indéfiniment (le proxy et cette même fonction
- * réappliqueraient la même redirection). Si l'URL du back-office n'est
- * pas configurée, déconnecte plutôt que de boucler.
+ * réappliqueraient la même redirection). Si l'URL de l'espace étudiant
+ * n'est pas configurée, déconnecte plutôt que de boucler.
  */
 export async function requireRole(role: Profile["role"]): Promise<Profile> {
   const profile = await getProfile();
@@ -57,7 +57,7 @@ export async function requireRole(role: Profile["role"]): Promise<Profile> {
   }
 
   if (profile.role !== role) {
-    const autreAppUrl = process.env.NEXT_PUBLIC_BACKOFFICE_URL;
+    const autreAppUrl = process.env.NEXT_PUBLIC_ESPACE_ETUDIANT_URL;
     if (autreAppUrl) {
       redirect(autreAppUrl);
     }

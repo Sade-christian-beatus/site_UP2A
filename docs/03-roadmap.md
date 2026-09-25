@@ -86,7 +86,15 @@
       routage par rôle, design system.
 - [x] Écrans étudiant (lecture) : tableau de bord, emploi du temps,
       supports de cours, examens, résultats, documents, annonces. Voir
-      `app-etudiant/README.md` "Espace étudiant".
+      `app-etudiant/README.md` "Écrans".
+- [x] **Application séparée du back-office** (même date) : `app-etudiant`
+      ne porte plus que l'espace étudiant (rôle `etudiant` uniquement),
+      le back-office vit désormais dans `back-office/` — deux projets
+      Vercel, deux sous-domaines. Voir docs/01-architecture.md.
+- [x] Présentation modernisée : sidebar desktop / nav mobile à pastilles
+      avec icônes, avatar à initiales (couleur dérivée du nom, pas de
+      vraie photo — voir `app-etudiant/README.md` "Présentation"),
+      tableau de bord avec cartes de statistiques.
 - [x] Chaque écran = requêtes Supabase filtrées par RLS (`lib/etudiant/data.ts`),
       pas de logique d'autorisation dupliquée côté client — les policies
       `*_select_self_or_admin` filtrent déjà les lignes, la plupart des
@@ -104,18 +112,22 @@
 
 ## Phase 7 — Back-office (2026-09-25, MVP complet)
 
+- [x] **Application séparée de l'espace étudiant** (2026-09-25) : le
+      back-office vit désormais dans `back-office/` (son propre projet
+      Vercel, son propre sous-domaine), après avoir vécu sous `/admin`
+      dans `app-etudiant`. URLs aplaties (`/admin/...` → `/...`, cette
+      app étant mono-usage). Voir docs/01-architecture.md.
 - [x] Écrans admin : liste des candidatures (filtre par statut) +
       changement de statut, transformation candidature → étudiant (crée
       compte `auth.users` via `supabase.auth.admin.inviteUserByEmail`,
       exécuté dans une Server Action plutôt qu'une route API dédiée — même
       garantie de sécurité, `service_role` toujours server-only, cohérent
       avec le reste du code qui utilise déjà des Server Actions partout).
-      Voir `app-etudiant/README.md` "Back-office — candidatures".
+      Voir `back-office/README.md` "Candidatures".
 - [x] Saisie académique : emplois du temps, examens, résultats (saisie
       groupée par examen + publication/dépublication en masse), supports
       de cours (upload vers Storage), annonces (ciblage formation/année
-      optionnel). Voir `app-etudiant/README.md` "Back-office — saisie
-      académique".
+      optionnel). Voir `back-office/README.md` "Saisie académique".
 - [ ] Gestion des formations/facultés/années académiques elles-mêmes
       depuis l'admin (aujourd'hui : SQL Editor Supabase uniquement) — pas
       construit, non prioritaire vu la fréquence de changement quasi
@@ -143,12 +155,17 @@
 
 ## Phase 1 bis — Scaffold app-etudiant (peut démarrer en parallèle de la phase 1)
 
-Réalisée sans écrans métier, juste le socle technique :
+Réalisée sans écrans métier, juste le socle technique. **Note
+(2026-09-25)** : à l'origine une seule app Next.js portant les deux
+rôles (`/etudiant/*`, `/admin/*`) — depuis séparée en deux applications
+distinctes (`app-etudiant` et `back-office`, voir phases 6/7 et
+docs/01-architecture.md), chacune mono-rôle.
 
 - [x] Next.js + TypeScript + Tailwind + `@supabase/supabase-js`.
 - [x] Design system (docs/02) intégré comme tokens Tailwind.
 - [x] Garde d'authentification (proxy + layout protégé).
-- [x] Routage par rôle (`/etudiant/*`, `/admin/*`).
+- [x] Routage par rôle — remplacé depuis par deux apps séparées, chacune
+      mono-rôle (voir note ci-dessus).
 
 ## Hors périmètre tant que non explicitement ajouté à cette roadmap
 
