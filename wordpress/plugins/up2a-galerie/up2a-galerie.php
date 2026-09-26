@@ -4,9 +4,10 @@
  * Description:       Module "Galerie" (grille + lightbox photo) de la home
  *                     UP-2A — extrait de `up2a-core` (voir
  *                     docs/06-storyboard.md et docs/03-roadmap.md). Photos
- *                     modifiables dans inc/galerie.php sans toucher au
- *                     reste du site.
- * Version:           1.0.0
+ *                     gérées depuis le tableau de bord (menu "Galerie",
+ *                     CPT `up2a_photo`) — voir inc/cpt.php. Shortcode
+ *                     `[up2a_galerie]`.
+ * Version:           1.1.0
  * Requires PHP:      8.0
  * Requires Plugins:  up2a-core
  * Text Domain:        up2a-galerie
@@ -16,10 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_GALERIE_VERSION', '1.0.0' );
+define( 'UP2A_GALERIE_VERSION', '1.1.0' );
 define( 'UP2A_GALERIE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP2A_GALERIE_URL', plugin_dir_url( __FILE__ ) );
 
+require_once UP2A_GALERIE_PATH . 'inc/cpt.php';
 require_once UP2A_GALERIE_PATH . 'inc/galerie.php';
 
 /**

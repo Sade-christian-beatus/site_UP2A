@@ -1,18 +1,17 @@
 <?php
 /**
- * Page de détail d'une formation — servie sur /formations/{slug}/ (voir
- * inc/formations.php). Contenu strictement repris de
- * up2a_formations_formations() : aucune information (programme détaillé,
- * conditions spécifiques, effectifs...) n'est inventée pour cette page —
- * ce qui n'est pas encore confirmé par le client reste marqué comme
- * "à venir" plutôt que fabriqué (voir CLAUDE.md §3).
+ * Page de détail d'une formation — servie sur /formations/{slug}/, URL
+ * gérée nativement par le CPT `up2a_formation` (voir inc/cpt.php). Le
+ * "Programme" affiche le contenu principal du CPT s'il a été renseigné
+ * dans le tableau de bord, sinon "bientôt disponible" — jamais
+ * d'information inventée (voir CLAUDE.md §3).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$formation = up2a_formations_find( (string) get_query_var( 'up2a_formation' ) );
+$formation = up2a_formations_find( get_post_field( 'post_name', get_queried_object_id() ) );
 if ( null === $formation ) {
 	// Filet de sécurité : ne devrait pas arriver (déjà vérifié dans
 	// inc/formations.php avant de servir ce template).
@@ -49,17 +48,19 @@ get_header();
 	<section class="up2a-formation-page__banner">
 		<div class="up2a-section-inner up2a-formation-page__banner-grid">
 			<div class="up2a-formation-page__banner-media">
-				<picture>
-					<source srcset="<?php echo esc_url( $formation['image']['mobile'] ); ?>" media="(max-width: 640px)">
-					<img
-						src="<?php echo esc_url( $formation['image']['desktop'] ); ?>"
-						alt="<?php echo esc_attr( $formation['nom'] ); ?>"
-						loading="eager"
-						fetchpriority="high"
-						width="700"
-						height="500"
-					>
-				</picture>
+				<?php if ( ! empty( $formation['image']['desktop'] ) ) : ?>
+					<picture>
+						<source srcset="<?php echo esc_url( $formation['image']['mobile'] ); ?>" media="(max-width: 640px)">
+						<img
+							src="<?php echo esc_url( $formation['image']['desktop'] ); ?>"
+							alt="<?php echo esc_attr( $formation['nom'] ); ?>"
+							loading="eager"
+							fetchpriority="high"
+							width="700"
+							height="500"
+						>
+					</picture>
+				<?php endif; ?>
 			</div>
 			<div class="up2a-formation-page__banner-text">
 				<span class="up2a-formation-modal__badge up2a-formation-modal__badge--<?php echo esc_attr( strtolower( $formation['faculte'] ) ); ?>"><?php echo esc_html( $formation['faculte'] ); ?></span>
@@ -78,21 +79,29 @@ get_header();
 	<section class="up2a-formation-page__body">
 		<div class="up2a-section-inner up2a-formation-page__body-grid">
 			<div class="up2a-formation-page__main">
-				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Présentation', 'up2a-formations' ); ?></h2>
-				<p class="up2a-formation-modal__intro"><?php echo esc_html( $formation['intro'] ); ?></p>
+				<?php if ( ! empty( $formation['intro'] ) ) : ?>
+					<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Présentation', 'up2a-formations' ); ?></h2>
+					<p class="up2a-formation-modal__intro"><?php echo esc_html( $formation['intro'] ); ?></p>
+				<?php endif; ?>
 
-				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Débouchés', 'up2a-formations' ); ?></h2>
-				<ul class="up2a-formation-modal__debouches">
-					<?php foreach ( $formation['debouches'] as $debouche ) : ?>
-						<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
-					<?php endforeach; ?>
-				</ul>
+				<?php if ( ! empty( $formation['debouches'] ) ) : ?>
+					<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Débouchés', 'up2a-formations' ); ?></h2>
+					<ul class="up2a-formation-modal__debouches">
+						<?php foreach ( $formation['debouches'] as $debouche ) : ?>
+							<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 
 				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( 'Programme', 'up2a-formations' ); ?></h2>
-				<p class="up2a-formation-page__placeholder">
-					<?php echo up2a_core_content_icon( 'clock' ); ?>
-					<?php esc_html_e( 'Le détail du programme (matières et volumes horaires) sera publié prochainement.', 'up2a-formations' ); ?>
-				</p>
+				<?php if ( ! empty( $formation['programme'] ) ) : ?>
+					<div class="up2a-formation-page__programme"><?php echo wp_kses_post( $formation['programme'] ); ?></div>
+				<?php else : ?>
+					<p class="up2a-formation-page__placeholder">
+						<?php echo up2a_core_content_icon( 'clock' ); ?>
+						<?php esc_html_e( 'Le détail du programme (matières et volumes horaires) sera publié prochainement.', 'up2a-formations' ); ?>
+					</p>
+				<?php endif; ?>
 
 				<h2 class="up2a-section-title up2a-section-title--left"><?php esc_html_e( "Conditions d'admission", 'up2a-formations' ); ?></h2>
 				<ol class="up2a-formation-page__steps">
@@ -115,9 +124,11 @@ get_header();
 					<?php foreach ( $autres as $f ) : ?>
 						<li>
 							<a href="<?php echo esc_url( home_url( '/formations/' . $f['slug'] . '/' ) ); ?>">
-								<picture>
-									<img src="<?php echo esc_url( $f['image']['mobile'] ); ?>" alt="" loading="lazy" decoding="async" width="80" height="80">
-								</picture>
+								<?php if ( ! empty( $f['image']['mobile'] ) ) : ?>
+									<picture>
+										<img src="<?php echo esc_url( $f['image']['mobile'] ); ?>" alt="" loading="lazy" decoding="async" width="80" height="80">
+									</picture>
+								<?php endif; ?>
 								<span>
 									<strong><?php echo esc_html( $f['nom'] ); ?></strong>
 									<small><?php echo esc_html( $f['faculte'] ); ?></small>

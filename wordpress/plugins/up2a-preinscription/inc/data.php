@@ -9,16 +9,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Les 4 licences proposées (slug, faculté, nom). Les slugs DOIVENT
+ * Les licences proposées (slug, faculté, nom). Les slugs DOIVENT
  * correspondre exactement à `formations.slug` dans
  * `supabase/migrations/0003_seed.sql` — c'est ce slug qui sert à
  * résoudre le `formation_id` réel côté Supabase à la soumission (voir
  * `up2a_preinscription_resolve_formation_id()` dans inc/rest.php).
- * Repris aussi dans `wordpress/plugins/up2a-formations/inc/formations.php`
- * (`up2a_formations_formations()`) — à maintenir en cohérence si une
- * licence change.
+ *
+ * Depuis que les formations sont gérées depuis le tableau de bord (CPT
+ * `up2a_formation`, voir `wordpress/plugins/up2a-formations/inc/cpt.php`),
+ * cette fonction lit la liste **en direct** depuis ce plugin quand il est
+ * actif — sinon un slug ajouté depuis wp-admin serait accepté par la home
+ * mais rejeté ici à la soumission (voir docs/06-storyboard.md "CPT
+ * Formation depuis le dashboard"). Le tableau ci-dessous ne sert donc
+ * plus que de repli si `up2a-formations` n'est pas installé.
  */
 function up2a_preinscription_formations(): array {
+	if ( function_exists( 'up2a_formations_formations' ) ) {
+		$formations = array_map(
+			static function ( array $f ): array {
+				return array(
+					'slug'    => $f['slug'],
+					'nom'     => $f['nom'],
+					'faculte' => $f['faculte'],
+				);
+			},
+			up2a_formations_formations()
+		);
+		if ( ! empty( $formations ) ) {
+			return apply_filters( 'up2a_preinscription_formations', $formations );
+		}
+	}
+
 	$defaults = array(
 		array(
 			'slug'    => 'licence-droit-public',

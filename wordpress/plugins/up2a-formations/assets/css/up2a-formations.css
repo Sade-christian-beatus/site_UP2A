@@ -49,6 +49,14 @@
   z-index: 0;
 }
 
+/* Repli tant qu'aucune photo n'a encore été définie depuis le tableau de
+   bord (Formations → [formation] → "Photo de la formation") — jamais
+   d'image cassée (src vide), voir up2a_formations_render() dans
+   inc/formations.php. */
+.up2a-formations__card-media--placeholder {
+  background: linear-gradient(135deg, var(--up2a-color-primary), var(--up2a-color-primary-dark));
+}
+
 .up2a-formations__card-media img {
   width: 100%;
   height: 100%;

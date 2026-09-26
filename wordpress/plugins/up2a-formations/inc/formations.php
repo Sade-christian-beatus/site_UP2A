@@ -1,19 +1,17 @@
 <?php
 /**
- * Données et rendu du module "Formations" — extrait de
- * `up2a-core/inc/front-page.php` (voir docs/06-storyboard.md et
- * docs/03-roadmap.md "Scission Formations/Galerie"). Contenu (les 2
- * facultés, 4 licences) confirmé par le client, synchronisé avec
- * supabase/migrations/0003_seed.sql — à terme (docs/03-roadmap.md phase 4),
- * ce bloc lira un CPT "Formation" plutôt que ce tableau statique.
+ * Lecture et rendu du module "Formations" — le contenu vit désormais dans
+ * le CPT `up2a_formation` (voir inc/cpt.php), modifiable depuis le tableau
+ * de bord WordPress (menu "Formations"). Ce fichier ne fait plus que
+ * lire ce CPT et le présenter avec la même forme de données qu'avant
+ * (tableau slug/icone/nom/faculte/faculte_full/intro/debouches/image) —
+ * voir docs/06-storyboard.md "CPT Formation depuis le dashboard" pour le
+ * détail de cette migration (2026-09-26).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
  * `up2a_core_icon()`, décor `up2a_core_decor()`, URL de préinscription
- * `up2a_core_preinscription_url()`, constante `UP2A_CORE_URL` pour les
- * photos — voir up2a-formations.php "Requires Plugins"). Les photos
- * restent physiquement dans up2a-core/assets/img/ : ce sont les mêmes
- * visuels de campus déjà réutilisés par le Hero et la Galerie, pas des
- * assets propres à ce module.
+ * `up2a_core_preinscription_url()` — voir up2a-formations.php
+ * "Requires Plugins").
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,96 +19,77 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // --------------------------------------------------------------------
-// Données
+// Données — lues depuis le CPT up2a_formation (inc/cpt.php)
 // --------------------------------------------------------------------
 
-function up2a_formations_formations(): array {
-	$defaults = array(
-		array(
-			'slug'         => 'licence-droit-public',
-			'icone'        => 'scale',
-			'nom'          => __( 'Licence en Droit Public', 'up2a-formations' ),
-			'faculte'      => 'SJPA',
-			'faculte_full' => __( "Sciences Juridiques, Politiques et de l'Administration (SJPA)", 'up2a-formations' ),
-			'intro'        => __( 'Droit constitutionnel, administratif et institutions publiques.', 'up2a-formations' ),
-			'debouches'    => array(
-				__( 'Administration publique', 'up2a-formations' ),
-				__( 'Fonction publique', 'up2a-formations' ),
-				__( 'Collectivités territoriales', 'up2a-formations' ),
-			),
-			'image'        => array(
-				'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-1.webp',
-				'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-1-mobile.webp',
-			),
-		),
-		array(
-			'slug'         => 'licence-droit-prive',
-			'icone'        => 'users',
-			'nom'          => __( 'Licence en Droit Privé', 'up2a-formations' ),
-			'faculte'      => 'SJPA',
-			'faculte_full' => __( "Sciences Juridiques, Politiques et de l'Administration (SJPA)", 'up2a-formations' ),
-			'intro'        => __( 'Droit civil, des affaires et des contrats.', 'up2a-formations' ),
-			'debouches'    => array(
-				__( "Droit d'entreprise", 'up2a-formations' ),
-				__( 'Conseil juridique', 'up2a-formations' ),
-				__( 'Professions judiciaires', 'up2a-formations' ),
-			),
-			'image'        => array(
-				'desktop' => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment.webp',
-				'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment-mobile.webp',
-			),
-		),
-		array(
-			'slug'         => 'licence-logistique-internationale',
-			'icone'        => 'truck',
-			'nom'          => __( 'Licence en Logistique Internationale', 'up2a-formations' ),
-			'faculte'      => 'SEG',
-			'faculte_full' => __( 'Sciences Économiques et de Gestion (SEG)', 'up2a-formations' ),
-			'intro'        => __( "Transport, chaîne d'approvisionnement et commerce international.", 'up2a-formations' ),
-			'debouches'    => array(
-				__( 'Logistique & transport', 'up2a-formations' ),
-				__( "Chaîne d'approvisionnement", 'up2a-formations' ),
-				__( 'Commerce international', 'up2a-formations' ),
-			),
-			'image'        => array(
-				'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-2.webp',
-				'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-2-mobile.webp',
-			),
-		),
-		array(
-			'slug'         => 'licence-marketing-communication',
-			'icone'        => 'megaphone',
-			'nom'          => __( 'Licence en Marketing Communication', 'up2a-formations' ),
-			'faculte'      => 'SEG',
-			'faculte_full' => __( 'Sciences Économiques et de Gestion (SEG)', 'up2a-formations' ),
-			'intro'        => __( 'Stratégie de marque, communication et marketing digital.', 'up2a-formations' ),
-			'debouches'    => array(
-				__( 'Marketing', 'up2a-formations' ),
-				__( "Communication d'entreprise", 'up2a-formations' ),
-				__( 'Stratégie de marque', 'up2a-formations' ),
-			),
-			'image'        => array(
-				'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-facade.webp',
-				'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-facade-mobile.webp',
-			),
-		),
-	);
+/**
+ * Formate un post `up2a_formation` dans la forme de données attendue par
+ * le reste du plugin (inchangée depuis la version "tableau statique", pour
+ * ne pas avoir à toucher au rendu/JS/CSS lors de cette migration).
+ */
+function up2a_formations_format_post( \WP_Post $post ): array {
+	$termes        = get_the_terms( $post->ID, 'up2a_faculte' );
+	$terme         = ( is_array( $termes ) && ! empty( $termes ) ) ? $termes[0] : null;
+	$faculte       = $terme ? $terme->name : '';
+	$faculte_full  = $terme ? ( get_term_meta( $terme->term_id, 'nom_complet', true ) ?: $terme->name ) : '';
+	$debouches_raw = (string) get_post_meta( $post->ID, 'up2a_debouches', true );
+	$debouches     = array_values( array_filter( array_map( 'trim', explode( "\n", $debouches_raw ) ) ) );
 
-	$formations = apply_filters( 'up2a_formations_formations', $defaults );
-
-	// Garde-fou : si un filtre externe renvoie une valeur vide ou invalide,
-	// on retombe sur les 4 licences par défaut plutôt que d'afficher une
-	// section vide — voir docs/06-storyboard.md "Corrections et ajouts".
-	if ( ! is_array( $formations ) || empty( $formations ) ) {
-		return $defaults;
+	$thumb_id = get_post_thumbnail_id( $post );
+	$image    = array( 'desktop' => '', 'mobile' => '' );
+	if ( $thumb_id ) {
+		$desktop = wp_get_attachment_image_url( $thumb_id, 'up2a_formations_desktop' );
+		$mobile  = wp_get_attachment_image_url( $thumb_id, 'up2a_formations_mobile' );
+		$image   = array(
+			'desktop' => $desktop ?: '',
+			'mobile'  => $mobile ?: $desktop ?: '',
+		);
 	}
 
-	return $formations;
+	return array(
+		'id'           => $post->ID,
+		'slug'         => $post->post_name,
+		'icone'        => (string) get_post_meta( $post->ID, 'up2a_icone', true ) ?: 'book',
+		'nom'          => get_the_title( $post ),
+		'faculte'      => $faculte,
+		'faculte_full' => $faculte_full,
+		'intro'        => has_excerpt( $post ) ? get_the_excerpt( $post ) : '',
+		'programme'    => trim( (string) $post->post_content ) ? apply_filters( 'the_content', $post->post_content ) : '',
+		'debouches'    => $debouches,
+		'image'        => $image,
+	);
+}
+
+/**
+ * Liste des formations publiées, triées par ordre (Attributs de page →
+ * Ordre, dans l'écran d'édition du CPT). Mise en cache pour la durée de
+ * la requête : cette fonction est appelée plusieurs fois par page (rendu
+ * home, pied de page d'up2a-core, page de détail, synchronisation
+ * up2a-preinscription...).
+ */
+function up2a_formations_formations(): array {
+	static $cache = null;
+	if ( null !== $cache ) {
+		return $cache;
+	}
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'up2a_formation',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+		)
+	);
+
+	$cache = array_map( 'up2a_formations_format_post', $posts );
+	return $cache;
 }
 
 /**
  * Retrouve une formation par son slug, pour la page de détail (voir
- * up2a_formations_register_rewrite() plus bas) — évite de dupliquer la
+ * up2a_formations_template_include() plus bas) — évite de dupliquer la
  * boucle de recherche à chaque usage.
  */
 function up2a_formations_find( string $slug ): ?array {
@@ -128,6 +107,9 @@ function up2a_formations_find( string $slug ): ?array {
 
 function up2a_formations_render(): void {
 	$formations = up2a_formations_formations();
+	if ( empty( $formations ) ) {
+		return;
+	}
 	// Le module Galerie fournit les vignettes de la modale (choix de
 	// présentation, pas une dépendance technique) : si le plugin
 	// up2a-galerie n'est pas actif, la modale s'affiche simplement sans
@@ -148,17 +130,21 @@ function up2a_formations_render(): void {
 						data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
 						data-image-alt="<?php echo esc_attr( $f['nom'] ); ?>"
 					>
-						<picture class="up2a-formations__card-media">
-							<source srcset="<?php echo esc_url( $f['image']['mobile'] ); ?>" media="(max-width: 640px)">
-							<img
-								src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
-								alt=""
-								loading="lazy"
-								decoding="async"
-								width="600"
-								height="450"
-							>
-						</picture>
+						<?php if ( ! empty( $f['image']['desktop'] ) ) : ?>
+							<picture class="up2a-formations__card-media">
+								<source srcset="<?php echo esc_url( $f['image']['mobile'] ); ?>" media="(max-width: 640px)">
+								<img
+									src="<?php echo esc_url( $f['image']['desktop'] ); ?>"
+									alt=""
+									loading="lazy"
+									decoding="async"
+									width="600"
+									height="450"
+								>
+							</picture>
+						<?php else : ?>
+							<div class="up2a-formations__card-media up2a-formations__card-media--placeholder" aria-hidden="true"></div>
+						<?php endif; ?>
 						<span class="up2a-formations__badge up2a-formations__badge--<?php echo esc_attr( strtolower( $f['faculte'] ) ); ?>"><?php echo esc_html( $f['faculte'] ); ?></span>
 						<span class="up2a-formations__hover-link"><?php esc_html_e( 'Voir la formation', 'up2a-formations' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></span>
 						<span class="up2a-formations__card-footer">
@@ -177,14 +163,18 @@ function up2a_formations_render(): void {
 				<p class="up2a-formation-modal__highlight"><?php echo up2a_core_content_icon( $f['icone'] ); ?> <?php esc_html_e( 'Licence · 3 ans', 'up2a-formations' ); ?></p>
 				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_icon( 'cap' ); ?> <?php echo esc_html( $f['faculte_full'] ); ?></p>
 				<hr class="up2a-formation-modal__divider">
-				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Description', 'up2a-formations' ); ?></p>
-				<p class="up2a-formation-modal__intro"><?php echo esc_html( $f['intro'] ); ?></p>
-				<p class="up2a-formation-modal__label"><?php esc_html_e( 'Débouchés', 'up2a-formations' ); ?></p>
-				<ul class="up2a-formation-modal__debouches">
-					<?php foreach ( $f['debouches'] as $debouche ) : ?>
-						<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
-					<?php endforeach; ?>
-				</ul>
+				<?php if ( ! empty( $f['intro'] ) ) : ?>
+					<p class="up2a-formation-modal__label"><?php esc_html_e( 'Description', 'up2a-formations' ); ?></p>
+					<p class="up2a-formation-modal__intro"><?php echo esc_html( $f['intro'] ); ?></p>
+				<?php endif; ?>
+				<?php if ( ! empty( $f['debouches'] ) ) : ?>
+					<p class="up2a-formation-modal__label"><?php esc_html_e( 'Débouchés', 'up2a-formations' ); ?></p>
+					<ul class="up2a-formation-modal__debouches">
+						<?php foreach ( $f['debouches'] as $debouche ) : ?>
+							<li><?php echo up2a_core_content_icon( 'check' ); ?> <span><?php echo esc_html( $debouche ); ?></span></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 				<div class="up2a-formation-modal__actions">
 					<a href="<?php echo esc_url( up2a_core_preinscription_url( $f['slug'] ) ); ?>" class="up2a-hero__cta up2a-hero__cta--accent js-formation-modal-cta"><?php esc_html_e( 'Faire ma préinscription', 'up2a-formations' ); ?> <?php echo up2a_core_content_icon( 'arrow' ); ?></a>
 					<a href="<?php echo esc_url( home_url( '/formations/' . $f['slug'] . '/' ) ); ?>" class="up2a-hero__cta up2a-hero__cta--outline"><?php esc_html_e( 'Voir la fiche complète', 'up2a-formations' ); ?></a>
@@ -223,78 +213,33 @@ function up2a_formations_render(): void {
 	<?php
 }
 
-// --------------------------------------------------------------------
-// Pages de détail — /formations/{slug}/
-// --------------------------------------------------------------------
-// Approche retenue : une règle de réécriture + un template codé (même
-// logique que la home), pas un CPT ni un montage Elementor : le contenu
-// réel des 4 licences est déjà centralisé dans up2a_formations_formations()
-// (synchronisé avec supabase/migrations/0003_seed.sql), un CPT
-// dupliquerait cette source de vérité sans rien apporter pour seulement 4
-// pages fixes.
-
 /**
- * Déclare la règle `/formations/{slug}/` → `index.php?up2a_formation={slug}`.
- * Appelée sur `init` (cas normal) et directement à l'activation du plugin
- * (voir up2a-formations.php) pour que la règle existe avant le premier flush.
+ * Shortcode `[up2a_formations]` — permet d'insérer la section depuis
+ * n'importe quelle page (Elementor "Shortcode", éditeur de blocs...) sans
+ * toucher au code. Utilisé par défaut par la home onepage d'up2a-core
+ * (voir templates/front-page-onepage.php).
  */
-function up2a_formations_register_rewrite(): void {
-	add_rewrite_tag( '%up2a_formation%', '([^&/]+)' );
-	add_rewrite_rule( '^formations/([^/]+)/?$', 'index.php?up2a_formation=$matches[1]', 'top' );
-}
-add_action( 'init', 'up2a_formations_register_rewrite' );
-
-/**
- * Flush automatique si la version du plugin a changé depuis le dernier
- * chargement : filet de sécurité pour le cas fréquent où les fichiers sont
- * remplacés sans passer par une (dés)activation WordPress (voir
- * wordpress/README.md "Dépannage").
- */
-add_action(
-	'init',
-	function (): void {
-		if ( get_option( 'up2a_formations_rewrite_version' ) !== UP2A_FORMATIONS_VERSION ) {
-			flush_rewrite_rules();
-			update_option( 'up2a_formations_rewrite_version', UP2A_FORMATIONS_VERSION );
-		}
-	},
-	20
-);
-
-/**
- * Empêche WordPress de traiter la requête comme un 404 : aucune règle de
- * réécriture ne correspond à un contenu WP réel (page/article), donc la
- * requête principale ne trouve rien par défaut. On rétablit un statut 200
- * dès que le slug demandé correspond à une formation connue.
- */
-add_action(
-	'wp',
-	function (): void {
-		$slug = get_query_var( 'up2a_formation' );
-		if ( '' === $slug || null === $slug ) {
-			return;
-		}
-		if ( null === up2a_formations_find( $slug ) ) {
-			return; // Slug inconnu : on laisse WordPress rendre son vrai 404.
-		}
-		global $wp_query;
-		$wp_query->is_404 = false;
-		status_header( 200 );
+add_shortcode(
+	'up2a_formations',
+	function (): string {
+		ob_start();
+		up2a_formations_render();
+		return (string) ob_get_clean();
 	}
 );
 
-/**
- * Sert le template de détail dès que le slug demandé correspond à une
- * formation connue.
- */
+// --------------------------------------------------------------------
+// Pages de détail — /formations/{slug}/
+// --------------------------------------------------------------------
+// Le rewrite est désormais géré nativement par le CPT `up2a_formation`
+// (voir inc/cpt.php, `'rewrite' => array('slug' => 'formations')`) —
+// WordPress gère lui-même l'URL, le 404 et le flush des règles ; il ne
+// reste plus qu'à brancher le template de détail sur ce type de contenu.
+
 add_filter(
 	'template_include',
 	function ( string $template ): string {
-		$slug = get_query_var( 'up2a_formation' );
-		if ( '' === $slug || null === $slug ) {
-			return $template;
-		}
-		if ( null === up2a_formations_find( $slug ) ) {
+		if ( ! is_singular( 'up2a_formation' ) ) {
 			return $template;
 		}
 		$custom = UP2A_FORMATIONS_PATH . 'templates/formation-detail.php';
@@ -313,9 +258,8 @@ add_filter(
 add_action(
 	'wp_enqueue_scripts',
 	function (): void {
-		$is_home = is_singular( 'page' ) && get_page_template_slug( get_the_ID() ) === 'up2a-core-onepage.php';
-		$slug      = get_query_var( 'up2a_formation' );
-		$is_detail = '' !== $slug && null !== $slug && null !== up2a_formations_find( (string) $slug );
+		$is_home   = is_singular( 'page' ) && get_page_template_slug( get_the_ID() ) === 'up2a-core-onepage.php';
+		$is_detail = is_singular( 'up2a_formation' );
 
 		if ( ! $is_home && ! $is_detail ) {
 			return;

@@ -1,92 +1,71 @@
 <?php
 /**
- * Données et rendu du module "Galerie" — extrait de
- * `up2a-core/inc/front-page.php` (voir docs/06-storyboard.md et
- * docs/03-roadmap.md "Scission Formations/Galerie"). Photos disponibles à
- * ce jour (campus + vie étudiante, fournies par le client). D'autres
- * arriveront progressivement (voir CLAUDE.md §3) : le tableau ci-dessous
- * est filtrable via `up2a_galerie_images` pour en ajouter sans toucher au
- * code du plugin.
+ * Lecture et rendu du module "Galerie" — le contenu vit désormais dans le
+ * CPT `up2a_photo` (voir inc/cpt.php), modifiable depuis le tableau de
+ * bord WordPress (menu "Galerie"). Ce fichier ne fait plus que lire ce
+ * CPT et le présenter avec la même forme de données qu'avant
+ * (tableau desktop/mobile/alt/legende) — voir docs/06-storyboard.md "CPT
+ * Formation depuis le dashboard" (2026-09-26).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
- * `up2a_core_icon()`, décor `up2a_core_decor()`, constante `UP2A_CORE_URL`
- * pour les photos — voir up2a-galerie.php "Requires Plugins"). Les photos
- * restent physiquement dans up2a-core/assets/img/ : ce sont les mêmes
- * visuels de campus déjà réutilisés par le Hero et les Formations, pas des
- * assets propres à ce module.
+ * `up2a_core_icon()`, décor `up2a_core_decor()` — voir up2a-galerie.php
+ * "Requires Plugins").
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Liste des photos publiées, triées par ordre (Attributs de page → Ordre,
+ * dans l'écran d'édition du CPT), avec image définie (une entrée sans
+ * photo est ignorée plutôt que d'afficher un cadre cassé). Mise en cache
+ * pour la durée de la requête : cette fonction est appelée plusieurs fois
+ * par page (rendu galerie + modale Formations pour les vignettes).
+ */
 function up2a_galerie_images(): array {
-	$defaults = array(
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-1.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-1-mobile.webp',
-			'alt'     => __( "Le campus de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( 'Le campus', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-etudiants-batiment-mobile.webp',
-			'alt'     => __( "Étudiants de l'UP-2A devant le bâtiment", 'up2a-galerie' ),
-			'legende' => __( 'Vie étudiante', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-2.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-2-mobile.webp',
-			'alt'     => __( "Le bâtiment de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( 'Le bâtiment', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-facade.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-facade-mobile.webp',
-			'alt'     => __( "Façade principale du campus de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( 'La façade principale', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/pourquoi-photo.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/pourquoi-photo-mobile.webp',
-			'alt'     => __( "Étudiants devant le campus de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( 'Nos étudiants', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-angle.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-angle-mobile.webp',
-			'alt'     => __( "Vue d'angle du campus de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( 'Le campus, vue latérale', 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-campus-perspective.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-campus-perspective-mobile.webp',
-			'alt'     => __( "Architecture du bâtiment de l'UP-2A", 'up2a-galerie' ),
-			'legende' => __( "L'architecture", 'up2a-galerie' ),
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/gallery-vie-etudiante-groupe-mobile.webp',
-			'alt'     => __( "Groupe d'étudiants de l'UP-2A devant le campus", 'up2a-galerie' ),
-			'legende' => __( 'Nos étudiants sur le campus', 'up2a-galerie' ),
-		),
-	);
-
-	$images = apply_filters( 'up2a_galerie_images', $defaults );
-
-	// Garde-fou : un filtre externe qui renverrait une liste vide ne doit
-	// jamais vider la galerie.
-	if ( ! is_array( $images ) || empty( $images ) ) {
-		return $defaults;
+	static $cache = null;
+	if ( null !== $cache ) {
+		return $cache;
 	}
 
-	return $images;
+	$posts = get_posts(
+		array(
+			'post_type'      => 'up2a_photo',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+		)
+	);
+
+	$images = array();
+	foreach ( $posts as $post ) {
+		$thumb_id = get_post_thumbnail_id( $post );
+		if ( ! $thumb_id ) {
+			continue;
+		}
+		$desktop = wp_get_attachment_image_url( $thumb_id, 'up2a_galerie_desktop' );
+		$mobile  = wp_get_attachment_image_url( $thumb_id, 'up2a_galerie_mobile' );
+		if ( ! $desktop ) {
+			continue;
+		}
+		$images[] = array(
+			'desktop' => $desktop,
+			'mobile'  => $mobile ?: $desktop,
+			'alt'     => (string) get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ),
+			'legende' => get_the_title( $post ),
+		);
+	}
+
+	$cache = $images;
+	return $cache;
 }
 
 /**
  * Galerie photo (grille + lightbox tactile). N'affiche rien si aucune
  * image n'est disponible (jamais de cadre vide) — voir
- * up2a_galerie_images() pour ajouter des photos sans coder.
+ * up2a_galerie_images() pour ajouter des photos depuis le tableau de bord.
  */
 function up2a_galerie_render(): void {
 	$images = up2a_galerie_images();
@@ -178,3 +157,18 @@ function up2a_galerie_render(): void {
 	</section>
 	<?php
 }
+
+/**
+ * Shortcode `[up2a_galerie]` — permet d'insérer la section depuis
+ * n'importe quelle page (Elementor "Shortcode", éditeur de blocs...) sans
+ * toucher au code. Utilisé par défaut par la home onepage d'up2a-core
+ * (voir templates/front-page-onepage.php).
+ */
+add_shortcode(
+	'up2a_galerie',
+	function (): string {
+		ob_start();
+		up2a_galerie_render();
+		return (string) ob_get_clean();
+	}
+);

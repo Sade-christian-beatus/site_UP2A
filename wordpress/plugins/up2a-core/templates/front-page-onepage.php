@@ -22,13 +22,17 @@ get_header();
 
 	// Formations et Galerie sont des plugins séparés (up2a-formations,
 	// up2a-galerie — voir docs/06-storyboard.md "Scission Formations/
-	// Galerie") : chaque section ne s'affiche que si son plugin est actif,
-	// plutôt que de faire échouer toute la home s'il ne l'est pas.
-	if ( function_exists( 'up2a_formations_render' ) ) {
-		up2a_formations_render();
+	// Galerie"), affichés via leurs shortcodes `[up2a_formations]` /
+	// `[up2a_galerie]` plutôt qu'un appel direct : ça permet de replacer
+	// chaque section ailleurs (Elementor, éditeur de blocs...) depuis
+	// wp-admin sans toucher au code. Chaque section ne s'affiche que si
+	// son plugin est actif, plutôt que de faire échouer toute la home
+	// s'il ne l'est pas.
+	if ( shortcode_exists( 'up2a_formations' ) ) {
+		echo do_shortcode( '[up2a_formations]' );
 	}
-	if ( function_exists( 'up2a_galerie_render' ) ) {
-		up2a_galerie_render();
+	if ( shortcode_exists( 'up2a_galerie' ) ) {
+		echo do_shortcode( '[up2a_galerie]' );
 	}
 
 	up2a_core_render_admissions();

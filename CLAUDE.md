@@ -76,8 +76,8 @@ up2a/
 │   ├── README.md                 install propre + wipe + plugins requis
 │   └── plugins/
 │       ├── up2a-core/            couche animation (GSAP/Lenis), tokens, en-tête
-│       ├── up2a-formations/      module Formations (cartes + détail), dépend d'up2a-core
-│       ├── up2a-galerie/         module Galerie (grille + lightbox), dépend d'up2a-core
+│       ├── up2a-formations/      Formations (CPT, shortcode [up2a_formations]), dépend d'up2a-core
+│       ├── up2a-galerie/         Galerie (CPT, shortcode [up2a_galerie]), dépend d'up2a-core
 │       └── up2a-preinscription/  formulaire → Supabase (sans paiement)
 ├── app-etudiant/                 espace étudiant (Next.js, lecture seule)
 │   └── README.md
@@ -92,10 +92,12 @@ application plutôt que de voir une section qui ne le concerne pas.
 
 Côté WordPress, `up2a-formations` et `up2a-galerie` sont scindés
 d'`up2a-core` depuis le 2026-09-26 (voir wordpress/README.md "Statut des
-plugins maison") : chacun gère ses propres données (images, titres) et
-dépend d'`up2a-core` (icônes, décor, styles partagés) ; la home affiche
-simplement la section correspondante en moins si l'un des deux n'est pas
-actif, jamais une erreur bloquante.
+plugins maison") : chacun gère son propre contenu via un CPT modifiable
+depuis le tableau de bord (menus "Formations"/"Galerie", plus de tableau
+statique dans le code depuis la v1.1.0) et dépend d'`up2a-core` (icônes,
+décor, styles partagés) ; la home affiche chaque section via son
+shortcode (`[up2a_formations]`/`[up2a_galerie]`), en moins si le plugin
+correspondant n'est pas actif — jamais une erreur bloquante.
 
 ## 6. Ordre de travail recommandé
 

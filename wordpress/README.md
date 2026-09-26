@@ -109,8 +109,10 @@ de cette page tant qu'on n'en a pas besoin).
   (slider de photos de campus + **compte à rebours de la rentrée**),
   "Pourquoi choisir l'UP-2A" (collage photo + checklist), les Valeurs, les
   Formations (cartes façon "fiche" qui **ouvrent une modale** de détail au
-  clic — fournies par `up2a-formations`), une **Galerie photo** (grille +
-  lightbox, 7 photos — fournie par `up2a-galerie`), "Comment candidater"
+  clic — fournies par `up2a-formations`, shortcode `[up2a_formations]`,
+  contenu modifiable depuis le menu wp-admin "Formations"), une **Galerie
+  photo** (grille + lightbox — fournie par `up2a-galerie`, shortcode
+  `[up2a_galerie]`, menu "Galerie"), "Comment candidater"
   (grande carte pour la 1ère étape + 3 petites cartes), la section Contact
   (coordonnées + **carte Google Maps intégrée**) et un pied de page
   multi-colonnes (voir docs/06-storyboard.md). Chaque section a un léger
@@ -166,13 +168,50 @@ sans cette constante, la photo par défaut reste utilisée — plus jamais
 l'illustration vectorielle, gardée uniquement comme filet de sécurité si
 le fichier venait à manquer).
 
-La **Galerie** (plugin `up2a-galerie`) affiche par défaut 7 photos (campus
-+ vie étudiante, fournies par le client). Pour en ajouter d'autres sans
-toucher au code, utiliser le filtre `up2a_galerie_images` depuis un
-mu-plugin (même logique que `up2a_core_hero_slides` ci-dessus), ou
-demander une mise à jour du plugin. Les **Formations** (plugin
-`up2a-formations`, les 4 licences) sont modifiables de la même façon via
-le filtre `up2a_formations_formations`.
+### Formations et Galerie — modifiables depuis le tableau de bord (2026-09-26)
+
+Depuis cette date, le contenu de ces deux sections **ne vit plus dans le
+code** : chacune a son propre menu dans wp-admin.
+
+- **Formations** (plugin `up2a-formations`) : menu **Formations**. Chaque
+  licence est une entrée avec titre (nom), texte "Extrait" (description
+  courte affichée dans la modale et sur la page de détail), contenu
+  principal (sert de section "Programme" sur la page de détail — laissez
+  vide pour afficher "bientôt disponible"), photo mise en avant, une
+  métabox "Détails de la formation" (icône, débouchés — un par ligne), et
+  l'attribut "Ordre" (Attributs de page) pour l'ordre d'affichage des
+  cartes. La **Faculté** (SJPA/SEG) est un menu séparé **Formations →
+  Facultés**, comme les catégories d'articles : chaque terme a un champ
+  "Nom complet" (ex. "SJPA" → "Sciences Juridiques, Politiques et de
+  l'Administration (SJPA)"), et un terme peut être créé si l'université
+  ouvre une 3ᵉ faculté un jour, sans toucher au code.
+- **Galerie** (plugin `up2a-galerie`) : menu **Galerie**. Chaque photo est
+  une entrée avec un titre (sert de légende affichée sous la photo), une
+  image mise en avant, et l'attribut "Ordre" — la première entrée devient
+  la vignette "en avant" avec le défilement automatique. Le texte
+  alternatif (accessibilité) se règle depuis **Médias** → modifier l'image
+  → "Texte alternatif", pas depuis l'écran de la photo.
+- **Après avoir installé cette mise à jour** : les 4 licences et les 8
+  photos existantes sont recréées automatiquement une seule fois (avec
+  leurs photos d'origine, pour ne rien faire disparaître du site), pas
+  besoin de les ressaisir. Pour toute **nouvelle** formation/photo ajoutée
+  depuis wp-admin, définir sa photo est le seul geste manuel requis —
+  sans elle, la carte s'affiche sans image plutôt que cassée.
+- **Où ces sections s'affichent** : chacune est un shortcode —
+  `[up2a_formations]` et `[up2a_galerie]`. Par défaut la home onepage les
+  affiche automatiquement (elle exécute ces shortcodes elle-même), mais
+  rien n'empêche de coller `[up2a_formations]` dans un widget "Shortcode"
+  Elementor sur une autre page si besoin de la déplacer sans toucher au
+  code.
+- **Changement par rapport aux versions précédentes** : `up2a_formations_formations()`
+  et `up2a_galerie_images()` existent toujours (même forme de résultat,
+  utilisées ailleurs dans le code — vignettes de la modale, colonne du
+  pied de page, validation de `up2a-preinscription`...), mais lisent
+  désormais le CPT plutôt qu'un tableau filtrable par
+  `apply_filters()`. Un filtre `up2a_formations_formations`/
+  `up2a_galerie_images` posé depuis un mu-plugin (aucun ne l'était à ce
+  jour sur ce projet) ne serait donc plus appliqué — passer par le
+  tableau de bord à la place.
 
 ### Documents (brochure) — actuellement hors du parcours de la page
 
@@ -284,15 +323,16 @@ define('UP2A_ESPACE_ETUDIANT_URL', 'https://espace.bdo-burkina.com/');
 | Plugin | Rôle | Statut |
 |---|---|---|
 | `up2a-core` | Animation GSAP/Lenis (self-hostées, `assets/js/vendor/`), tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) — **à activer en premier** |
-| `up2a-formations` | Module "Formations" (cartes + modale + pages détail `/formations/{slug}/`) — scindé de `up2a-core` le 2026-09-26 | Prêt (`up2a-formations.zip` fourni) — nécessite `up2a-core` actif |
-| `up2a-galerie` | Module "Galerie" (grille + lightbox photo) — scindé de `up2a-core` le 2026-09-26 | Prêt (`up2a-galerie.zip` fourni) — nécessite `up2a-core` actif |
+| `up2a-formations` | Module "Formations" (CPT `up2a_formation`, cartes + modale + pages détail `/formations/{slug}/`, shortcode `[up2a_formations]`) — scindé de `up2a-core` le 2026-09-26, contenu géré depuis le tableau de bord depuis la v1.1.0 | Prêt (`up2a-formations.zip` fourni) — nécessite `up2a-core` actif |
+| `up2a-galerie` | Module "Galerie" (CPT `up2a_photo`, grille + lightbox photo, shortcode `[up2a_galerie]`) — scindé de `up2a-core` le 2026-09-26, contenu géré depuis le tableau de bord depuis la v1.1.0 | Prêt (`up2a-galerie.zip` fourni) — nécessite `up2a-core` actif |
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
 
 `up2a-formations` et `up2a-galerie` sont des plugins **séparés** de
-`up2a-core` (pas des extensions Elementor, pas des CPT) : chacun gère ses
-propres données (images, titres, descriptions) dans son fichier
-`inc/*.php`, modifiable sans toucher au reste du site. Ils dépendent tous
-les deux de `up2a-core` (icônes, décor, styles/utilitaires partagés,
+`up2a-core` : chacun gère son propre contenu via un CPT (voir "Formations
+et Galerie — modifiables depuis le tableau de bord" ci-dessus), affiché
+via un shortcode dédié plutôt qu'un appel de code — modifiable
+entièrement depuis wp-admin, sans toucher au reste du site. Ils dépendent
+tous les deux de `up2a-core` (icônes, décor, styles/utilitaires partagés,
 URL de préinscription) — WordPress refuse de les activer si `up2a-core`
 ne l'est pas déjà (en-tête `Requires Plugins`). La modale de détail d'une
 formation affiche des vignettes tirées de la Galerie si `up2a-galerie`
@@ -311,16 +351,17 @@ est actif ; sinon elle s'affiche simplement sans ce bandeau de vignettes.
 > ci-dessous.
 
 > **Pages formation (`/formations/{slug}/`) en 404 après mise à jour**
-> (2026-09-25) : ces pages sont servies par une règle de réécriture
-> ajoutée par `up2a-formations` (depuis le 2026-09-26 ; `up2a-core`
-> avant cette date), pas par une vraie page WordPress. Si elles ne se
-> chargent pas après avoir remplacé le zip du plugin (même symptôme déjà
-> rencontré sur `/preinscription/`, voir plus bas) : **Réglages →
-> Permaliens → Enregistrer les modifications**, sans rien changer — cela
-> force WordPress à regénérer ses règles. Un filet de sécurité dans le
-> code le fait aussi automatiquement à la prochaine visite si le numéro
-> de version du plugin a changé, mais un flush manuel reste plus rapide
-> si vous voulez tester tout de suite.
+> (2026-09-25) : ces pages sont servies par le rewrite natif du CPT
+> `up2a_formation` (`up2a-formations`, depuis la v1.1.0/2026-09-26 ; une
+> règle de réécriture codée à la main avant cette date, puis dans
+> `up2a-core` avant le 2026-09-26), pas par une vraie page WordPress. Si
+> elles ne se chargent pas après avoir remplacé le zip du plugin (même
+> symptôme déjà rencontré sur `/preinscription/`, voir plus bas) :
+> **Réglages → Permaliens → Enregistrer les modifications**, sans rien
+> changer — cela force WordPress à regénérer ses règles. Un filet de
+> sécurité dans le code le fait aussi automatiquement à la prochaine
+> visite si le numéro de version du plugin a changé, mais un flush manuel
+> reste plus rapide si vous voulez tester tout de suite.
 
 Dans l'ordre le plus probable :
 
@@ -371,21 +412,19 @@ Dans l'ordre le plus probable :
       source) et chercher `up2a-front-page.css?ver=` — le numéro doit
       correspondre au `Version:` de `up2a-core.php` dans ce dépôt.
 7. **Une section précise reste vide alors que tout le reste de la page est
-   à jour** (diagnostiqué le 2026-09-22 sur "Nos formations" : le HTML et
-   le CSS les plus récents sont bien servis partout ailleurs sur la même
-   page, mais une seule section n'affiche aucun contenu et ne réagit pas
-   au clic). Ce n'est **pas** un souci de cache (qui affecterait toute la
-   page, pas une section isolée) — c'est le signe qu'une autre extension
-   active sur le site modifie ou vide les données de cette section via un
-   filtre WordPress (`up2a_formations_formations`, `up2a_galerie_images`...).
-   Pour isoler la cause : désactivez temporairement toutes les extensions
-   sauf Elementor, Hello Elementor, `up2a-core`, `up2a-formations` et
-   `up2a-galerie`, rechargez la page ; si la section réapparaît, réactivez
-   les autres extensions une par une pour trouver la responsable. Depuis
-   la version 0.9.1 (`up2a-core` à l'époque, `up2a-formations`/
-   `up2a-galerie` depuis leur création), un filtre qui renverrait une liste
-   vide est ignoré au profit du contenu par défaut, donc ce cas précis ne
-   devrait plus produire de section vide.
+   à jour** (diagnostiqué le 2026-09-22 sur "Nos formations"). Ce n'est
+   **pas** un souci de cache (qui affecterait toute la page, pas une
+   section isolée). Depuis la v1.1.0 (`up2a-formations`/`up2a-galerie`,
+   contenu géré depuis un CPT plutôt qu'un tableau statique) : vérifiez
+   d'abord **Formations**/**Galerie** dans wp-admin — la section entière
+   ne s'affiche pas si le CPT n'a aucune entrée **publiée** (statut
+   "Brouillon" au lieu de "Publié", par exemple). Une entrée sans photo
+   ne fait, elle, disparaître que sa propre carte (fond dégradé sans
+   image pour une formation ; ignorée pour une photo de galerie), jamais
+   toute la section. Si les entrées sont bien publiées et ont une photo
+   mais que la section reste vide, désactivez temporairement les
+   extensions tierces (hors Elementor, Hello Elementor et les plugins
+   `up2a-*`) pour écarter un conflit.
 8. **La section "Nos formations" ou "Galerie" a disparu depuis une mise à
    jour récente (2026-09-26)** : ces deux modules sont désormais des
    plugins séparés (`up2a-formations`, `up2a-galerie`), plus intégrés à
@@ -405,6 +444,7 @@ diagnostic précis.
 - [ ] Hello Elementor + Elementor installés et activés
 - [ ] `up2a-core` installé et activé (dernière version), en-tête visible sur le site
 - [ ] `up2a-formations` et `up2a-galerie` installés et activés (après `up2a-core`)
+- [ ] Menus wp-admin "Formations" et "Galerie" contiennent bien les entrées existantes avec leurs photos (recréées automatiquement à l'activation — vérifier qu'aucune n'affiche un cadre vide)
 - [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
 - [ ] Page créée, modèle "Accueil UP-2A (onepage)" assigné (Attributs de page)
 - [ ] Cette page définie comme page d'accueil (Réglages → Lecture → "Une page statique")

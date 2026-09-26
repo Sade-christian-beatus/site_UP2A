@@ -382,6 +382,68 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   correspondants). Sans impact connu à ce jour : aucun mu-plugin/thème
   enfant n'utilisait encore ces filtres.
 
+## CPT Formation depuis le dashboard (2026-09-26)
+
+- **Pourquoi** : demande explicite de rendre Formations et Galerie
+  "modifiables à partir du tableau de bord" et affichées via un
+  shortcode plutôt qu'un appel de code — la version "plugins séparés"
+  ci-dessus scindait déjà le code, mais le contenu restait un tableau PHP
+  statique, donc toujours non modifiable sans mise à jour du plugin.
+- **Modèle retenu** : un CPT par plugin plutôt qu'un simple tableau
+  filtrable (`apply_filters`) — un CPT donne un vrai écran d'édition
+  wp-admin (titre, image, champs), ce qu'un filtre ne permet pas sans
+  écrire soi-même une page de réglages.
+  - `up2a-formations` → CPT `up2a_formation` (titre = nom, extrait =
+    description courte, contenu = "Programme" sur la page de détail,
+    image mise en avant, attribut d'ordre) + taxonomie `up2a_faculte`
+    (SJPA/SEG, champ "Nom complet" par terme — une 3ᵉ faculté se crée
+    depuis wp-admin sans toucher au code) + métabox "Détails" (icône en
+    liste fermée pour éviter une faute de frappe silencieuse, débouchés
+    un par ligne). Le rewrite `/formations/{slug}/` est désormais géré
+    nativement par le CPT (`'rewrite' => ['slug' => 'formations']`),
+    WordPress gère lui-même l'URL/404/permaliens — supprime la règle de
+    réécriture manuelle + le filtre 404 codés à la main pour la phase 4.
+  - `up2a-galerie` → CPT `up2a_photo` (titre = légende, image mise en
+    avant, attribut d'ordre — la première entrée devient la vignette "en
+    avant"). CPT non public (`'public' => false`) : pas de page de
+    détail, ces photos ne s'affichent que dans la grille/lightbox. Le
+    texte alternatif vient du champ natif de la médiathèque
+    (`_wp_attachment_image_alt`), pas d'un champ dupliqué.
+- **Amorçage automatique, avec les photos d'origine** : à la première
+  exécution après mise à jour (vérifié sur `init`, même filet de sécurité
+  que le flush des règles de réécriture — tourne même sans passer par une
+  désactivation/réactivation explicite), chaque plugin recrée ses entrées
+  par défaut (4 licences, 8 photos) **et** copie dans la médiathèque
+  WordPress la même photo que l'ancienne version "tableau statique"
+  utilisait pour cette entrée (`wp_upload_bits()` + `wp_insert_attachment()`
+  depuis un fichier déjà présent dans `up2a-core/assets/img/`), pour que
+  la mise à jour ne fasse RIEN disparaître d'un site déjà en ligne avec du
+  vrai contenu. Une formation/photo ajoutée ensuite depuis wp-admin (pas
+  par cet amorçage) doit avoir sa photo définie manuellement une fois ;
+  tant que ce n'est pas fait, la carte s'affiche sans image (fond dégradé
+  pour une formation, entrée simplement ignorée pour une photo de
+  galerie) plutôt qu'avec une image cassée.
+- **Shortcodes** `[up2a_formations]` / `[up2a_galerie]` : la home onepage
+  d'`up2a-core` les exécute elle-même par défaut
+  (`shortcode_exists()` + `do_shortcode()`, remplace l'appel direct de
+  fonction de la phase 4 bis), mais rien n'empêche de coller le shortcode
+  dans un widget Elementor "Shortcode" sur une autre page pour déplacer
+  la section sans toucher au code.
+- **Correctif de cohérence appliqué du même coup** : `up2a-preinscription`
+  dupliquait sa propre liste statique des 4 licences pour la validation
+  serveur du champ `formation` (voir inc/data.php). Une fois les
+  formations éditables depuis wp-admin, garder cette liste figée aurait
+  créé un vrai bug : une formation ajoutée depuis le dashboard aurait été
+  proposée sur la home mais **rejetée** à la soumission du formulaire de
+  préinscription. `up2a_preinscription_formations()` lit désormais
+  `up2a_formations_formations()` en priorité (repli sur son ancienne
+  liste statique si `up2a-formations` n'est pas actif).
+- **Changement de contrat** : `up2a_formations_formations()` et
+  `up2a_galerie_images()` gardent la même forme de retour (même clés de
+  tableau) mais ne passent plus par `apply_filters()` — un mu-plugin qui
+  aurait modifié leur contenu via ce filtre (aucun sur ce projet à ce
+  jour) devrait passer par le tableau de bord à la place.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc

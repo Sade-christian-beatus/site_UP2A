@@ -116,6 +116,24 @@
   color: var(--up2a-color-ink-soft);
 }
 
+/* Contenu principal du CPT (renseigné depuis le tableau de bord),
+   affiché ici s'il n'est pas vide — voir up2a_formations_format_post()
+   dans inc/formations.php. */
+.up2a-formation-page__programme {
+  color: var(--up2a-color-ink-soft);
+  line-height: 1.65;
+  margin: 0 0 20px;
+}
+
+.up2a-formation-page__programme > * + * {
+  margin-top: 1em;
+}
+
+.up2a-formation-page__programme ul,
+.up2a-formation-page__programme ol {
+  padding-left: 1.25em;
+}
+
 .up2a-formation-page__steps {
   margin: 0 0 12px;
   padding-left: 22px;
