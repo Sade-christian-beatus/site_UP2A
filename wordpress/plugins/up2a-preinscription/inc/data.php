@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `supabase/migrations/0003_seed.sql` — c'est ce slug qui sert à
  * résoudre le `formation_id` réel côté Supabase à la soumission (voir
  * `up2a_preinscription_resolve_formation_id()` dans inc/rest.php).
- * Repris aussi dans `wordpress/plugins/up2a-core/inc/front-page.php`
- * (`up2a_core_formations()`) — à maintenir en cohérence si une licence
- * change.
+ * Repris aussi dans `wordpress/plugins/up2a-formations/inc/formations.php`
+ * (`up2a_formations_formations()`) — à maintenir en cohérence si une
+ * licence change.
  */
 function up2a_preinscription_formations(): array {
 	$defaults = array(

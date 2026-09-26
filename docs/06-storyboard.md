@@ -340,6 +340,48 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   wordpress/README.md "Dépannage") — les deux causes peuvent se
   superposer.
 
+## Scission Formations/Galerie en plugins dédiés (2026-09-26)
+
+- **Pourquoi** : demande explicite de scinder les modules Formations et
+  Galerie hors du plugin `up2a-core`, chacun dans son propre plugin
+  (`up2a-formations`, `up2a-galerie`) — pour pouvoir les gérer/désactiver
+  indépendamment sans toucher au reste de la couche d'animation/en-tête.
+- **Ce qui a été déplacé** :
+  - `up2a-formations` : les 4 licences (`up2a_formations_formations()`),
+    les cartes + la modale de détail (`up2a_formations_render()`), la
+    règle de réécriture `/formations/{slug}/` et son template
+    (`templates/formation-detail.php`), le CSS/JS propres à ces deux
+    écrans.
+  - `up2a-galerie` : les photos (`up2a_galerie_images()`), la grille +
+    lightbox (`up2a_galerie_render()`), le CSS/JS propres à cette
+    section.
+- **Ce qui reste dans `up2a-core`** (dépendance obligatoire des deux
+  nouveaux plugins, en-tête `Requires Plugins`) : les tokens du design
+  system, l'en-tête du site, Hero/Pourquoi/Valeurs/Documents/Admissions/
+  Contact/pied de page, le système de décor de fond (`up2a_core_decor()`,
+  y compris sa variante `--galerie` : c'est un système visuel central,
+  pas un asset propre à la Galerie), les icônes de contenu
+  (`up2a_core_content_icon()`), l'URL de préinscription
+  (`up2a_core_preinscription_url()`) et les photos de campus partagées
+  (`assets/img/` — les mêmes fichiers servent au Hero, aux Formations et
+  à la Galerie, donc ils restent au même endroit plutôt que d'être
+  dupliqués).
+- **Dépendances croisées, résolues par degradation propre plutôt que par
+  erreur** : le footer d'`up2a-core` (colonne "Nos formations") et la
+  modale Formations (vignettes tirées de la Galerie) appellent la
+  fonction du plugin voisin via `function_exists()` — si ce plugin
+  n'est pas actif, la colonne/le bandeau concerné est simplement absent,
+  jamais une erreur PHP. La home (`templates/front-page-onepage.php`,
+  dans `up2a-core`) fait de même pour les deux sections entières.
+- **Renommage des fonctions/filtres** : `up2a_core_formations` →
+  `up2a_formations_formations`, `up2a_core_find_formation` →
+  `up2a_formations_find`, `up2a_core_render_formations` →
+  `up2a_formations_render`, `up2a_core_gallery_images` →
+  `up2a_galerie_images`, `up2a_core_render_galerie` →
+  `up2a_galerie_render` (même chose pour les filtres `apply_filters`
+  correspondants). Sans impact connu à ce jour : aucun mu-plugin/thème
+  enfant n'utilisait encore ces filtres.
+
 ## Règles transverses (toutes scènes)
 
 - Toute scène avec pin/effet 3D/parallaxe lourd est déclarée dans un bloc

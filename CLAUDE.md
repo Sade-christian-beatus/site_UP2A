@@ -75,7 +75,9 @@ up2a/
 ├── wordpress/
 │   ├── README.md                 install propre + wipe + plugins requis
 │   └── plugins/
-│       ├── up2a-core/            couche animation (GSAP/Lenis)
+│       ├── up2a-core/            couche animation (GSAP/Lenis), tokens, en-tête
+│       ├── up2a-formations/      module Formations (cartes + détail), dépend d'up2a-core
+│       ├── up2a-galerie/         module Galerie (grille + lightbox), dépend d'up2a-core
 │       └── up2a-preinscription/  formulaire → Supabase (sans paiement)
 ├── app-etudiant/                 espace étudiant (Next.js, lecture seule)
 │   └── README.md
@@ -87,6 +89,13 @@ Deux applications Next.js **distinctes** (deux projets Vercel, deux
 sous-domaines) depuis la scission du 2026-09-25 : un compte étudiant qui
 atterrit sur le back-office (ou inversement) est redirigé vers l'autre
 application plutôt que de voir une section qui ne le concerne pas.
+
+Côté WordPress, `up2a-formations` et `up2a-galerie` sont scindés
+d'`up2a-core` depuis le 2026-09-26 (voir wordpress/README.md "Statut des
+plugins maison") : chacun gère ses propres données (images, titres) et
+dépend d'`up2a-core` (icônes, décor, styles partagés) ; la home affiche
+simplement la section correspondante en moins si l'un des deux n'est pas
+actif, jamais une erreur bloquante.
 
 ## 6. Ordre de travail recommandé
 

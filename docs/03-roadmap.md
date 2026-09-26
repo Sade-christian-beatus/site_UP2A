@@ -62,6 +62,22 @@
 - [x] Cartes/modale de la home reliées vers ces pages ("Voir la fiche
       complète").
 
+### Phase 4 bis — Scission Formations/Galerie (2026-09-26)
+
+- [x] `up2a_core_formations()`/`up2a_core_render_formations()`/
+      `up2a_core_find_formation()` + la règle de réécriture
+      `/formations/{slug}/` déplacés dans un plugin dédié
+      `up2a-formations` (renommés `up2a_formations_*`).
+- [x] `up2a_core_gallery_images()`/`up2a_core_render_galerie()` déplacés
+      dans un plugin dédié `up2a-galerie` (renommés `up2a_galerie_*`).
+- [x] Les deux dépendent d'`up2a-core` (icônes, décor, styles partagés —
+      en-tête `Requires Plugins`) ; la home affiche la section
+      correspondante en moins si l'un n'est pas actif, jamais une
+      erreur. Le footer (`up2a-core`) et la modale Formations (vignettes
+      Galerie) utilisent `function_exists()` pour ce même motif.
+      Voir wordpress/README.md "Statut des plugins maison" et
+      docs/06-storyboard.md.
+
 ## Phase 5 — Préinscription (2026-09-23)
 
 - [x] Finaliser `up2a-preinscription` : formulaire multi-étapes (4

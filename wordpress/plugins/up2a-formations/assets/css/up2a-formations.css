@@ -1,0 +1,451 @@
+/*
+ * Module "Formations" — cartes + modale de détail (voir
+ * up2a-formations/inc/formations.php). Extrait de
+ * wordpress/plugins/up2a-core/assets/css/up2a-front-page.css (scission
+ * documentée dans docs/06-storyboard.md). Dépend de up2a-front-page.css
+ * (up2a-core) pour les tokens et les utilitaires partagés
+ * (.up2a-section-inner, .up2a-section-title, .up2a-hero__cta*, .up2a-decor*)
+ * — voir up2a-formations.php pour la déclaration de dépendance CSS.
+ */
+
+/* --- Formations (scène 3) — cartes façon "fiche bien immobilier" --- */
+
+.up2a-formations {
+  position: relative;
+  overflow: hidden;
+  padding: 88px 0;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-formations__hint {
+  text-align: center;
+  color: var(--up2a-color-ink-soft);
+  font-size: 0.875rem;
+  margin: -20px 0 40px;
+}
+
+.up2a-formations__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.up2a-formations__card {
+  position: relative;
+  height: 320px;
+  border: none;
+  border-radius: var(--up2a-radius-lg);
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  background: var(--up2a-color-primary-dark);
+  box-shadow: var(--up2a-shadow-md);
+  text-align: left;
+}
+
+.up2a-formations__card-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.up2a-formations__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--up2a-motion-base) ease;
+}
+
+.up2a-formations__card:hover .up2a-formations__card-media img {
+  transform: scale(1.06);
+}
+
+.up2a-formations__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(3, 18, 42, 0.15) 0%, rgba(3, 18, 42, 0.15) 45%, rgba(3, 18, 42, 0.92) 100%);
+  transition: background var(--up2a-motion-base) ease;
+}
+
+.up2a-formations__card:hover::before,
+.up2a-formations__card:focus-visible::before {
+  background: linear-gradient(180deg, rgba(3, 18, 42, 0.45) 0%, rgba(3, 18, 42, 0.5) 45%, rgba(3, 18, 42, 0.94) 100%);
+}
+
+.up2a-formations__badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 1;
+  background: var(--up2a-color-accent);
+  color: var(--up2a-color-ink);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.up2a-formations__badge--sjpa {
+  background: var(--up2a-color-teal);
+  color: #ffffff;
+}
+
+.up2a-formations__badge--seg {
+  background: var(--up2a-color-red);
+  color: #ffffff;
+}
+
+.up2a-formations__hover-link {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--up2a-motion-fast) ease, transform var(--up2a-motion-fast) ease;
+}
+
+.up2a-formations__card:hover .up2a-formations__hover-link,
+.up2a-formations__card:focus-visible .up2a-formations__hover-link {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.up2a-formations__card-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.up2a-formations__card-title {
+  font-family: var(--up2a-font-heading);
+  font-size: 1.125rem;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.up2a-formations__card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.up2a-formations__card-meta svg {
+  width: 16px;
+  height: 16px;
+  color: var(--up2a-color-accent);
+  flex-shrink: 0;
+}
+
+/* --- Modale de détail d'une formation --- */
+
+.up2a-formation-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--up2a-motion-fast) ease;
+}
+
+.up2a-formation-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.up2a-formation-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 18, 42, 0.72);
+}
+
+.up2a-formation-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 920px;
+  max-height: 88vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: var(--up2a-color-surface);
+  border-radius: var(--up2a-radius-lg);
+  box-shadow: var(--up2a-shadow-lg);
+  transform: translateY(12px);
+  transition: transform var(--up2a-motion-fast) ease;
+}
+
+.up2a-formation-modal.is-open .up2a-formation-modal__panel {
+  transform: translateY(0);
+}
+
+.up2a-formation-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--up2a-color-ink);
+  cursor: pointer;
+  box-shadow: var(--up2a-shadow-sm);
+}
+
+/* --- Galerie photo de la modale --- */
+
+.up2a-formation-modal__gallery {
+  display: flex;
+  flex-direction: column;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-formation-modal__main {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.up2a-formation-modal__main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.up2a-formation-modal__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--up2a-color-ink);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.up2a-formation-modal__nav--prev {
+  left: 12px;
+}
+
+.up2a-formation-modal__nav--next {
+  right: 12px;
+}
+
+.up2a-formation-modal__thumbs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px;
+}
+
+.up2a-formation-modal__thumb {
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: var(--up2a-radius-sm);
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+}
+
+.up2a-formation-modal__thumb.is-active {
+  border-color: var(--up2a-color-primary);
+}
+
+.up2a-formation-modal__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Détails --- */
+
+.up2a-formation-modal__content {
+  padding: 40px 36px;
+}
+
+.up2a-formation-modal__badge {
+  display: inline-block;
+  background: var(--up2a-color-accent);
+  color: var(--up2a-color-ink);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin: 0 0 14px;
+}
+
+.up2a-formation-modal__badge--sjpa {
+  background: var(--up2a-color-teal);
+  color: #ffffff;
+}
+
+.up2a-formation-modal__badge--seg {
+  background: var(--up2a-color-red);
+  color: #ffffff;
+}
+
+.up2a-formation-modal__content h3 {
+  font-family: var(--up2a-font-heading);
+  font-size: 1.625rem;
+  color: var(--up2a-color-ink);
+  margin: 0 0 14px;
+  line-height: 1.25;
+}
+
+.up2a-formation-modal__highlight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--up2a-font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--up2a-color-primary);
+  margin: 0 0 12px;
+}
+
+.up2a-formation-modal__highlight svg {
+  color: var(--up2a-color-primary);
+  flex-shrink: 0;
+}
+
+.up2a-formation-modal__faculte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+  font-size: 0.8125rem;
+  color: var(--up2a-color-ink-soft);
+  font-weight: 600;
+}
+
+.up2a-formation-modal__faculte svg {
+  color: var(--up2a-color-ink-soft);
+  flex-shrink: 0;
+}
+
+.up2a-formation-modal__divider {
+  border: none;
+  border-top: 1px solid var(--up2a-color-border);
+  margin: 0 0 20px;
+}
+
+.up2a-formation-modal__label {
+  font-weight: 700;
+  color: var(--up2a-color-ink);
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+}
+
+.up2a-formation-modal__intro {
+  color: var(--up2a-color-ink-soft);
+  line-height: 1.65;
+  margin: 0 0 24px;
+}
+
+.up2a-formation-modal__debouches {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.up2a-formation-modal__debouches li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--up2a-color-ink-soft);
+  font-size: 0.9375rem;
+}
+
+.up2a-formation-modal__debouches svg {
+  color: var(--up2a-color-primary);
+  flex-shrink: 0;
+}
+
+.up2a-formation-modal__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.up2a-formation-modal__back {
+  background: none;
+  border: none;
+  color: var(--up2a-color-ink-soft);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.up2a-formation-modal__back:hover {
+  color: var(--up2a-color-primary);
+}
+
+@media (max-width: 760px) {
+  .up2a-formation-modal__panel {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+  }
+
+  .up2a-formation-modal__content {
+    padding: 28px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .up2a-formations__card {
+    height: 280px;
+  }
+
+  .up2a-formation-modal__thumbs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .up2a-formations__grid {
+    grid-template-columns: 1fr;
+  }
+}

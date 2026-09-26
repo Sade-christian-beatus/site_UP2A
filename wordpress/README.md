@@ -60,8 +60,16 @@ de cette page tant qu'on n'en a pas besoin).
    sinon rester sur la version gratuite et adapter le storyboard,
    docs/06, à ses limites.)
 3. **Extensions → Ajouter → Téléverger une extension** : sélectionner
-   `up2a-core.zip` (fourni) → Installer maintenant → Activer.
-4. **Extensions → Ajouter → Téléverger une extension** : sélectionner
+   `up2a-core.zip` (fourni) → Installer maintenant → Activer. **À activer
+   en premier** : `up2a-formations` et `up2a-galerie` en dépendent
+   (déclaré dans leur en-tête `Requires Plugins`) et WordPress refuse de
+   les activer si `up2a-core` ne l'est pas déjà.
+4. **Extensions → Ajouter → Téléverger une extension** : répéter avec
+   `up2a-formations.zip` puis `up2a-galerie.zip` (fournis) — les modules
+   "Formations" et "Galerie" de la home, chacun dans son propre plugin
+   depuis la scission du 2026-09-26 (voir "Statut des plugins maison"
+   ci-dessous et docs/06-storyboard.md).
+5. **Extensions → Ajouter → Téléverger une extension** : sélectionner
    `up2a-preinscription.zip` (fourni) → Installer maintenant → Activer.
    Un avertissement admin apparaît ("constantes Supabase non définies") —
    normal à ce stade, sans effet bloquant. Ce plugin sera construit en
@@ -101,12 +109,16 @@ de cette page tant qu'on n'en a pas besoin).
   (slider de photos de campus + **compte à rebours de la rentrée**),
   "Pourquoi choisir l'UP-2A" (collage photo + checklist), les Valeurs, les
   Formations (cartes façon "fiche" qui **ouvrent une modale** de détail au
-  clic), une **Galerie photo** (grille + lightbox, 7 photos), "Comment
-  candidater" (grande carte pour la 1ère étape + 3 petites cartes), la
-  section Contact (coordonnées + **carte Google Maps intégrée**) et un
-  pied de page multi-colonnes (voir docs/06-storyboard.md). Chaque section
-  a un léger décor de fond (formes discrètes aux couleurs de la marque,
-  avec un effet de parallaxe au scroll sur desktop). Pour l'activer :
+  clic — fournies par `up2a-formations`), une **Galerie photo** (grille +
+  lightbox, 7 photos — fournie par `up2a-galerie`), "Comment candidater"
+  (grande carte pour la 1ère étape + 3 petites cartes), la section Contact
+  (coordonnées + **carte Google Maps intégrée**) et un pied de page
+  multi-colonnes (voir docs/06-storyboard.md). Chaque section a un léger
+  décor de fond (formes discrètes aux couleurs de la marque, avec un effet
+  de parallaxe au scroll sur desktop). Si `up2a-formations` ou
+  `up2a-galerie` n'est pas actif, la section correspondante est
+  simplement absente de la page plutôt que de casser le reste — jamais
+  bloquant. Pour l'activer :
   1. **Pages → Ajouter** (ou éditer la page existante prévue comme
      accueil).
   2. Dans **Attributs de page** (colonne de droite) → **Modèle**,
@@ -154,11 +166,13 @@ sans cette constante, la photo par défaut reste utilisée — plus jamais
 l'illustration vectorielle, gardée uniquement comme filet de sécurité si
 le fichier venait à manquer).
 
-La **Galerie** affiche par défaut 7 photos (campus + vie étudiante,
-fournies par le client). Pour en ajouter d'autres sans toucher au code,
-utiliser le filtre `up2a_core_gallery_images` depuis un mu-plugin (même
-logique que `up2a_core_hero_slides` ci-dessus), ou demander une mise à
-jour du plugin.
+La **Galerie** (plugin `up2a-galerie`) affiche par défaut 7 photos (campus
++ vie étudiante, fournies par le client). Pour en ajouter d'autres sans
+toucher au code, utiliser le filtre `up2a_galerie_images` depuis un
+mu-plugin (même logique que `up2a_core_hero_slides` ci-dessus), ou
+demander une mise à jour du plugin. Les **Formations** (plugin
+`up2a-formations`, les 4 licences) sont modifiables de la même façon via
+le filtre `up2a_formations_formations`.
 
 ### Documents (brochure) — actuellement hors du parcours de la page
 
@@ -269,8 +283,20 @@ define('UP2A_ESPACE_ETUDIANT_URL', 'https://espace.bdo-burkina.com/');
 
 | Plugin | Rôle | Statut |
 |---|---|---|
-| `up2a-core` | Animation GSAP/Lenis (self-hostées, `assets/js/vendor/`), tokens design system, en-tête du site, modèle de page "Accueil (onepage)", pages détail formation (`/formations/{slug}/`) | Prêt (`up2a-core.zip` fourni) |
+| `up2a-core` | Animation GSAP/Lenis (self-hostées, `assets/js/vendor/`), tokens design system, en-tête du site, modèle de page "Accueil (onepage)" | Prêt (`up2a-core.zip` fourni) — **à activer en premier** |
+| `up2a-formations` | Module "Formations" (cartes + modale + pages détail `/formations/{slug}/`) — scindé de `up2a-core` le 2026-09-26 | Prêt (`up2a-formations.zip` fourni) — nécessite `up2a-core` actif |
+| `up2a-galerie` | Module "Galerie" (grille + lightbox photo) — scindé de `up2a-core` le 2026-09-26 | Prêt (`up2a-galerie.zip` fourni) — nécessite `up2a-core` actif |
 | `up2a-preinscription` | Formulaire préinscription (4 étapes) → Supabase, sans paiement | Prêt (`up2a-preinscription.zip` fourni) — nécessite les constantes Supabase (Étape 4) et une page avec le shortcode (Étape 5) |
+
+`up2a-formations` et `up2a-galerie` sont des plugins **séparés** de
+`up2a-core` (pas des extensions Elementor, pas des CPT) : chacun gère ses
+propres données (images, titres, descriptions) dans son fichier
+`inc/*.php`, modifiable sans toucher au reste du site. Ils dépendent tous
+les deux de `up2a-core` (icônes, décor, styles/utilitaires partagés,
+URL de préinscription) — WordPress refuse de les activer si `up2a-core`
+ne l'est pas déjà (en-tête `Requires Plugins`). La modale de détail d'une
+formation affiche des vignettes tirées de la Galerie si `up2a-galerie`
+est actif ; sinon elle s'affiche simplement sans ce bandeau de vignettes.
 
 ## Dépannage — "rien ne s'affiche comme voulu"
 
@@ -286,9 +312,10 @@ define('UP2A_ESPACE_ETUDIANT_URL', 'https://espace.bdo-burkina.com/');
 
 > **Pages formation (`/formations/{slug}/`) en 404 après mise à jour**
 > (2026-09-25) : ces pages sont servies par une règle de réécriture
-> ajoutée par `up2a-core`, pas par une vraie page WordPress. Si elles ne
-> se chargent pas après avoir remplacé le zip du plugin (même symptôme
-> déjà rencontré sur `/preinscription/`, voir plus bas) : **Réglages →
+> ajoutée par `up2a-formations` (depuis le 2026-09-26 ; `up2a-core`
+> avant cette date), pas par une vraie page WordPress. Si elles ne se
+> chargent pas après avoir remplacé le zip du plugin (même symptôme déjà
+> rencontré sur `/preinscription/`, voir plus bas) : **Réglages →
 > Permaliens → Enregistrer les modifications**, sans rien changer — cela
 > force WordPress à regénérer ses règles. Un filet de sécurité dans le
 > code le fait aussi automatiquement à la prochaine visite si le numéro
@@ -350,14 +377,22 @@ Dans l'ordre le plus probable :
    au clic). Ce n'est **pas** un souci de cache (qui affecterait toute la
    page, pas une section isolée) — c'est le signe qu'une autre extension
    active sur le site modifie ou vide les données de cette section via un
-   filtre WordPress (`up2a_core_formations`, `up2a_core_gallery_images`...).
+   filtre WordPress (`up2a_formations_formations`, `up2a_galerie_images`...).
    Pour isoler la cause : désactivez temporairement toutes les extensions
-   sauf Elementor, Hello Elementor et `up2a-core`, rechargez la page ; si
-   la section réapparaît, réactivez les autres extensions une par une pour
-   trouver la responsable. Depuis la version 0.9.1, `up2a-core` ignore de
-   toute façon un filtre qui renverrait une liste vide et retombe sur le
-   contenu par défaut, donc ce cas précis ne devrait plus produire de
-   section vide.
+   sauf Elementor, Hello Elementor, `up2a-core`, `up2a-formations` et
+   `up2a-galerie`, rechargez la page ; si la section réapparaît, réactivez
+   les autres extensions une par une pour trouver la responsable. Depuis
+   la version 0.9.1 (`up2a-core` à l'époque, `up2a-formations`/
+   `up2a-galerie` depuis leur création), un filtre qui renverrait une liste
+   vide est ignoré au profit du contenu par défaut, donc ce cas précis ne
+   devrait plus produire de section vide.
+8. **La section "Nos formations" ou "Galerie" a disparu depuis une mise à
+   jour récente (2026-09-26)** : ces deux modules sont désormais des
+   plugins séparés (`up2a-formations`, `up2a-galerie`), plus intégrés à
+   `up2a-core`. Vérifiez qu'ils sont bien installés **et activés**
+   (**Extensions → Extensions installées**) — sans eux, la section
+   correspondante est simplement absente de la home (comportement
+   voulu, pas une erreur), voir "Statut des plugins maison" ci-dessus.
 
 Si le problème persiste après ces vérifications, une capture d'écran de
 ce que vous voyez (et de vos réglages Pages/Lecture) permettrait un
@@ -369,6 +404,7 @@ diagnostic précis.
 - [ ] Ancien contenu (articles, pages, médias, plugins, thèmes) supprimé
 - [ ] Hello Elementor + Elementor installés et activés
 - [ ] `up2a-core` installé et activé (dernière version), en-tête visible sur le site
+- [ ] `up2a-formations` et `up2a-galerie` installés et activés (après `up2a-core`)
 - [ ] Menu configuré (Apparence → Menus → emplacement "Menu principal UP-2A")
 - [ ] Page créée, modèle "Accueil UP-2A (onepage)" assigné (Attributs de page)
 - [ ] Cette page définie comme page d'accueil (Réglages → Lecture → "Une page statique")
