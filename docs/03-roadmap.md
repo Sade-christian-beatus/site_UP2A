@@ -62,6 +62,48 @@
 - [x] Cartes/modale de la home reliées vers ces pages ("Voir la fiche
       complète").
 
+### Phase 4 bis — Scission Formations/Galerie (2026-09-26)
+
+- [x] `up2a_core_formations()`/`up2a_core_render_formations()`/
+      `up2a_core_find_formation()` + la règle de réécriture
+      `/formations/{slug}/` déplacés dans un plugin dédié
+      `up2a-formations` (renommés `up2a_formations_*`).
+- [x] `up2a_core_gallery_images()`/`up2a_core_render_galerie()` déplacés
+      dans un plugin dédié `up2a-galerie` (renommés `up2a_galerie_*`).
+- [x] Les deux dépendent d'`up2a-core` (icônes, décor, styles partagés —
+      en-tête `Requires Plugins`) ; la home affiche la section
+      correspondante en moins si l'un n'est pas actif, jamais une
+      erreur. Le footer (`up2a-core`) et la modale Formations (vignettes
+      Galerie) utilisent `function_exists()` pour ce même motif.
+      Voir wordpress/README.md "Statut des plugins maison" et
+      docs/06-storyboard.md.
+
+### Phase 4 ter — CPT + shortcodes, contenu depuis le dashboard (2026-09-26)
+
+- [x] `up2a_formations_formations()`/`up2a_galerie_images()` lisent
+      désormais un CPT (`up2a_formation`, `up2a_photo`) au lieu d'un
+      tableau statique — contenu modifiable depuis wp-admin (menus
+      "Formations"/"Galerie"), plus besoin d'une mise à jour du plugin
+      pour changer une photo ou un texte.
+- [x] Taxonomie `up2a_faculte` (SJPA/SEG + champ "Nom complet" par
+      terme) — une 3ᵉ faculté se crée depuis wp-admin sans code.
+- [x] Rewrite `/formations/{slug}/` géré nativement par le CPT
+      (`'rewrite' => ['slug' => 'formations']`), remplace la règle
+      manuelle de la phase 4 bis — WordPress gère lui-même l'URL/404/flush.
+- [x] Shortcodes `[up2a_formations]`/`[up2a_galerie]` : la home les
+      utilise par défaut (`do_shortcode()`), mais chaque section peut être
+      replacée ailleurs (Elementor, éditeur de blocs) sans toucher au code.
+- [x] Amorçage automatique (une fois) : les 4 licences et 8 photos par
+      défaut sont recréées avec leurs photos d'origine (copiées dans la
+      médiathèque) pour qu'une mise à jour ne fasse rien disparaître d'un
+      site déjà en ligne. Une formation/photo ajoutée ensuite depuis
+      wp-admin sans image définie s'affiche sans photo plutôt que cassée.
+- [x] `up2a-preinscription` lit `up2a_formations_formations()` en
+      priorité pour sa validation de slug (avec repli statique si
+      `up2a-formations` est inactif) — sans ça, une formation ajoutée
+      depuis le dashboard aurait été rejetée à la soumission du formulaire.
+      Voir docs/06-storyboard.md "CPT Formation depuis le dashboard".
+
 ## Phase 5 — Préinscription (2026-09-23)
 
 - [x] Finaliser `up2a-preinscription` : formulaire multi-étapes (4
