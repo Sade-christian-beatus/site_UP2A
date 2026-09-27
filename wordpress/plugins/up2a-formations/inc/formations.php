@@ -1,12 +1,12 @@
 <?php
 /**
- * Lecture et rendu du module "Formations" — le contenu vit désormais dans
- * le CPT `up2a_formation` (voir inc/cpt.php), modifiable depuis le tableau
- * de bord WordPress (menu "Formations"). Ce fichier ne fait plus que
- * lire ce CPT et le présenter avec la même forme de données qu'avant
- * (tableau slug/icone/nom/faculte/faculte_full/intro/debouches/image) —
- * voir docs/06-storyboard.md "CPT Formation depuis le dashboard" pour le
- * détail de cette migration (2026-09-26).
+ * Lecture et rendu du module "Formations" — le contenu vit dans l'option
+ * `up2a_formations_option` (voir inc/settings.php, menu wp-admin
+ * "Formations"), pas dans un CPT ni un tableau statique dans le code. Ce
+ * fichier ne fait que lire cette option et la présenter avec une forme de
+ * données stable (slug/icone/nom/faculte/faculte_full/intro/programme/
+ * debouches/image) — voir docs/06-storyboard.md "Réglages Formations/
+ * Galerie" (2026-09-27).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
  * `up2a_core_icon()`, décor `up2a_core_decor()`, URL de préinscription
@@ -19,53 +19,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // --------------------------------------------------------------------
-// Données — lues depuis le CPT up2a_formation (inc/cpt.php)
+// Données — lues depuis l'option up2a_formations_option (inc/settings.php)
 // --------------------------------------------------------------------
 
 /**
- * Formate un post `up2a_formation` dans la forme de données attendue par
- * le reste du plugin (inchangée depuis la version "tableau statique", pour
- * ne pas avoir à toucher au rendu/JS/CSS lors de cette migration).
+ * Formate une ligne brute (telle que stockée par l'écran de réglages)
+ * dans la forme de données attendue par le reste du plugin.
  */
-function up2a_formations_format_post( \WP_Post $post ): array {
-	$termes        = get_the_terms( $post->ID, 'up2a_faculte' );
-	$terme         = ( is_array( $termes ) && ! empty( $termes ) ) ? $termes[0] : null;
-	$faculte       = $terme ? $terme->name : '';
-	$faculte_full  = $terme ? ( get_term_meta( $terme->term_id, 'nom_complet', true ) ?: $terme->name ) : '';
-	$debouches_raw = (string) get_post_meta( $post->ID, 'up2a_debouches', true );
-	$debouches     = array_values( array_filter( array_map( 'trim', explode( "\n", $debouches_raw ) ) ) );
-
-	$thumb_id = get_post_thumbnail_id( $post );
+function up2a_formations_format_row( array $row ): array {
 	$image    = array( 'desktop' => '', 'mobile' => '' );
-	if ( $thumb_id ) {
-		$desktop = wp_get_attachment_image_url( $thumb_id, 'up2a_formations_desktop' );
-		$mobile  = wp_get_attachment_image_url( $thumb_id, 'up2a_formations_mobile' );
-		$image   = array(
-			'desktop' => $desktop ?: '',
-			'mobile'  => $mobile ?: $desktop ?: '',
-		);
+	$image_id = (int) ( $row['image_id'] ?? 0 );
+	if ( $image_id ) {
+		$desktop = wp_get_attachment_image_url( $image_id, 'up2a_formations_desktop' );
+		$mobile  = wp_get_attachment_image_url( $image_id, 'up2a_formations_mobile' );
+		if ( $desktop ) {
+			$image = array(
+				'desktop' => $desktop,
+				'mobile'  => $mobile ?: $desktop,
+			);
+		}
 	}
 
+	$debouches_raw = (string) ( $row['debouches'] ?? '' );
+	$debouches     = array_values( array_filter( array_map( 'trim', explode( "\n", $debouches_raw ) ) ) );
+	$programme_raw = trim( (string) ( $row['programme'] ?? '' ) );
+
 	return array(
-		'id'           => $post->ID,
-		'slug'         => $post->post_name,
-		'icone'        => (string) get_post_meta( $post->ID, 'up2a_icone', true ) ?: 'book',
-		'nom'          => get_the_title( $post ),
-		'faculte'      => $faculte,
-		'faculte_full' => $faculte_full,
-		'intro'        => has_excerpt( $post ) ? get_the_excerpt( $post ) : '',
-		'programme'    => trim( (string) $post->post_content ) ? apply_filters( 'the_content', $post->post_content ) : '',
+		'slug'         => (string) ( $row['slug'] ?? '' ),
+		'icone'        => (string) ( $row['icone'] ?? 'book' ),
+		'nom'          => (string) ( $row['nom'] ?? '' ),
+		'faculte'      => (string) ( $row['faculte'] ?? '' ),
+		'faculte_full' => (string) ( $row['faculte_full'] ?? '' ),
+		'intro'        => (string) ( $row['intro'] ?? '' ),
+		'programme'    => '' !== $programme_raw ? wpautop( wp_kses_post( $programme_raw ) ) : '',
 		'debouches'    => $debouches,
 		'image'        => $image,
 	);
 }
 
 /**
- * Liste des formations publiées, triées par ordre (Attributs de page →
- * Ordre, dans l'écran d'édition du CPT). Mise en cache pour la durée de
- * la requête : cette fonction est appelée plusieurs fois par page (rendu
- * home, pied de page d'up2a-core, page de détail, synchronisation
- * up2a-preinscription...).
+ * Liste des formations, dans l'ordre défini sur l'écran de réglages
+ * (Formations → glisser via les boutons Monter/Descendre). Mise en cache
+ * pour la durée de la requête : cette fonction est appelée plusieurs fois
+ * par page (rendu home, pied de page d'up2a-core, page de détail,
+ * synchronisation up2a-preinscription...).
  */
 function up2a_formations_formations(): array {
 	static $cache = null;
@@ -73,24 +70,13 @@ function up2a_formations_formations(): array {
 		return $cache;
 	}
 
-	$posts = get_posts(
-		array(
-			'post_type'      => 'up2a_formation',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'orderby'        => 'menu_order',
-			'order'          => 'ASC',
-		)
-	);
-
-	$cache = array_map( 'up2a_formations_format_post', $posts );
+	$cache = array_map( 'up2a_formations_format_row', up2a_formations_get_raw_list() );
 	return $cache;
 }
 
 /**
- * Retrouve une formation par son slug, pour la page de détail (voir
- * up2a_formations_template_include() plus bas) — évite de dupliquer la
- * boucle de recherche à chaque usage.
+ * Retrouve une formation par son slug, pour la page de détail (voir plus
+ * bas) — évite de dupliquer la boucle de recherche à chaque usage.
  */
 function up2a_formations_find( string $slug ): ?array {
 	foreach ( up2a_formations_formations() as $formation ) {
@@ -231,15 +217,72 @@ add_shortcode(
 // --------------------------------------------------------------------
 // Pages de détail — /formations/{slug}/
 // --------------------------------------------------------------------
-// Le rewrite est désormais géré nativement par le CPT `up2a_formation`
-// (voir inc/cpt.php, `'rewrite' => array('slug' => 'formations')`) —
-// WordPress gère lui-même l'URL, le 404 et le flush des règles ; il ne
-// reste plus qu'à brancher le template de détail sur ce type de contenu.
+// Une règle de réécriture + un template codé (même logique que la home) :
+// pas de CPT, le contenu réel des formations vit dans l'option de l'écran
+// de réglages (voir inc/settings.php).
 
+/**
+ * Déclare la règle `/formations/{slug}/` → `index.php?up2a_formation={slug}`.
+ * Appelée sur `init` (cas normal) et directement à l'activation du plugin
+ * (voir up2a-formations.php) pour que la règle existe avant le premier flush.
+ */
+function up2a_formations_register_rewrite(): void {
+	add_rewrite_tag( '%up2a_formation%', '([^&/]+)' );
+	add_rewrite_rule( '^formations/([^/]+)/?$', 'index.php?up2a_formation=$matches[1]', 'top' );
+}
+add_action( 'init', 'up2a_formations_register_rewrite' );
+
+/**
+ * Flush automatique si la version du plugin a changé depuis le dernier
+ * chargement : filet de sécurité pour le cas fréquent où les fichiers sont
+ * remplacés sans passer par une (dés)activation WordPress (voir
+ * wordpress/README.md "Dépannage").
+ */
+add_action(
+	'init',
+	function (): void {
+		if ( get_option( 'up2a_formations_rewrite_version' ) !== UP2A_FORMATIONS_VERSION ) {
+			flush_rewrite_rules();
+			update_option( 'up2a_formations_rewrite_version', UP2A_FORMATIONS_VERSION );
+		}
+	},
+	20
+);
+
+/**
+ * Empêche WordPress de traiter la requête comme un 404 : aucune règle de
+ * réécriture ne correspond à un contenu WP réel (page/article), donc la
+ * requête principale ne trouve rien par défaut. On rétablit un statut 200
+ * dès que le slug demandé correspond à une formation connue.
+ */
+add_action(
+	'wp',
+	function (): void {
+		$slug = get_query_var( 'up2a_formation' );
+		if ( '' === $slug || null === $slug ) {
+			return;
+		}
+		if ( null === up2a_formations_find( $slug ) ) {
+			return; // Slug inconnu : on laisse WordPress rendre son vrai 404.
+		}
+		global $wp_query;
+		$wp_query->is_404 = false;
+		status_header( 200 );
+	}
+);
+
+/**
+ * Sert le template de détail dès que le slug demandé correspond à une
+ * formation connue.
+ */
 add_filter(
 	'template_include',
 	function ( string $template ): string {
-		if ( ! is_singular( 'up2a_formation' ) ) {
+		$slug = get_query_var( 'up2a_formation' );
+		if ( '' === $slug || null === $slug ) {
+			return $template;
+		}
+		if ( null === up2a_formations_find( $slug ) ) {
 			return $template;
 		}
 		$custom = UP2A_FORMATIONS_PATH . 'templates/formation-detail.php';
@@ -259,7 +302,8 @@ add_action(
 	'wp_enqueue_scripts',
 	function (): void {
 		$is_home   = is_singular( 'page' ) && get_page_template_slug( get_the_ID() ) === 'up2a-core-onepage.php';
-		$is_detail = is_singular( 'up2a_formation' );
+		$slug      = get_query_var( 'up2a_formation' );
+		$is_detail = '' !== $slug && null !== $slug && null !== up2a_formations_find( (string) $slug );
 
 		if ( ! $is_home && ! $is_detail ) {
 			return;

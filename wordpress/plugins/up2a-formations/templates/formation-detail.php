@@ -1,17 +1,17 @@
 <?php
 /**
- * Page de détail d'une formation — servie sur /formations/{slug}/, URL
- * gérée nativement par le CPT `up2a_formation` (voir inc/cpt.php). Le
- * "Programme" affiche le contenu principal du CPT s'il a été renseigné
- * dans le tableau de bord, sinon "bientôt disponible" — jamais
- * d'information inventée (voir CLAUDE.md §3).
+ * Page de détail d'une formation — servie sur /formations/{slug}/ via une
+ * règle de réécriture manuelle (voir inc/formations.php). Le "Programme"
+ * affiche le champ correspondant de l'écran de réglages (inc/settings.php)
+ * s'il a été renseigné, sinon "bientôt disponible" — jamais d'information
+ * inventée (voir CLAUDE.md §3).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$formation = up2a_formations_find( get_post_field( 'post_name', get_queried_object_id() ) );
+$formation = up2a_formations_find( (string) get_query_var( 'up2a_formation' ) );
 if ( null === $formation ) {
 	// Filet de sécurité : ne devrait pas arriver (déjà vérifié dans
 	// inc/formations.php avant de servir ce template).

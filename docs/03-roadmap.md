@@ -78,31 +78,44 @@
       Voir wordpress/README.md "Statut des plugins maison" et
       docs/06-storyboard.md.
 
-### Phase 4 ter — CPT + shortcodes, contenu depuis le dashboard (2026-09-26)
+### Phase 4 ter — Réglages + shortcodes, contenu depuis le dashboard (2026-09-26 → 27)
 
 - [x] `up2a_formations_formations()`/`up2a_galerie_images()` lisent
-      désormais un CPT (`up2a_formation`, `up2a_photo`) au lieu d'un
-      tableau statique — contenu modifiable depuis wp-admin (menus
-      "Formations"/"Galerie"), plus besoin d'une mise à jour du plugin
-      pour changer une photo ou un texte.
-- [x] Taxonomie `up2a_faculte` (SJPA/SEG + champ "Nom complet" par
-      terme) — une 3ᵉ faculté se crée depuis wp-admin sans code.
-- [x] Rewrite `/formations/{slug}/` géré nativement par le CPT
-      (`'rewrite' => ['slug' => 'formations']`), remplace la règle
-      manuelle de la phase 4 bis — WordPress gère lui-même l'URL/404/flush.
+      désormais une option (`up2a_formations_option`/`up2a_galerie_option`,
+      un tableau de formations/photos) au lieu d'un tableau statique dans
+      le code — modifiable depuis un écran de réglages dans wp-admin
+      (menus "Formations"/"Galerie"), plus besoin d'une mise à jour du
+      plugin pour changer une photo ou un texte.
+- [x] **Choix retenu : un écran de réglages (formulaire répéteur), pas un
+      CPT.** Une première version utilisait un CPT (`up2a_formation`,
+      `up2a_photo`) + une taxonomie Faculté — écartée sur retour explicite
+      du client, qui voulait gérer chaque module "à travers réglage de
+      l'extension" (un seul écran par plugin, pas une liste d'articles à
+      ouvrir un par un). Voir docs/06-storyboard.md "Réglages Formations/
+      Galerie" pour le détail des deux approches et pourquoi la seconde a
+      remplacé la première.
+- [x] Écran "Formations" : répéteur (ajouter/supprimer/réordonner une
+      formation), champs nom/slug/faculté (code + nom complet, texte
+      libre)/icône/description courte/débouchés/programme, photo choisie
+      depuis la médiathèque (`wp.media`). Écran "Galerie" : même principe,
+      champs légende + photo (l'alt vient du champ natif de la médiathèque).
+- [x] Rewrite `/formations/{slug}/` : règle de réécriture manuelle (pas de
+      CPT à accrocher un rewrite natif dessus) — même mécanisme que la
+      phase 4 bis.
 - [x] Shortcodes `[up2a_formations]`/`[up2a_galerie]` : la home les
       utilise par défaut (`do_shortcode()`), mais chaque section peut être
       replacée ailleurs (Elementor, éditeur de blocs) sans toucher au code.
-- [x] Amorçage automatique (une fois) : les 4 licences et 8 photos par
-      défaut sont recréées avec leurs photos d'origine (copiées dans la
-      médiathèque) pour qu'une mise à jour ne fasse rien disparaître d'un
-      site déjà en ligne. Une formation/photo ajoutée ensuite depuis
-      wp-admin sans image définie s'affiche sans photo plutôt que cassée.
+- [x] Amorçage automatique (une fois, à la première lecture de l'option) :
+      les 4 licences et 8 photos par défaut sont préremplies avec leurs
+      photos d'origine (copiées dans la médiathèque) pour qu'une mise à
+      jour ne fasse rien disparaître d'un site déjà en ligne. Une
+      formation/photo ajoutée ensuite depuis l'écran de réglages sans
+      image définie s'affiche sans photo plutôt que cassée.
 - [x] `up2a-preinscription` lit `up2a_formations_formations()` en
       priorité pour sa validation de slug (avec repli statique si
       `up2a-formations` est inactif) — sans ça, une formation ajoutée
       depuis le dashboard aurait été rejetée à la soumission du formulaire.
-      Voir docs/06-storyboard.md "CPT Formation depuis le dashboard".
+      Voir docs/06-storyboard.md "Réglages Formations/Galerie".
 
 ## Phase 5 — Préinscription (2026-09-23)
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * Lecture et rendu du module "Galerie" — le contenu vit désormais dans le
- * CPT `up2a_photo` (voir inc/cpt.php), modifiable depuis le tableau de
- * bord WordPress (menu "Galerie"). Ce fichier ne fait plus que lire ce
- * CPT et le présenter avec la même forme de données qu'avant
- * (tableau desktop/mobile/alt/legende) — voir docs/06-storyboard.md "CPT
- * Formation depuis le dashboard" (2026-09-26).
+ * Lecture et rendu du module "Galerie" — le contenu vit dans l'option
+ * `up2a_galerie_option` (voir inc/settings.php, menu wp-admin "Galerie"),
+ * pas dans un CPT ni un tableau statique dans le code. Ce fichier ne fait
+ * plus que lire cette option et la présenter avec une forme de données
+ * stable (desktop/mobile/alt/legende) — voir docs/06-storyboard.md
+ * "Réglages Formations/Galerie" (2026-09-27).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
  * `up2a_core_icon()`, décor `up2a_core_decor()` — voir up2a-galerie.php
@@ -17,11 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Liste des photos publiées, triées par ordre (Attributs de page → Ordre,
- * dans l'écran d'édition du CPT), avec image définie (une entrée sans
- * photo est ignorée plutôt que d'afficher un cadre cassé). Mise en cache
- * pour la durée de la requête : cette fonction est appelée plusieurs fois
- * par page (rendu galerie + modale Formations pour les vignettes).
+ * Liste des photos, dans l'ordre défini sur l'écran de réglages, avec
+ * image définie (une entrée sans photo est ignorée plutôt que d'afficher
+ * un cadre cassé). Mise en cache pour la durée de la requête : cette
+ * fonction est appelée plusieurs fois par page (rendu galerie + modale
+ * Formations pour les vignettes).
  */
 function up2a_galerie_images(): array {
 	static $cache = null;
@@ -29,32 +29,22 @@ function up2a_galerie_images(): array {
 		return $cache;
 	}
 
-	$posts = get_posts(
-		array(
-			'post_type'      => 'up2a_photo',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'orderby'        => 'menu_order',
-			'order'          => 'ASC',
-		)
-	);
-
 	$images = array();
-	foreach ( $posts as $post ) {
-		$thumb_id = get_post_thumbnail_id( $post );
-		if ( ! $thumb_id ) {
+	foreach ( up2a_galerie_get_raw_list() as $row ) {
+		$image_id = (int) ( $row['image_id'] ?? 0 );
+		if ( ! $image_id ) {
 			continue;
 		}
-		$desktop = wp_get_attachment_image_url( $thumb_id, 'up2a_galerie_desktop' );
-		$mobile  = wp_get_attachment_image_url( $thumb_id, 'up2a_galerie_mobile' );
+		$desktop = wp_get_attachment_image_url( $image_id, 'up2a_galerie_desktop' );
+		$mobile  = wp_get_attachment_image_url( $image_id, 'up2a_galerie_mobile' );
 		if ( ! $desktop ) {
 			continue;
 		}
 		$images[] = array(
 			'desktop' => $desktop,
 			'mobile'  => $mobile ?: $desktop,
-			'alt'     => (string) get_post_meta( $thumb_id, '_wp_attachment_image_alt', true ),
-			'legende' => get_the_title( $post ),
+			'alt'     => (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ),
+			'legende' => (string) ( $row['legende'] ?? '' ),
 		);
 	}
 

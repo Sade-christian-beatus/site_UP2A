@@ -382,7 +382,15 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   correspondants). Sans impact connu à ce jour : aucun mu-plugin/thème
   enfant n'utilisait encore ces filtres.
 
-## CPT Formation depuis le dashboard (2026-09-26)
+## CPT Formation depuis le dashboard (2026-09-26) — remplacé le lendemain
+
+> ⚠️ **Approche remplacée le 2026-09-27** par un écran de réglages (voir
+> "Réglages Formations/Galerie" ci-dessous) : le client voulait gérer
+> chaque module "à travers réglage de l'extension", pas une liste
+> d'articles CPT à ouvrir un par un. Section conservée pour l'historique
+> (pourquoi le CPT avait été choisi, ce qu'il apportait) mais **le code
+> actuel n'a plus de CPT `up2a_formation`/`up2a_photo` ni de taxonomie
+> `up2a_faculte`** — ne pas s'y référer pour comprendre le code présent.
 
 - **Pourquoi** : demande explicite de rendre Formations et Galerie
   "modifiables à partir du tableau de bord" et affichées via un
@@ -443,6 +451,62 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   tableau) mais ne passent plus par `apply_filters()` — un mu-plugin qui
   aurait modifié leur contenu via ce filtre (aucun sur ce projet à ce
   jour) devrait passer par le tableau de bord à la place.
+
+## Réglages Formations/Galerie — remplace le CPT (2026-09-27)
+
+- **Pourquoi ce second changement, un jour après le premier** : retour
+  client explicite sur la version CPT ci-dessus — "je veux des plugins
+  dont je pourrai modifier chaque module à travers réglage de l'extension
+  depuis le tableau de bord wordpress". Un CPT donne un menu avec une
+  **liste de posts** à ouvrir un par un (comme Articles) ; ce qui était
+  demandé est un **écran de réglages unique par module** (comme la page
+  de réglages d'à peu près n'importe quel plugin WordPress), où tout le
+  contenu se voit et se modifie en un seul formulaire.
+- **Ce qui a changé** : CPT `up2a_formation`/`up2a_photo` + taxonomie
+  `up2a_faculte` → une simple option WordPress par plugin
+  (`up2a_formations_option`, `up2a_galerie_option`, chacune un tableau de
+  lignes) éditée via un formulaire répéteur sur une page
+  `add_menu_page()` dédiée :
+  - **Formations** (menu "Formations") : une ligne par formation avec
+    nom, slug, faculté (deux champs texte — code court + nom complet,
+    plus de taxonomie séparée : simplicité de l'écran unique plutôt que
+    la réutilisation entre formations, qui n'est de toute façon qu'un
+    gain marginal pour 2 facultés), icône (liste fermée), description
+    courte, débouchés (un par ligne), programme, et une photo choisie
+    dans la médiathèque (`wp.media`, pas de champ URL à coller à la
+    main). Boutons "Monter"/"Descendre" par ligne pour l'ordre d'affichage,
+    "+ Ajouter une formation" pour une nouvelle ligne (clone d'un
+    `<template>` avec un jeton `__INDEX__` remplacé côté JS, même
+    principe que le clonage de `.js-formation-template` en front),
+    "Supprimer" par ligne. Un seul bouton "Enregistrer les modifications"
+    pour tout le formulaire.
+  - **Galerie** (menu "Galerie") : même principe, une ligne par photo
+    (légende + photo), la première ligne de la liste étant celle qui
+    devient la vignette "en avant" avec le défilement automatique.
+  - Le rewrite `/formations/{slug}/` redevient une règle de réécriture
+    manuelle (`add_rewrite_rule()`) — il n'y a plus de CPT pour porter un
+    rewrite natif, retour au mécanisme de la phase 4 bis (filet de
+    sécurité de flush par version de plugin inclus).
+- **Amorçage automatique inchangé dans son principe** : la première fois
+  que l'option n'existe pas encore (`get_option(...) === false`), le
+  plugin la préremplit avec les 4 licences/8 photos connues **et** copie
+  leurs photos d'origine dans la médiathèque (`wp_upload_bits()` +
+  `wp_insert_attachment()`), pour qu'une mise à jour ne fasse rien
+  disparaître d'un site déjà en ligne — même raisonnement que pour le
+  CPT, juste appliqué à une option plutôt qu'à des posts.
+- **Lien "Réglages" dans la liste des extensions** : chaque plugin ajoute
+  un lien "Réglages" à côté de son nom dans **Extensions → Extensions
+  installées** (filtre `plugin_action_links_{basename}`), qui pointe vers
+  son écran — pour que l'accès soit aussi visible depuis là où les
+  administrateurs WordPress ont l'habitude de chercher les réglages d'une
+  extension.
+- **Toujours vrai depuis la version CPT** (inchangé par ce second
+  changement) : les shortcodes `[up2a_formations]`/`[up2a_galerie]`, la
+  dégradation propre via `function_exists()`/`shortcode_exists()` si un
+  plugin est inactif, et la lecture prioritaire de
+  `up2a_formations_formations()` par `up2a-preinscription` pour éviter
+  qu'une formation ajoutée depuis le tableau de bord soit rejetée à la
+  soumission du formulaire.
 
 ## Règles transverses (toutes scènes)
 

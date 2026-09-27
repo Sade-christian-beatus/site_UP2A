@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * résoudre le `formation_id` réel côté Supabase à la soumission (voir
  * `up2a_preinscription_resolve_formation_id()` dans inc/rest.php).
  *
- * Depuis que les formations sont gérées depuis le tableau de bord (CPT
- * `up2a_formation`, voir `wordpress/plugins/up2a-formations/inc/cpt.php`),
+ * Depuis que les formations sont gérées depuis l'écran de réglages
+ * "Formations" (voir `wordpress/plugins/up2a-formations/inc/settings.php`),
  * cette fonction lit la liste **en direct** depuis ce plugin quand il est
  * actif — sinon un slug ajouté depuis wp-admin serait accepté par la home
- * mais rejeté ici à la soumission (voir docs/06-storyboard.md "CPT
- * Formation depuis le dashboard"). Le tableau ci-dessous ne sert donc
- * plus que de repli si `up2a-formations` n'est pas installé.
+ * mais rejeté ici à la soumission (voir docs/06-storyboard.md "Réglages
+ * Formations/Galerie"). Le tableau ci-dessous ne sert donc plus que de
+ * repli si `up2a-formations` n'est pas installé.
  */
 function up2a_preinscription_formations(): array {
 	if ( function_exists( 'up2a_formations_formations' ) ) {
