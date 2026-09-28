@@ -124,11 +124,22 @@
 
 ## Scène 6 — Actualités / vie universitaire
 
-- Contenu : 2-3 dernières actualités (CPT Actualité, hors périmètre de
-  cette phase si le CPT n'existe pas encore — peut être une section
-  statique en V1).
-- Mise en scène : cartes en fondu + léger défilement, rien de coûteux.
-- Classes : `js-news`, `js-news-card`.
+> **Statut (2026-09-28)** : implémentée, voir "Extraction En-tête/Pied de
+> page/Slider/Actualités" plus bas. Pas de CPT — un écran de réglages
+> (répéteur) dans le plugin dédié `up2a-actualites`, shortcode
+> `[up2a_actualites]`. **Aucune actualité n'est préremplie** (contenu
+> réel à préserver = aucun, aucune donnée à inventer) : la section reste
+> absente de la home jusqu'à ce qu'une vraie actualité soit ajoutée
+> depuis le tableau de bord.
+
+- Contenu : les actualités ajoutées par l'admin (titre, date, extrait,
+  image, lien "En savoir plus" optionnel), dans l'ordre choisi sur
+  l'écran de réglages (pas un tri automatique par date).
+- Mise en scène : grille de cartes (3 colonnes desktop, 2 puis 1 en
+  responsive), légère élévation au survol pour les cartes cliquables.
+- Classes : `js-decor` (décor de section, même mécanisme que les autres
+  scènes) — pas d'animation GSAP dédiée pour l'instant (grille statique,
+  rien de coûteux).
 
 ## Scène 7 — CTA final + contact
 
@@ -313,6 +324,273 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   WordPress. Un filet de sécurité compare le numéro de version du plugin
   à une option stockée et relance `flush_rewrite_rules()` automatiquement
   si elle a changé, en plus du flush à l'activation.
+
+## Correctif ScrollTrigger — Formations/Galerie invisibles au scroll normal (2026-09-25)
+
+- **Symptôme rapporté** : sur desktop, la section Formations ne
+  s'affichait qu'en arrivant directement sur `#up2a-formations`, jamais
+  en scrollant normalement depuis le haut de la page ; la Galerie ne
+  s'affichait pas du tout. Sur mobile, tout s'affichait normalement.
+- **Cause** : `up2a-core.js` enregistre Lenis (scroll fluide) et relie
+  son événement `scroll` à `ScrollTrigger.update()`, mais ne
+  recalculait jamais les positions de déclenchement une fois la page
+  entièrement chargée. Les triggers de "Formations" et "Galerie" (créés
+  tôt, avec `scrollTrigger: { start: "top 75%" }`) pouvaient donc rester
+  calés sur un seuil obsolète si la mise en page bougeait après leur
+  création — un scroll normal ne le recroisait alors jamais, alors
+  qu'un saut direct via ancre (`#up2a-formations`) pouvait, lui,
+  satisfaire immédiatement la condition.
+- **Correctif** : `ScrollTrigger.refresh()` appelé sur l'événement
+  `window.load`, qui recalcule toutes les positions de déclenchement
+  une fois la page (et ses ressources visibles) chargée — pratique
+  standard recommandée par GSAP/Lenis pour ce type d'intégration. Voir
+  `up2a-core.js`.
+- **Si le problème persiste après mise à jour du plugin** : vérifier
+  d'abord le cache CSS "optimisé" d'Elementor (cause historique de ce
+  projet pour des sections qui n'apparaissent pas du tout, voir
+  wordpress/README.md "Dépannage") — les deux causes peuvent se
+  superposer.
+
+## Scission Formations/Galerie en plugins dédiés (2026-09-26)
+
+- **Pourquoi** : demande explicite de scinder les modules Formations et
+  Galerie hors du plugin `up2a-core`, chacun dans son propre plugin
+  (`up2a-formations`, `up2a-galerie`) — pour pouvoir les gérer/désactiver
+  indépendamment sans toucher au reste de la couche d'animation/en-tête.
+- **Ce qui a été déplacé** :
+  - `up2a-formations` : les 4 licences (`up2a_formations_formations()`),
+    les cartes + la modale de détail (`up2a_formations_render()`), la
+    règle de réécriture `/formations/{slug}/` et son template
+    (`templates/formation-detail.php`), le CSS/JS propres à ces deux
+    écrans.
+  - `up2a-galerie` : les photos (`up2a_galerie_images()`), la grille +
+    lightbox (`up2a_galerie_render()`), le CSS/JS propres à cette
+    section.
+- **Ce qui reste dans `up2a-core`** (dépendance obligatoire des deux
+  nouveaux plugins, en-tête `Requires Plugins`) : les tokens du design
+  system, l'en-tête du site, Hero/Pourquoi/Valeurs/Documents/Admissions/
+  Contact/pied de page, le système de décor de fond (`up2a_core_decor()`,
+  y compris sa variante `--galerie` : c'est un système visuel central,
+  pas un asset propre à la Galerie), les icônes de contenu
+  (`up2a_core_content_icon()`), l'URL de préinscription
+  (`up2a_core_preinscription_url()`) et les photos de campus partagées
+  (`assets/img/` — les mêmes fichiers servent au Hero, aux Formations et
+  à la Galerie, donc ils restent au même endroit plutôt que d'être
+  dupliqués).
+- **Dépendances croisées, résolues par degradation propre plutôt que par
+  erreur** : le footer d'`up2a-core` (colonne "Nos formations") et la
+  modale Formations (vignettes tirées de la Galerie) appellent la
+  fonction du plugin voisin via `function_exists()` — si ce plugin
+  n'est pas actif, la colonne/le bandeau concerné est simplement absent,
+  jamais une erreur PHP. La home (`templates/front-page-onepage.php`,
+  dans `up2a-core`) fait de même pour les deux sections entières.
+- **Renommage des fonctions/filtres** : `up2a_core_formations` →
+  `up2a_formations_formations`, `up2a_core_find_formation` →
+  `up2a_formations_find`, `up2a_core_render_formations` →
+  `up2a_formations_render`, `up2a_core_gallery_images` →
+  `up2a_galerie_images`, `up2a_core_render_galerie` →
+  `up2a_galerie_render` (même chose pour les filtres `apply_filters`
+  correspondants). Sans impact connu à ce jour : aucun mu-plugin/thème
+  enfant n'utilisait encore ces filtres.
+
+## CPT Formation depuis le dashboard (2026-09-26) — remplacé le lendemain
+
+> ⚠️ **Approche remplacée le 2026-09-27** par un écran de réglages (voir
+> "Réglages Formations/Galerie" ci-dessous) : le client voulait gérer
+> chaque module "à travers réglage de l'extension", pas une liste
+> d'articles CPT à ouvrir un par un. Section conservée pour l'historique
+> (pourquoi le CPT avait été choisi, ce qu'il apportait) mais **le code
+> actuel n'a plus de CPT `up2a_formation`/`up2a_photo` ni de taxonomie
+> `up2a_faculte`** — ne pas s'y référer pour comprendre le code présent.
+
+- **Pourquoi** : demande explicite de rendre Formations et Galerie
+  "modifiables à partir du tableau de bord" et affichées via un
+  shortcode plutôt qu'un appel de code — la version "plugins séparés"
+  ci-dessus scindait déjà le code, mais le contenu restait un tableau PHP
+  statique, donc toujours non modifiable sans mise à jour du plugin.
+- **Modèle retenu** : un CPT par plugin plutôt qu'un simple tableau
+  filtrable (`apply_filters`) — un CPT donne un vrai écran d'édition
+  wp-admin (titre, image, champs), ce qu'un filtre ne permet pas sans
+  écrire soi-même une page de réglages.
+  - `up2a-formations` → CPT `up2a_formation` (titre = nom, extrait =
+    description courte, contenu = "Programme" sur la page de détail,
+    image mise en avant, attribut d'ordre) + taxonomie `up2a_faculte`
+    (SJPA/SEG, champ "Nom complet" par terme — une 3ᵉ faculté se crée
+    depuis wp-admin sans toucher au code) + métabox "Détails" (icône en
+    liste fermée pour éviter une faute de frappe silencieuse, débouchés
+    un par ligne). Le rewrite `/formations/{slug}/` est désormais géré
+    nativement par le CPT (`'rewrite' => ['slug' => 'formations']`),
+    WordPress gère lui-même l'URL/404/permaliens — supprime la règle de
+    réécriture manuelle + le filtre 404 codés à la main pour la phase 4.
+  - `up2a-galerie` → CPT `up2a_photo` (titre = légende, image mise en
+    avant, attribut d'ordre — la première entrée devient la vignette "en
+    avant"). CPT non public (`'public' => false`) : pas de page de
+    détail, ces photos ne s'affichent que dans la grille/lightbox. Le
+    texte alternatif vient du champ natif de la médiathèque
+    (`_wp_attachment_image_alt`), pas d'un champ dupliqué.
+- **Amorçage automatique, avec les photos d'origine** : à la première
+  exécution après mise à jour (vérifié sur `init`, même filet de sécurité
+  que le flush des règles de réécriture — tourne même sans passer par une
+  désactivation/réactivation explicite), chaque plugin recrée ses entrées
+  par défaut (4 licences, 8 photos) **et** copie dans la médiathèque
+  WordPress la même photo que l'ancienne version "tableau statique"
+  utilisait pour cette entrée (`wp_upload_bits()` + `wp_insert_attachment()`
+  depuis un fichier déjà présent dans `up2a-core/assets/img/`), pour que
+  la mise à jour ne fasse RIEN disparaître d'un site déjà en ligne avec du
+  vrai contenu. Une formation/photo ajoutée ensuite depuis wp-admin (pas
+  par cet amorçage) doit avoir sa photo définie manuellement une fois ;
+  tant que ce n'est pas fait, la carte s'affiche sans image (fond dégradé
+  pour une formation, entrée simplement ignorée pour une photo de
+  galerie) plutôt qu'avec une image cassée.
+- **Shortcodes** `[up2a_formations]` / `[up2a_galerie]` : la home onepage
+  d'`up2a-core` les exécute elle-même par défaut
+  (`shortcode_exists()` + `do_shortcode()`, remplace l'appel direct de
+  fonction de la phase 4 bis), mais rien n'empêche de coller le shortcode
+  dans un widget Elementor "Shortcode" sur une autre page pour déplacer
+  la section sans toucher au code.
+- **Correctif de cohérence appliqué du même coup** : `up2a-preinscription`
+  dupliquait sa propre liste statique des 4 licences pour la validation
+  serveur du champ `formation` (voir inc/data.php). Une fois les
+  formations éditables depuis wp-admin, garder cette liste figée aurait
+  créé un vrai bug : une formation ajoutée depuis le dashboard aurait été
+  proposée sur la home mais **rejetée** à la soumission du formulaire de
+  préinscription. `up2a_preinscription_formations()` lit désormais
+  `up2a_formations_formations()` en priorité (repli sur son ancienne
+  liste statique si `up2a-formations` n'est pas actif).
+- **Changement de contrat** : `up2a_formations_formations()` et
+  `up2a_galerie_images()` gardent la même forme de retour (même clés de
+  tableau) mais ne passent plus par `apply_filters()` — un mu-plugin qui
+  aurait modifié leur contenu via ce filtre (aucun sur ce projet à ce
+  jour) devrait passer par le tableau de bord à la place.
+
+## Réglages Formations/Galerie — remplace le CPT (2026-09-27)
+
+- **Pourquoi ce second changement, un jour après le premier** : retour
+  client explicite sur la version CPT ci-dessus — "je veux des plugins
+  dont je pourrai modifier chaque module à travers réglage de l'extension
+  depuis le tableau de bord wordpress". Un CPT donne un menu avec une
+  **liste de posts** à ouvrir un par un (comme Articles) ; ce qui était
+  demandé est un **écran de réglages unique par module** (comme la page
+  de réglages d'à peu près n'importe quel plugin WordPress), où tout le
+  contenu se voit et se modifie en un seul formulaire.
+- **Ce qui a changé** : CPT `up2a_formation`/`up2a_photo` + taxonomie
+  `up2a_faculte` → une simple option WordPress par plugin
+  (`up2a_formations_option`, `up2a_galerie_option`, chacune un tableau de
+  lignes) éditée via un formulaire répéteur sur une page
+  `add_menu_page()` dédiée :
+  - **Formations** (menu "Formations") : une ligne par formation avec
+    nom, slug, faculté (deux champs texte — code court + nom complet,
+    plus de taxonomie séparée : simplicité de l'écran unique plutôt que
+    la réutilisation entre formations, qui n'est de toute façon qu'un
+    gain marginal pour 2 facultés), icône (liste fermée), description
+    courte, débouchés (un par ligne), programme, et une photo choisie
+    dans la médiathèque (`wp.media`, pas de champ URL à coller à la
+    main). Boutons "Monter"/"Descendre" par ligne pour l'ordre d'affichage,
+    "+ Ajouter une formation" pour une nouvelle ligne (clone d'un
+    `<template>` avec un jeton `__INDEX__` remplacé côté JS, même
+    principe que le clonage de `.js-formation-template` en front),
+    "Supprimer" par ligne. Un seul bouton "Enregistrer les modifications"
+    pour tout le formulaire.
+  - **Galerie** (menu "Galerie") : même principe, une ligne par photo
+    (légende + photo), la première ligne de la liste étant celle qui
+    devient la vignette "en avant" avec le défilement automatique.
+  - Le rewrite `/formations/{slug}/` redevient une règle de réécriture
+    manuelle (`add_rewrite_rule()`) — il n'y a plus de CPT pour porter un
+    rewrite natif, retour au mécanisme de la phase 4 bis (filet de
+    sécurité de flush par version de plugin inclus).
+- **Amorçage automatique inchangé dans son principe** : la première fois
+  que l'option n'existe pas encore (`get_option(...) === false`), le
+  plugin la préremplit avec les 4 licences/8 photos connues **et** copie
+  leurs photos d'origine dans la médiathèque (`wp_upload_bits()` +
+  `wp_insert_attachment()`), pour qu'une mise à jour ne fasse rien
+  disparaître d'un site déjà en ligne — même raisonnement que pour le
+  CPT, juste appliqué à une option plutôt qu'à des posts.
+- **Lien "Réglages" dans la liste des extensions** : chaque plugin ajoute
+  un lien "Réglages" à côté de son nom dans **Extensions → Extensions
+  installées** (filtre `plugin_action_links_{basename}`), qui pointe vers
+  son écran — pour que l'accès soit aussi visible depuis là où les
+  administrateurs WordPress ont l'habitude de chercher les réglages d'une
+  extension.
+- **Toujours vrai depuis la version CPT** (inchangé par ce second
+  changement) : les shortcodes `[up2a_formations]`/`[up2a_galerie]`, la
+  dégradation propre via `function_exists()`/`shortcode_exists()` si un
+  plugin est inactif, et la lecture prioritaire de
+  `up2a_formations_formations()` par `up2a-preinscription` pour éviter
+  qu'une formation ajoutée depuis le tableau de bord soit rejetée à la
+  soumission du formulaire.
+
+## Extraction En-tête/Pied de page/Slider/Actualités, SEO, login matricule (2026-09-28)
+
+- **Pourquoi ce nouveau découpage** : même logique que la scission
+  Formations/Galerie (2026-09-26/27) et même demande client — "gérer le
+  site web facilement sur WordPress" — étendue au reste de la home.
+  En-tête, Pied de page et Hero portaient encore du contenu réel
+  (téléphone, adresse, logo, texte du bandeau défilant, diapositives,
+  date de rentrée) codé en dur ou piloté par des constantes
+  `wp-config.php` (`UP2A_ESPACE_ETUDIANT_URL`, `UP2A_RENTREE_DATE`) —
+  plus aucune de ces deux constantes n'est nécessaire, tout est un champ
+  d'un écran de réglages.
+- **Ce qui a bougé, même principe que Formations/Galerie (une option par
+  plugin, un écran de réglages `add_menu_page()`, un shortcode)** :
+  - `up2a-header` : logo, téléphone, localisation courte, adresse
+    complète, texte du bandeau défilant, URL de l'espace étudiant.
+    Shortcode `[up2a_header]`, hooké sur `wp_body_open` — s'affiche
+    désormais sur **toutes les pages** (avant : seulement la home et les
+    pages détail formation, via un appel direct dans chaque template).
+  - `up2a-footer` : logo, slogan, liens (répéteur label/URL), texte de
+    copyright (jeton `{annee}` remplacé automatiquement). Shortcode
+    `[up2a_footer]`, hooké sur `wp_footer` — également sitewide
+    désormais, ce qui corrige une régression où des pages comme
+    `/preinscription/` n'avaient **aucun** pied de page.
+  - `up2a-slider` : diapositives du Hero (répéteur image + titre/sous-
+    titre/CTA), date de rentrée (`<input type="date">` plutôt qu'une
+    constante PHP). Shortcode `[up2a_slider]`, home uniquement.
+  - `up2a-actualites` (nouveau module, pas une extraction — voir Scène 6
+    plus haut) : actualités (répéteur titre/date/extrait/image/lien).
+    Shortcode `[up2a_actualites]`, home uniquement. **Sans amorçage
+    automatique**, à la différence des trois plugins ci-dessus : aucune
+    actualité réelle n'existait avant ce module, donc rien à préserver —
+    inventer un contenu de démonstration aurait violé CLAUDE.md §3.
+- **Dépendance croisée sans lien rigide entre plugins** : la section
+  Contact (`up2a-core`) lit désormais le téléphone/l'adresse via
+  `function_exists('up2a_header_get_option')` plutôt qu'un appel direct
+  à une fonction d'`up2a-core` — chaque carte de contact disparaît
+  individuellement si sa donnée est vide, jamais d'erreur bloquante si
+  `up2a-header` est inactif. Même motif déjà en place pour Formations/
+  Galerie (voir plus haut).
+- **Bug de portée CSS repéré et corrigé avant livraison** : les classes
+  `.up2a-hero__cta*` sont en réalité les boutons **partagés** de tout le
+  site (Pourquoi, Admissions, Documents, CTA final, Contact, modale
+  Formations) et pas seulement du Hero. Les déplacer avec le reste du CSS
+  du Hero vers `up2a-slider` (chargé uniquement sur la home) aurait cassé
+  le style des boutons sur toute page ne chargeant pas ce plugin (ex.
+  `/formations/{slug}/`). Ces règles sont restées dans
+  `up2a-core/assets/css/up2a-front-page.css`.
+- **Second bug repéré et corrigé** : le pied de page utilisait la classe
+  utilitaire `.up2a-section-inner` (centrage/largeur max) définie dans
+  `up2a-front-page.css`, chargée seulement sur la home — or le pied de
+  page doit maintenant s'afficher partout. Les propriétés de centrage
+  ont été recopiées directement dans `.up2a-footer__grid` (nouveau
+  fichier CSS autonome `up2a-footer.css`) plutôt que de dépendre d'une
+  classe utilitaire potentiellement absente.
+- **SEO minimal ajouté à `up2a-core`** (menu "SEO") : méta description et
+  image de partage par défaut (réglables), balises Open Graph/Twitter
+  Card et URL canonique injectées en `wp_head` (priorité 1). Se
+  désactive automatiquement si un plugin SEO dédié (Yoast, RankMath, All
+  in One SEO) est détecté actif, pour ne jamais produire de balises en
+  double. Le sitemap XML (`/wp-sitemap.xml`) et le robots.txt virtuel
+  sont natifs à WordPress depuis la 5.5 — rien codé pour ça, juste à
+  vérifier une fois le site en ligne.
+- **Pages légales rédigées** (docs/07-pages-legales.md) : Mentions
+  légales + Politique de confidentialité, avec des placeholders
+  `[À CONFIRMER]` explicites pour toute information officielle non
+  fournie par le client (numéro RCCM/IFU, nom légal de l'association
+  gestionnaire, hébergeur, e-mail de contact...) — livrées comme du
+  contenu à coller dans deux Pages WordPress, pas comme du code.
+- **Login étudiant par matricule, SMTP abandonné définitivement** (hors
+  périmètre de ce fichier storyboard home, mais lié à la même demande
+  client) : voir `docs/03-roadmap.md` Phase 6 et
+  `app-etudiant/README.md` "Connexion par matricule".
 
 ## Règles transverses (toutes scènes)
 

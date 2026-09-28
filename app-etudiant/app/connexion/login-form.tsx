@@ -9,15 +9,16 @@ export function LoginForm() {
   return (
     <form action={action} className="flex w-full max-w-sm flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium text-ink">
-          Adresse e-mail
+        <label htmlFor="matricule" className="text-sm font-medium text-ink">
+          Matricule
         </label>
         <input
-          id="email"
-          name="email"
-          type="email"
+          id="matricule"
+          name="matricule"
+          type="text"
           required
-          autoComplete="email"
+          autoComplete="username"
+          placeholder="UP2A-2026-0001"
           className="rounded-md border border-border bg-surface px-3 py-2 text-ink outline-none focus:border-primary"
         />
       </div>

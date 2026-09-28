@@ -19,6 +19,18 @@
   if (typeof gsap !== "undefined") {
     if (typeof ScrollTrigger !== "undefined") {
       gsap.registerPlugin(ScrollTrigger);
+
+      // Les scènes en aval (Formations, Galerie...) créent leurs
+      // ScrollTrigger au chargement du script, avant que les images
+      // `loading="lazy"` et les polices web n'aient fini de charger :
+      // leur arrivée décale la mise en page et rend obsolètes les seuils
+      // de déclenchement déjà calculés — une section peut alors rester
+      // bloquée à opacity:0 si le scroll normal ne recroise jamais le
+      // nouveau seuil réel (voir docs/06-storyboard.md). `refresh()`
+      // recalcule toutes les positions une fois la page chargée.
+      window.addEventListener("load", function () {
+        ScrollTrigger.refresh();
+      });
     }
     if (typeof SplitText !== "undefined") {
       gsap.registerPlugin(SplitText);

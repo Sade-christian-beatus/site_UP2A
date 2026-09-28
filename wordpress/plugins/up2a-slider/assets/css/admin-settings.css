@@ -1,0 +1,20 @@
+/*
+ * Écran de réglages "Slider" (wp-admin) — voir inc/settings.php.
+ */
+
+.up2a-slider-form {
+  max-width: 700px;
+}
+
+.up2a-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.up2a-slider-row__thumb img {
+  max-width: 90px;
+  max-height: 60px;
+  display: block;
+}

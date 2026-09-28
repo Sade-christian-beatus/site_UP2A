@@ -62,6 +62,113 @@
 - [x] Cartes/modale de la home reliées vers ces pages ("Voir la fiche
       complète").
 
+### Phase 4 bis — Scission Formations/Galerie (2026-09-26)
+
+- [x] `up2a_core_formations()`/`up2a_core_render_formations()`/
+      `up2a_core_find_formation()` + la règle de réécriture
+      `/formations/{slug}/` déplacés dans un plugin dédié
+      `up2a-formations` (renommés `up2a_formations_*`).
+- [x] `up2a_core_gallery_images()`/`up2a_core_render_galerie()` déplacés
+      dans un plugin dédié `up2a-galerie` (renommés `up2a_galerie_*`).
+- [x] Les deux dépendent d'`up2a-core` (icônes, décor, styles partagés —
+      en-tête `Requires Plugins`) ; la home affiche la section
+      correspondante en moins si l'un n'est pas actif, jamais une
+      erreur. Le footer (`up2a-core`) et la modale Formations (vignettes
+      Galerie) utilisent `function_exists()` pour ce même motif.
+      Voir wordpress/README.md "Statut des plugins maison" et
+      docs/06-storyboard.md.
+
+### Phase 4 ter — Réglages + shortcodes, contenu depuis le dashboard (2026-09-26 → 27)
+
+- [x] `up2a_formations_formations()`/`up2a_galerie_images()` lisent
+      désormais une option (`up2a_formations_option`/`up2a_galerie_option`,
+      un tableau de formations/photos) au lieu d'un tableau statique dans
+      le code — modifiable depuis un écran de réglages dans wp-admin
+      (menus "Formations"/"Galerie"), plus besoin d'une mise à jour du
+      plugin pour changer une photo ou un texte.
+- [x] **Choix retenu : un écran de réglages (formulaire répéteur), pas un
+      CPT.** Une première version utilisait un CPT (`up2a_formation`,
+      `up2a_photo`) + une taxonomie Faculté — écartée sur retour explicite
+      du client, qui voulait gérer chaque module "à travers réglage de
+      l'extension" (un seul écran par plugin, pas une liste d'articles à
+      ouvrir un par un). Voir docs/06-storyboard.md "Réglages Formations/
+      Galerie" pour le détail des deux approches et pourquoi la seconde a
+      remplacé la première.
+- [x] Écran "Formations" : répéteur (ajouter/supprimer/réordonner une
+      formation), champs nom/slug/faculté (code + nom complet, texte
+      libre)/icône/description courte/débouchés/programme, photo choisie
+      depuis la médiathèque (`wp.media`). Écran "Galerie" : même principe,
+      champs légende + photo (l'alt vient du champ natif de la médiathèque).
+- [x] Rewrite `/formations/{slug}/` : règle de réécriture manuelle (pas de
+      CPT à accrocher un rewrite natif dessus) — même mécanisme que la
+      phase 4 bis.
+- [x] Shortcodes `[up2a_formations]`/`[up2a_galerie]` : la home les
+      utilise par défaut (`do_shortcode()`), mais chaque section peut être
+      replacée ailleurs (Elementor, éditeur de blocs) sans toucher au code.
+- [x] Amorçage automatique (une fois, à la première lecture de l'option) :
+      les 4 licences et 8 photos par défaut sont préremplies avec leurs
+      photos d'origine (copiées dans la médiathèque) pour qu'une mise à
+      jour ne fasse rien disparaître d'un site déjà en ligne. Une
+      formation/photo ajoutée ensuite depuis l'écran de réglages sans
+      image définie s'affiche sans photo plutôt que cassée.
+- [x] `up2a-preinscription` lit `up2a_formations_formations()` en
+      priorité pour sa validation de slug (avec repli statique si
+      `up2a-formations` est inactif) — sans ça, une formation ajoutée
+      depuis le dashboard aurait été rejetée à la soumission du formulaire.
+      Voir docs/06-storyboard.md "Réglages Formations/Galerie".
+
+### Phase 4 quater — En-tête/Pied de page/Slider/Actualités, SEO, pages légales, login matricule (2026-09-28)
+
+- [x] `up2a_core_render_hero()`/`up2a_core_hero_slides()`/
+      `up2a_core_rentree_date()`/`up2a_core_format_date_fr()` déplacés dans
+      un plugin dédié `up2a-slider` (renommés `up2a_slider_*`), shortcode
+      `[up2a_slider]`, écran de réglages "Slider" (répéteur de
+      diapositives + champ date de rentrée — plus besoin de la constante
+      `wp-config.php` `UP2A_RENTREE_DATE`).
+- [x] L'en-tête (`up2a-core/inc/header.php`) déplacé dans un plugin dédié
+      `up2a-header` (renommé `up2a_header_*`), shortcode `[up2a_header]`,
+      écran de réglages "En-tête" (logo, téléphone, localisation, adresse,
+      bandeau défilant, URL de l'espace étudiant — plus besoin de la
+      constante `UP2A_ESPACE_ETUDIANT_URL`). S'affiche désormais sur
+      **toutes les pages** (`wp_body_open`), pas seulement la home.
+- [x] `up2a_core_render_footer()` déplacé dans un plugin dédié
+      `up2a-footer` (renommé `up2a_footer_*`), shortcode `[up2a_footer]`,
+      écran de réglages "Pied de page" (logo, slogan, liens, texte de
+      copyright). S'affiche désormais sur **toutes les pages**
+      (`wp_footer`), corrigeant une régression où des pages comme
+      `/preinscription/` n'avaient aucun pied de page.
+- [x] Nouveau module **Actualités** (`up2a-actualites`, inexistant avant
+      cette date) : écran de réglages "Actualités" (répéteur titre/date/
+      extrait/image/lien optionnel), shortcode `[up2a_actualites]`.
+      **Aucun amorçage automatique** (contrairement aux autres modules) :
+      pas d'actualité réelle à préserver, donc la section reste absente
+      de la page tant qu'aucune actualité n'est ajoutée depuis le tableau
+      de bord — jamais de contenu inventé (CLAUDE.md §3).
+- [x] Ces quatre plugins dépendent d'`up2a-core` (icônes, décor, styles
+      partagés — en-tête `Requires Plugins`), même motif que la phase 4
+      bis ; les sections utilisant leurs données ailleurs (Contact,
+      Footer) passent par `function_exists()` pour rester non bloquantes
+      si un plugin est inactif.
+- [x] `up2a-core/templates/front-page-onepage.php` : appel à l'ancien
+      `up2a_core_render_hero()` (supprimé) remplacé par le shortcode
+      `[up2a_slider]`, et `[up2a_actualites]` ajouté à la suite de la
+      Galerie — les deux protégés par `shortcode_exists()`.
+- [x] **SEO** minimal ajouté à `up2a-core` (menu "SEO") : méta
+      description + image de partage par défaut (éditables), balises
+      Open Graph/Twitter Card et URL canonique injectées en `wp_head`
+      (désactivé automatiquement si un plugin SEO dédié est détecté).
+      Sitemap XML et robots.txt : nativement fournis par WordPress, rien
+      à coder.
+- [x] **Pages légales** rédigées (docs/07-pages-legales.md) : Mentions
+      légales + Politique de confidentialité, avec placeholders
+      `[À CONFIRMER]` explicites pour toute donnée officielle non fournie
+      par le client (RCCM/IFU, nom légal de l'association, hébergeur,
+      e-mail de contact...) — à coller dans deux Pages WordPress.
+- [x] **Login étudiant par matricule** : SMTP abandonné définitivement
+      (pas seulement mis en pause) — l'étudiant se connecte avec le
+      matricule fourni à son inscription plutôt que son e-mail. Voir
+      Phase 6 pour le détail côté `app-etudiant`.
+
 ## Phase 5 — Préinscription (2026-09-23)
 
 - [x] Finaliser `up2a-preinscription` : formulaire multi-étapes (4
@@ -102,6 +209,17 @@
 - [x] Accès étudiant en lecture aux supports de cours de sa propre
       formation/année (`supabase/migrations/0005_storage_student_supports.sql`,
       basé sur la convention de chemin `{formation_id}/{annee_id}/...`).
+- [x] **Connexion par matricule (2026-09-28)**, pas par e-mail : l'e-mail
+      Supabase Auth devient un détail d'implémentation interne que
+      l'étudiant ne voit jamais. Résolution matricule → e-mail via une
+      fonction Postgres `SECURITY DEFINER`
+      (`supabase/migrations/0006_resolve_etudiant_email.sql`, contourne
+      la RLS car appelée avant authentification), puis
+      `signInWithPassword` côté Server Action (`lib/auth/actions.ts`) —
+      message d'erreur générique identique quelle que soit l'étape en
+      échec, pour ne jamais révéler si un matricule existe. SMTP
+      abandonné **définitivement** (pas mis en pause) : voir
+      `app-etudiant/README.md` "Connexion par matricule".
 - [ ] Documents administratifs : l'écran existe (lecture seule, URLs
       signées) mais rien ne dépose encore de fichier dans
       `documents-etudiants` — pas de fonctionnalité de génération de

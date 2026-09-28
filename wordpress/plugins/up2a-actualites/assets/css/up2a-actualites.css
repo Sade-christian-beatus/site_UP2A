@@ -1,0 +1,115 @@
+/*
+ * Module "Actualités" — grille de cartes (voir up2a-actualites/inc/
+ * actualites.php). Nouveau module (pas d'extraction possible, voir
+ * up2a-actualites.php) : conçu pour s'harmoniser avec les cartes
+ * Formations/Galerie tout en restant autonome. Dépend d'up2a-front-page
+ * (up2a-core) pour les tokens et les utilitaires partagés
+ * (.up2a-section-inner, .up2a-section-title, .up2a-decor*) — voir
+ * up2a-actualites.php pour la déclaration de dépendance CSS.
+ */
+
+.up2a-actualites {
+  position: relative;
+  overflow: hidden;
+  padding: 88px 0;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-actualites__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+@media (max-width: 960px) {
+  .up2a-actualites__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .up2a-actualites__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.up2a-actualites__card {
+  display: flex;
+  flex-direction: column;
+  background: var(--up2a-color-surface);
+  border-radius: var(--up2a-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--up2a-shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--up2a-motion-fast) ease, box-shadow var(--up2a-motion-fast) ease;
+}
+
+a.up2a-actualites__card:hover,
+a.up2a-actualites__card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--up2a-shadow-md);
+}
+
+.up2a-actualites__card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--up2a-color-surface-alt);
+}
+
+.up2a-actualites__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.up2a-actualites__card-media--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--up2a-color-primary);
+  opacity: 0.35;
+}
+
+.up2a-actualites__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 22px 24px;
+}
+
+.up2a-actualites__card-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--up2a-color-ink-soft);
+}
+
+.up2a-actualites__card-title {
+  margin: 0;
+  font-family: var(--up2a-font-heading);
+  font-size: 1.15rem;
+  line-height: 1.35;
+  color: var(--up2a-color-ink);
+}
+
+.up2a-actualites__card-extrait {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--up2a-color-ink-soft);
+}
+
+.up2a-actualites__card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--up2a-color-accent);
+}

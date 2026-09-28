@@ -447,6 +447,10 @@ export interface Database {
         Args: Record<string, never>;
         Returns: string | null;
       };
+      resolve_etudiant_email: {
+        Args: { p_matricule: string };
+        Returns: string | null;
+      };
     };
     Enums: {
       role_utilisateur: "etudiant" | "admin";

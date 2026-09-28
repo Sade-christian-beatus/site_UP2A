@@ -6,7 +6,7 @@ import type { ActionState } from "@/lib/academique-actions";
 /**
  * Bouton de suppression générique (confirm() + Server Action), réutilisé
  * par tous les écrans de saisie académique — même pattern que
- * TransformerButton (app/admin/candidatures/[id]/transformer-button.tsx).
+ * TransformerButton (app/(app)/candidatures/[id]/transformer-button.tsx).
  */
 export function DeleteButton({
   action,

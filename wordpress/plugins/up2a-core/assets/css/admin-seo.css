@@ -1,0 +1,19 @@
+/*
+ * Écran de réglages "SEO" (wp-admin) — voir inc/seo.php.
+ */
+
+.up2a-seo-form {
+  max-width: 640px;
+}
+
+.up2a-seo-row__image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.up2a-seo-thumb img {
+  max-width: 160px;
+  max-height: 100px;
+  display: block;
+}

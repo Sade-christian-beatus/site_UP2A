@@ -1,0 +1,44 @@
+/*
+ * Écran de réglages "Formations" (wp-admin) — voir inc/settings.php.
+ */
+
+.up2a-formations-row {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  max-width: 760px;
+}
+
+.up2a-formations-row__cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.up2a-formations-row__cols label {
+  flex: 1 1 200px;
+}
+
+.up2a-formations-row__image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.up2a-formations-row__thumb img {
+  max-width: 100px;
+  max-height: 75px;
+  display: block;
+  border-radius: 4px;
+}
+
+.up2a-formations-row__actions {
+  border-top: 1px solid #f0f0f1;
+  padding-top: 12px;
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

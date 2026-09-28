@@ -84,21 +84,29 @@ signées, 10 min), changement de statut, et transformation d'une
 candidature **acceptée** en compte étudiant.
 
 La transformation (`lib/actions.ts` → `transformerEnEtudiant`) :
-1. Invite le candidat par e-mail (`supabase.auth.admin.inviteUserByEmail`)
-   — crée le compte `auth.users` et lui envoie un lien pour choisir son
-   mot de passe. C'est la **seule** étape qui utilise la clé
-   `service_role` (`lib/supabase/admin.ts`) ; tout le reste passe par le
-   client `anon` + RLS, comme le reste de l'admin.
+1. Crée le compte `auth.users` avec un **mot de passe temporaire généré
+   côté serveur** (`supabase.auth.admin.createUser`, e-mail déjà
+   confirmé) — pas d'e-mail d'invitation envoyé : le SMTP du projet n'est
+   **définitivement pas configuré** (décision du client, voir
+   `wordpress/README.md`). Le mot de passe est renvoyé une seule fois à
+   l'écran (jamais stocké en clair côté applicatif) pour que l'admin le
+   communique lui-même à l'étudiant (téléphone, en personne...), avec le
+   **matricule** — les deux affichés côte à côte, chacun avec son bouton
+   "Copier". C'est la **seule** étape qui utilise la clé `service_role`
+   (`lib/supabase/admin.ts`) ; tout le reste passe par le client `anon` +
+   RLS, comme le reste de l'admin.
 2. Crée les lignes `profiles` (role=etudiant) et `etudiants` (matricule
    généré `UP2A-{année}-{séquence}`, convention volontairement simple
    en l'absence de format imposé — à ajuster dans `genererMatricule()`
    si besoin).
 3. Marque la candidature `transformee`.
 
-**Important** : l'envoi de l'e-mail d'invitation nécessite le SMTP
-Supabase configuré (Authentication → Emails dans le dashboard du
-projet) — sans ça, `inviteUserByEmail` peut réussir côté base sans que
-l'e-mail parte réellement. À vérifier avant la mise en production.
+**L'étudiant se connecte avec son matricule + ce mot de passe, jamais
+avec son e-mail** (voir `app-etudiant/README.md` "Connexion par
+matricule") : l'e-mail créé à l'étape 1 reste un identifiant Supabase
+Auth purement interne, résolu côté serveur à partir du matricule au
+moment de la connexion. Ce choix rend le SMTP inutile pour ce flux de
+façon définitive, pas seulement en attendant qu'il soit configuré.
 
 ## Saisie académique (phase 7)
 

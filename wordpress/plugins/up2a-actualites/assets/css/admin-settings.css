@@ -1,0 +1,28 @@
+/*
+ * Écran de réglages "Actualités" (wp-admin) — voir inc/settings.php.
+ */
+
+.up2a-actualites-row {
+  max-width: 700px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 4px;
+}
+
+.up2a-actualites-row__image {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.up2a-actualites-row__thumb img {
+  max-width: 90px;
+  max-height: 60px;
+  display: block;
+}
+
+.up2a-actualites-row__actions {
+  margin-top: 8px;
+}
