@@ -66,7 +66,7 @@ get_header();
 				<span class="up2a-formation-modal__badge up2a-formation-modal__badge--<?php echo esc_attr( strtolower( $formation['faculte'] ) ); ?>"><?php echo esc_html( $formation['faculte'] ); ?></span>
 				<h1><?php echo esc_html( $formation['nom'] ); ?></h1>
 				<p class="up2a-formation-modal__highlight"><?php echo up2a_core_content_icon( $formation['icone'] ); ?> <?php esc_html_e( 'Licence · 3 ans', 'up2a-formations' ); ?></p>
-				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_icon( 'cap' ); ?> <?php echo esc_html( $formation['faculte_full'] ); ?></p>
+				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_content_icon( 'cap' ); ?> <?php echo esc_html( $formation['faculte_full'] ); ?></p>
 				<p class="up2a-formation-page__lead"><?php echo esc_html( $formation['intro'] ); ?></p>
 				<a href="<?php echo esc_url( up2a_core_preinscription_url( $formation['slug'] ) ); ?>" class="up2a-hero__cta up2a-hero__cta--accent">
 					<?php esc_html_e( 'Faire ma préinscription', 'up2a-formations' ); ?>
@@ -141,7 +141,6 @@ get_header();
 		</div>
 	</section>
 
-	<?php up2a_core_render_footer(); ?>
 </main>
 
 <?php

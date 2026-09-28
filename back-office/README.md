@@ -86,26 +86,27 @@ candidature **acceptée** en compte étudiant.
 La transformation (`lib/actions.ts` → `transformerEnEtudiant`) :
 1. Crée le compte `auth.users` avec un **mot de passe temporaire généré
    côté serveur** (`supabase.auth.admin.createUser`, e-mail déjà
-   confirmé) — pas d'e-mail d'invitation envoyé : le SMTP du projet
-   n'est pas configuré (voir `wordpress/README.md`), un compte qui en
-   dépendrait serait inutilisable tant que ça reste le cas. Le mot de
-   passe est renvoyé une seule fois à l'écran (jamais stocké en clair
-   côté applicatif) pour que l'admin le communique lui-même à
-   l'étudiant (téléphone, en personne...). L'étudiant peut le changer
-   ensuite depuis l'espace étudiant (`/profil`). C'est la **seule**
-   étape qui utilise la clé `service_role` (`lib/supabase/admin.ts`) ;
-   tout le reste passe par le client `anon` + RLS, comme le reste de
-   l'admin.
+   confirmé) — pas d'e-mail d'invitation envoyé : le SMTP du projet n'est
+   **définitivement pas configuré** (décision du client, voir
+   `wordpress/README.md`). Le mot de passe est renvoyé une seule fois à
+   l'écran (jamais stocké en clair côté applicatif) pour que l'admin le
+   communique lui-même à l'étudiant (téléphone, en personne...), avec le
+   **matricule** — les deux affichés côte à côte, chacun avec son bouton
+   "Copier". C'est la **seule** étape qui utilise la clé `service_role`
+   (`lib/supabase/admin.ts`) ; tout le reste passe par le client `anon` +
+   RLS, comme le reste de l'admin.
 2. Crée les lignes `profiles` (role=etudiant) et `etudiants` (matricule
    généré `UP2A-{année}-{séquence}`, convention volontairement simple
    en l'absence de format imposé — à ajuster dans `genererMatricule()`
    si besoin).
 3. Marque la candidature `transformee`.
 
-**Si le SMTP est configuré plus tard**, on pourra revenir à
-`inviteUserByEmail` (ou ajouter un envoi d'e-mail informatif en plus du
-mot de passe affiché) — non fait pour l'instant, pas la peine de
-construire sur une dépendance qui ne fonctionne pas encore.
+**L'étudiant se connecte avec son matricule + ce mot de passe, jamais
+avec son e-mail** (voir `app-etudiant/README.md` "Connexion par
+matricule") : l'e-mail créé à l'étape 1 reste un identifiant Supabase
+Auth purement interne, résolu côté serveur à partir du matricule au
+moment de la connexion. Ce choix rend le SMTP inutile pour ce flux de
+façon définitive, pas seulement en attendant qu'il soit configuré.
 
 ## Saisie académique (phase 7)
 

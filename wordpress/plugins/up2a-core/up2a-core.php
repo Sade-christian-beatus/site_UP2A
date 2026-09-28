@@ -2,11 +2,12 @@
 /**
  * Plugin Name:       UP-2A — Core
  * Description:       Couche d'animation (GSAP + ScrollTrigger + SplitText + Lenis),
- *                     variables du design system et en-tête du site (structure/style,
- *                     pas le contenu éditorial des pages) pour UP-2A. Cible des classes
- *                     CSS `js-*` posées dans Elementor pour l'animation des pages (voir
- *                     docs/04-conventions.md et docs/06-storyboard.md).
- * Version:           0.15.0
+ *                     variables du design system et icônes/décor partagés
+ *                     pour UP-2A (pas le contenu éditorial des pages). Cible
+ *                     des classes CSS `js-*` posées dans Elementor pour
+ *                     l'animation des pages (voir docs/04-conventions.md et
+ *                     docs/06-storyboard.md).
+ * Version:           0.17.0
  * Requires PHP:      8.0
  * Text Domain:        up2a-core
  */
@@ -15,12 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Accès direct interdit.
 }
 
-define( 'UP2A_CORE_VERSION', '0.15.0' );
+define( 'UP2A_CORE_VERSION', '0.17.0' );
+define( 'UP2A_CORE_FILE', __FILE__ );
 define( 'UP2A_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP2A_CORE_URL', plugin_dir_url( __FILE__ ) );
 
-require_once UP2A_CORE_PATH . 'inc/header.php';
 require_once UP2A_CORE_PATH . 'inc/front-page.php';
+require_once UP2A_CORE_PATH . 'inc/seo.php';
 
 /**
  * Charge les tokens du design system (docs/02-design-system.md) et la
@@ -42,21 +44,6 @@ function up2a_core_enqueue_assets(): void {
 		UP2A_CORE_URL . 'assets/css/up2a-tokens.css',
 		array(),
 		UP2A_CORE_VERSION
-	);
-
-	wp_enqueue_style(
-		'up2a-header',
-		UP2A_CORE_URL . 'assets/css/up2a-header.css',
-		array( 'up2a-tokens' ),
-		UP2A_CORE_VERSION
-	);
-
-	wp_enqueue_script(
-		'up2a-header',
-		UP2A_CORE_URL . 'assets/js/up2a-header.js',
-		array(),
-		UP2A_CORE_VERSION,
-		true
 	);
 
 	wp_enqueue_script(

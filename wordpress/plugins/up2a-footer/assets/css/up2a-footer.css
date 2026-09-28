@@ -1,0 +1,162 @@
+/*
+ * Pied de page multi-colonnes — extrait de
+ * wordpress/plugins/up2a-core/assets/css/up2a-front-page.css (scission
+ * documentée dans docs/06-storyboard.md, 2026-09-28). `.up2a-footer__grid`
+ * inclut directement le centrage/max-width auparavant fourni par la
+ * classe utilitaire partagée `.up2a-section-inner` (up2a-core) : le pied
+ * de page s'affiche désormais sur tout le site (wp_footer), pas seulement
+ * sur la home, donc son CSS ne dépend plus d'une feuille de style qui
+ * n'est chargée que conditionnellement sur certaines pages.
+ */
+
+/* --- Footer de contenu (multi-colonnes) --- */
+
+.up2a-footer {
+  background: var(--up2a-color-ink);
+  color: rgba(255, 255, 255, 0.78);
+  border-top: 4px solid var(--up2a-color-accent);
+}
+
+.up2a-footer__grid {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 40px;
+  padding: 80px 24px 48px;
+}
+
+.up2a-footer__col {
+  padding-left: 40px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.up2a-footer__col--brand {
+  padding-left: 0;
+  border-left: none;
+}
+
+.up2a-footer__logo {
+  display: inline-flex;
+  margin: 0 0 22px;
+}
+
+.up2a-footer__logo img {
+  height: 68px;
+  width: auto;
+  display: block;
+}
+
+.up2a-footer__slogan {
+  color: var(--up2a-color-accent);
+  font-weight: 600;
+  font-family: var(--up2a-font-heading);
+  font-size: 1.0625rem;
+  margin: 0 0 24px;
+}
+
+.up2a-footer__contact-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.up2a-footer__contact-line svg {
+  flex-shrink: 0;
+  color: var(--up2a-color-accent);
+}
+
+.up2a-footer__title {
+  position: relative;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 24px;
+  padding-bottom: 12px;
+}
+
+.up2a-footer__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--up2a-color-accent);
+}
+
+.up2a-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.up2a-footer__list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color var(--up2a-motion-fast) ease, transform var(--up2a-motion-fast) ease;
+}
+
+.up2a-footer__list a::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  transition: background var(--up2a-motion-fast) ease;
+}
+
+.up2a-footer__list a:hover {
+  transform: translateX(3px);
+}
+
+.up2a-footer__list a:hover::before {
+  background: var(--up2a-color-accent);
+}
+
+.up2a-footer p {
+  margin: 0 0 6px;
+}
+
+.up2a-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.up2a-footer a:hover {
+  color: var(--up2a-color-accent);
+}
+
+.up2a-footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 22px 24px;
+  text-align: center;
+  font-size: 0.8125rem;
+}
+
+.up2a-footer__bottom p {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .up2a-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 56px 24px 40px;
+  }
+
+  .up2a-footer__col {
+    padding-left: 0;
+    border-left: none;
+  }
+}

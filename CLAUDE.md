@@ -18,7 +18,8 @@ Client réalisé par **LUPORA Group**.
 
 - **Vitrine publique** : site WordPress cinématique (home déroulante « à la
   zero.university », adaptée à la connexion locale) + pages formations,
-  admissions, actualités, contact.
+  admissions, actualités, contact, mentions légales, politique de
+  confidentialité (docs/07-pages-legales.md).
 - **Préinscription** : formulaire multi-étapes **SANS paiement**, écrit dans
   Supabase.
 - **Espace étudiant** : app **Supabase** (auth + données) — tableau de bord,
@@ -52,7 +53,7 @@ Client réalisé par **LUPORA Group**.
 | Animation | GSAP + ScrollTrigger + SplitText + Lenis (plugin `up2a-core`) |
 | Préinscription | Plugin `up2a-preinscription` (PHP → Supabase REST) |
 | Base de données / Auth | Supabase (PostgreSQL + Auth + Storage + RLS) |
-| Espace étudiant | **Next.js + @supabase/supabase-js** (`app-etudiant/`), sous-domaine dédié (espace.bdo-burkina.com). Lecture seule, rôle `etudiant` uniquement. |
+| Espace étudiant | **Next.js + @supabase/supabase-js** (`app-etudiant/`), sous-domaine dédié (espace.bdo-burkina.com). Lecture seule, rôle `etudiant` uniquement. Connexion par **matricule** (pas par e-mail, voir §5 — SMTP abandonné depuis le 2026-09-28). |
 | Back-office | **Next.js + @supabase/supabase-js** (`back-office/`), application **séparée** avec son propre sous-domaine (ex. admin.bdo-burkina.com), depuis la scission des deux espaces (2026-09-25). Rôle `admin` uniquement. |
 
 ## 5. Carte du dépôt
@@ -67,15 +68,21 @@ up2a/
 │   ├── 03-roadmap.md             plan de fabrication phasé (tâches)
 │   ├── 04-conventions.md         standards de code
 │   ├── 05-contenus.md            textes rédigés des pages (à coller)
-│   └── 06-storyboard.md          storyboard scène par scène de la home
+│   ├── 06-storyboard.md          storyboard scène par scène de la home
+│   └── 07-pages-legales.md       Mentions légales + Politique de confidentialité (à coller)
 ├── supabase/
 │   ├── migrations/0001_init.sql  schéma
 │   ├── migrations/0003_seed.sql  facultés + 4 licences + année
+│   ├── migrations/0006_resolve_etudiant_email.sql  résolution matricule → e-mail (login étudiant)
 │   └── policies/0002_rls.sql     politiques d'accès (RLS)
 ├── wordpress/
 │   ├── README.md                 install propre + wipe + plugins requis
 │   └── plugins/
-│       ├── up2a-core/            couche animation (GSAP/Lenis), tokens, en-tête
+│       ├── up2a-core/            couche animation (GSAP/Lenis), tokens, décor, SEO (méta/OG)
+│       ├── up2a-header/          En-tête (écran de réglages, shortcode [up2a_header]), sitewide, dépend d'up2a-core
+│       ├── up2a-footer/          Pied de page (écran de réglages, shortcode [up2a_footer]), sitewide, dépend d'up2a-core
+│       ├── up2a-slider/          Hero/slider (écran de réglages, shortcode [up2a_slider]), home uniquement, dépend d'up2a-core
+│       ├── up2a-actualites/      Actualités (écran de réglages, shortcode [up2a_actualites]), home uniquement, dépend d'up2a-core
 │       ├── up2a-formations/      Formations (écran de réglages, shortcode [up2a_formations]), dépend d'up2a-core
 │       ├── up2a-galerie/         Galerie (écran de réglages, shortcode [up2a_galerie]), dépend d'up2a-core
 │       └── up2a-preinscription/  formulaire → Supabase (sans paiement)
@@ -98,6 +105,27 @@ tableau statique dans le code depuis la v1.2.0) et dépend d'`up2a-core`
 (icônes, décor, styles partagés) ; la home affiche chaque section via son
 shortcode (`[up2a_formations]`/`[up2a_galerie]`), en moins si le plugin
 correspondant n'est pas actif — jamais une erreur bloquante.
+
+Depuis le 2026-09-28, En-tête, Pied de page et Hero/slider sont scindés
+d'`up2a-core` sur le même modèle (plugins `up2a-header`, `up2a-footer`,
+`up2a-slider`, chacun avec son propre écran de réglages et son shortcode
+`[up2a_header]` / `[up2a_footer]` / `[up2a_slider]`), et un nouveau module
+**Actualités** (`up2a-actualites`, shortcode `[up2a_actualites]`) a été
+ajouté — sans contenu de démonstration, la section reste absente de la
+home jusqu'à ce qu'une vraie actualité soit ajoutée depuis le tableau de
+bord (§3, jamais de contenu inventé). En-tête et Pied de page s'affichent
+désormais sur **toutes les pages** (plus seulement la home). But de cette
+scission : tout le contenu de ces sections (textes, images, liens) est
+éditable depuis wp-admin sans toucher au code — y compris ce qui vivait
+avant dans des constantes `wp-config.php` (`UP2A_ESPACE_ETUDIANT_URL`,
+`UP2A_RENTREE_DATE`), désormais des champs de réglages.
+
+`up2a-core` porte aussi, depuis le 2026-09-28, un module **SEO** minimal
+(menu "SEO" : méta description et image de partage par défaut, balises
+Open Graph et canonique injectées en `wp_head`) qui se désactive
+automatiquement si un plugin SEO dédié (Yoast, RankMath...) est installé.
+WordPress fournit nativement le sitemap XML (`/wp-sitemap.xml`) et le
+robots.txt virtuel — rien à coder pour ça.
 
 ## 6. Ordre de travail recommandé
 

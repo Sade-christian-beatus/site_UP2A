@@ -1,91 +1,4 @@
 /**
- * Slider du Hero (wordpress/plugins/up2a-core/inc/front-page.php).
- * Indépendant de GSAP (même logique que up2a-header.js) : la rotation des
- * diapositives ne doit pas dépendre d'un CDN externe qui peut échouer.
- */
-(function () {
-  "use strict";
-
-  var slides = document.querySelectorAll(".up2a-hero__slide");
-  var dots = document.querySelectorAll(".js-hero-dots button");
-
-  if (slides.length < 2) {
-    return;
-  }
-
-  var current = 0;
-  var prefersReducedMotion =
-    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function goTo(index) {
-    slides[current].classList.remove("is-active");
-    dots[current] && dots[current].classList.remove("is-active");
-    current = index % slides.length;
-    slides[current].classList.add("is-active");
-    dots[current] && dots[current].classList.add("is-active");
-  }
-
-  dots.forEach(function (dot) {
-    dot.addEventListener("click", function () {
-      goTo(parseInt(dot.dataset.slide, 10) || 0);
-    });
-  });
-
-  if (!prefersReducedMotion) {
-    setInterval(function () {
-      goTo(current + 1);
-    }, 6500);
-  }
-})();
-
-/**
- * Compte à rebours de la rentrée académique (wordpress/plugins/up2a-core/
- * inc/front-page.php). Indépendant de GSAP : doit continuer à s'afficher
- * même si le CDN GSAP échoue.
- */
-(function () {
-  "use strict";
-
-  var el = document.querySelector(".js-hero-countdown");
-  if (!el) {
-    return;
-  }
-
-  var target = new Date(el.dataset.target).getTime();
-  var daysEl = el.querySelector(".js-countdown-days");
-  var hoursEl = el.querySelector(".js-countdown-hours");
-  var minutesEl = el.querySelector(".js-countdown-minutes");
-  var secondsEl = el.querySelector(".js-countdown-seconds");
-  var timer = null;
-
-  function pad(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function tick() {
-    var diff = target - Date.now();
-    if (isNaN(target) || diff <= 0) {
-      daysEl.textContent = "00";
-      hoursEl.textContent = "00";
-      minutesEl.textContent = "00";
-      secondsEl.textContent = "00";
-      if (timer) {
-        clearInterval(timer);
-      }
-      return;
-    }
-    var totalSeconds = Math.floor(diff / 1000);
-    daysEl.textContent = pad(Math.floor(totalSeconds / 86400));
-    hoursEl.textContent = pad(Math.floor((totalSeconds % 86400) / 3600));
-    minutesEl.textContent = pad(Math.floor((totalSeconds % 3600) / 60));
-    secondsEl.textContent = pad(totalSeconds % 60);
-  }
-
-  tick();
-  timer = setInterval(tick, 1000);
-})();
-
-/**
  * Décor de section — suivi léger du curseur (wordpress/plugins/up2a-core/
  * inc/front-page.php, up2a_core_decor()). Indépendant de GSAP : purement
  * cosmétique, desktop uniquement (voir CLAUDE.md §7), respecte
@@ -151,58 +64,10 @@
 
   var registerScrollEffect = window.UP2A.registerScrollEffect;
 
-  // Scène 1 — Hero : titre en SplitText, puis sous-titre et CTA en stagger.
-  var heroTitle = document.querySelector(".js-hero-title");
-  if (heroTitle) {
-    var run = function () {
-      var split =
-        typeof SplitText !== "undefined"
-          ? new SplitText(heroTitle, { type: "words" })
-          : null;
-      var targets = split ? split.words : [heroTitle];
-
-      gsap.set(targets, { opacity: 0, y: 24 });
-      gsap.set(".js-hero-cta", { opacity: 0, y: 12 });
-
-      var tl = gsap.timeline({ delay: 0.2 });
-      tl.to(targets, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.06,
-        ease: "power2.out",
-      }).to(
-        ".js-hero-cta",
-        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-        "-=0.2"
-      );
-    };
-    run();
-  }
-
-  // Scène 1 — Hero : arrière-plan en parallaxe (défile plus lentement que
-  // le contenu). Desktop uniquement — voir CLAUDE.md §7, la couche
-  // `.up2a-hero__slides` est surdimensionnée en CSS pour ce déplacement
-  // ne révèle jamais de bord vide.
-  var heroBg = document.querySelector(".js-hero-bg");
-  var heroSection = document.querySelector(".js-hero");
-  if (heroBg && heroSection && registerScrollEffect) {
-    registerScrollEffect({
-      desktop: function () {
-        gsap.to(heroBg, {
-          y: 90,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSection,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-      },
-      mobile: function () {},
-    });
-  }
+  // Scène 1 — Hero : ses animations (titre SplitText, parallaxe
+  // d'arrière-plan) vivent maintenant dans le plugin up2a-slider (voir
+  // docs/06-storyboard.md "Extraction En-tête/Pied de page/Slider/
+  // Actualités") — même dépendance à `up2a-core`/`window.UP2A`.
 
   // Scène 1 bis — Pourquoi choisir l'UP-2A : texte + média en fondu.
   var pourquoi = document.querySelector(".js-pourquoi");

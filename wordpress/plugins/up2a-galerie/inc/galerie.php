@@ -8,7 +8,7 @@
  * "Réglages Formations/Galerie" (2026-09-27).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
- * `up2a_core_icon()`, décor `up2a_core_decor()` — voir up2a-galerie.php
+ * `up2a_core_content_icon()`, décor `up2a_core_decor()` — voir up2a-galerie.php
  * "Requires Plugins").
  */
 
@@ -135,7 +135,7 @@ function up2a_galerie_render(): void {
 		</div>
 
 		<div class="up2a-galerie__lightbox js-galerie-lightbox" aria-hidden="true">
-			<button type="button" class="up2a-galerie__lightbox-close js-galerie-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-galerie' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
+			<button type="button" class="up2a-galerie__lightbox-close js-galerie-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-galerie' ); ?>"><?php echo up2a_core_content_icon( 'close' ); ?></button>
 			<button type="button" class="up2a-galerie__lightbox-nav up2a-galerie__lightbox-nav--prev js-galerie-prev" aria-label="<?php esc_attr_e( 'Image précédente', 'up2a-galerie' ); ?>">‹</button>
 			<figure class="up2a-galerie__lightbox-figure">
 				<img class="up2a-galerie__lightbox-img js-galerie-lightbox-img" src="" alt="">

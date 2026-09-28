@@ -1,0 +1,280 @@
+/*
+ * Scène d'accueil "Hero" (diaporama, titre, boutons, compte à rebours) —
+ * extrait de wordpress/plugins/up2a-core/assets/css/up2a-front-page.css
+ * (scission documentée dans docs/06-storyboard.md, 2026-09-28). Dépend de
+ * up2a-front-page.css (up2a-core) pour les tokens, les utilitaires
+ * partagés (.up2a-section-inner, .up2a-section-title) et les boutons
+ * (.up2a-hero__cta* — restés dans up2a-core malgré leur nom : ce sont en
+ * réalité les boutons de TOUT le site, réutilisés par Formations,
+ * Admissions, Documents, CTA final...).
+ */
+
+/* --- Hero (scène 1) — slider --- */
+
+.up2a-hero {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 5vw 96px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.up2a-hero__slides {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12%;
+  height: 124%;
+  z-index: -2;
+  background: linear-gradient(160deg, var(--up2a-color-primary-dark), var(--up2a-color-primary) 70%);
+  will-change: transform;
+}
+
+.up2a-hero__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.up2a-hero__slide.is-active {
+  opacity: 1;
+}
+
+.up2a-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    rgba(6, 26, 61, 0.94) 0%,
+    rgba(6, 26, 61, 0.82) 32%,
+    rgba(6, 26, 61, 0.4) 58%,
+    rgba(6, 26, 61, 0.12) 78%
+  );
+}
+
+.up2a-hero__content {
+  position: relative;
+  max-width: 620px;
+  color: #ffffff;
+}
+
+.up2a-hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--up2a-color-accent);
+  font-size: 0.9375rem;
+}
+
+.up2a-hero__eyebrow span {
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--up2a-color-accent);
+}
+
+.up2a-hero__title {
+  font-family: var(--up2a-font-heading);
+  font-size: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
+  line-height: 1.12;
+  margin: 0 0 24px;
+}
+
+.up2a-hero__title span {
+  color: var(--up2a-color-accent);
+}
+
+.up2a-hero__subtitle {
+  font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 36px;
+  max-width: 540px;
+}
+
+.up2a-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+
+.up2a-hero__dots {
+  position: absolute;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  gap: 10px;
+}
+
+.up2a-hero__dots button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color var(--up2a-motion-fast) ease;
+}
+
+.up2a-hero__dots button.is-active {
+  background: var(--up2a-color-accent);
+  border-color: var(--up2a-color-accent);
+}
+
+.up2a-hero__countdown-wrap {
+  position: relative;
+  height: 0;
+  z-index: 5;
+}
+
+.up2a-hero__countdown {
+  position: absolute;
+  left: 50%;
+  top: -60px;
+  transform: translateX(-50%);
+  z-index: 5;
+  width: min(780px, 92%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--up2a-color-primary-dark);
+  color: #ffffff;
+  border-radius: var(--up2a-radius-lg);
+  padding: 24px 30px;
+  box-shadow: 0 20px 45px rgba(3, 18, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.up2a-hero__countdown-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--up2a-color-accent) 18%, transparent);
+  color: var(--up2a-color-accent);
+}
+
+.up2a-hero__countdown-label {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 24px;
+  margin-right: 4px;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.up2a-hero__countdown-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--up2a-color-accent);
+}
+
+.up2a-hero__countdown-date {
+  font-family: var(--up2a-font-heading);
+  font-size: 1.125rem;
+  white-space: nowrap;
+}
+
+.up2a-hero__countdown-stats {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.up2a-hero__countdown-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 44px;
+  padding: 0 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.up2a-hero__countdown-stat:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.up2a-hero__countdown-stat span {
+  font-family: var(--up2a-font-heading);
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 1.875rem);
+  font-weight: 700;
+  color: var(--up2a-color-accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.up2a-hero__countdown-stat small {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  .up2a-hero {
+    padding: 96px 24px 72px;
+    min-height: 92vh;
+  }
+
+  .up2a-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .up2a-hero__cta {
+    justify-content: center;
+  }
+
+  .up2a-hero__dots {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 20px;
+  }
+
+  .up2a-hero__countdown {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    top: -84px;
+    padding: 18px 20px;
+  }
+
+  .up2a-hero__countdown-icon {
+    display: none;
+  }
+
+  .up2a-hero__countdown-label {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .up2a-hero__countdown-stats {
+    justify-content: space-between;
+  }
+}

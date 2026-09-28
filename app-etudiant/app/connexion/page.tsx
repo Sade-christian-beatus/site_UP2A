@@ -10,7 +10,9 @@ export default function ConnexionPage() {
         <h1 className="font-heading text-2xl font-semibold text-ink">
           Espace étudiant UP-2A
         </h1>
-        <p className="text-ink-soft">Connectez-vous avec votre compte.</p>
+        <p className="text-ink-soft">
+          Connectez-vous avec votre matricule et le mot de passe communiqué par l&apos;administration.
+        </p>
       </div>
       <LoginForm />
     </main>

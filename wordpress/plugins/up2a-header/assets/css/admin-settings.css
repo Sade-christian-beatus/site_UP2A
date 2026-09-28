@@ -1,0 +1,19 @@
+/*
+ * Écran de réglages "En-tête" (wp-admin) — voir inc/settings.php.
+ */
+
+.up2a-header-form {
+  max-width: 640px;
+}
+
+.up2a-header-row__image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.up2a-header-thumb img {
+  max-width: 160px;
+  max-height: 80px;
+  display: block;
+}

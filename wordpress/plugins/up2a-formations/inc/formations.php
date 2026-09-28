@@ -9,7 +9,7 @@
  * Galerie" (2026-09-27).
  *
  * Dépendance obligatoire : `up2a-core` (icônes `up2a_core_content_icon()`/
- * `up2a_core_icon()`, décor `up2a_core_decor()`, URL de préinscription
+ * `up2a_core_content_icon()`, décor `up2a_core_decor()`, URL de préinscription
  * `up2a_core_preinscription_url()` — voir up2a-formations.php
  * "Requires Plugins").
  */
@@ -147,7 +147,7 @@ function up2a_formations_render(): void {
 				<span class="up2a-formation-modal__badge up2a-formation-modal__badge--<?php echo esc_attr( strtolower( $f['faculte'] ) ); ?>"><?php echo esc_html( $f['faculte'] ); ?></span>
 				<h3><?php echo esc_html( $f['nom'] ); ?></h3>
 				<p class="up2a-formation-modal__highlight"><?php echo up2a_core_content_icon( $f['icone'] ); ?> <?php esc_html_e( 'Licence · 3 ans', 'up2a-formations' ); ?></p>
-				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_icon( 'cap' ); ?> <?php echo esc_html( $f['faculte_full'] ); ?></p>
+				<p class="up2a-formation-modal__faculte"><?php echo up2a_core_content_icon( 'cap' ); ?> <?php echo esc_html( $f['faculte_full'] ); ?></p>
 				<hr class="up2a-formation-modal__divider">
 				<?php if ( ! empty( $f['intro'] ) ) : ?>
 					<p class="up2a-formation-modal__label"><?php esc_html_e( 'Description', 'up2a-formations' ); ?></p>
@@ -172,7 +172,7 @@ function up2a_formations_render(): void {
 		<div class="up2a-formation-modal js-formation-modal" aria-hidden="true">
 			<div class="up2a-formation-modal__backdrop js-formation-modal-close"></div>
 			<div class="up2a-formation-modal__panel" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Détail de la formation', 'up2a-formations' ); ?>">
-				<button type="button" class="up2a-formation-modal__close js-formation-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-formations' ); ?>"><?php echo up2a_core_icon( 'close' ); ?></button>
+				<button type="button" class="up2a-formation-modal__close js-formation-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'up2a-formations' ); ?>"><?php echo up2a_core_content_icon( 'close' ); ?></button>
 				<div class="up2a-formation-modal__gallery">
 					<div class="up2a-formation-modal__main">
 						<img class="js-formation-modal-mainimg" src="" alt="">

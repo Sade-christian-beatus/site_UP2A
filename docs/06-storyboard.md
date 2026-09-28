@@ -124,11 +124,22 @@
 
 ## Scène 6 — Actualités / vie universitaire
 
-- Contenu : 2-3 dernières actualités (CPT Actualité, hors périmètre de
-  cette phase si le CPT n'existe pas encore — peut être une section
-  statique en V1).
-- Mise en scène : cartes en fondu + léger défilement, rien de coûteux.
-- Classes : `js-news`, `js-news-card`.
+> **Statut (2026-09-28)** : implémentée, voir "Extraction En-tête/Pied de
+> page/Slider/Actualités" plus bas. Pas de CPT — un écran de réglages
+> (répéteur) dans le plugin dédié `up2a-actualites`, shortcode
+> `[up2a_actualites]`. **Aucune actualité n'est préremplie** (contenu
+> réel à préserver = aucun, aucune donnée à inventer) : la section reste
+> absente de la home jusqu'à ce qu'une vraie actualité soit ajoutée
+> depuis le tableau de bord.
+
+- Contenu : les actualités ajoutées par l'admin (titre, date, extrait,
+  image, lien "En savoir plus" optionnel), dans l'ordre choisi sur
+  l'écran de réglages (pas un tri automatique par date).
+- Mise en scène : grille de cartes (3 colonnes desktop, 2 puis 1 en
+  responsive), légère élévation au survol pour les cartes cliquables.
+- Classes : `js-decor` (décor de section, même mécanisme que les autres
+  scènes) — pas d'animation GSAP dédiée pour l'instant (grille statique,
+  rien de coûteux).
 
 ## Scène 7 — CTA final + contact
 
@@ -507,6 +518,79 @@ formulaire puisse résoudre la bonne ligne côté Supabase.
   `up2a_formations_formations()` par `up2a-preinscription` pour éviter
   qu'une formation ajoutée depuis le tableau de bord soit rejetée à la
   soumission du formulaire.
+
+## Extraction En-tête/Pied de page/Slider/Actualités, SEO, login matricule (2026-09-28)
+
+- **Pourquoi ce nouveau découpage** : même logique que la scission
+  Formations/Galerie (2026-09-26/27) et même demande client — "gérer le
+  site web facilement sur WordPress" — étendue au reste de la home.
+  En-tête, Pied de page et Hero portaient encore du contenu réel
+  (téléphone, adresse, logo, texte du bandeau défilant, diapositives,
+  date de rentrée) codé en dur ou piloté par des constantes
+  `wp-config.php` (`UP2A_ESPACE_ETUDIANT_URL`, `UP2A_RENTREE_DATE`) —
+  plus aucune de ces deux constantes n'est nécessaire, tout est un champ
+  d'un écran de réglages.
+- **Ce qui a bougé, même principe que Formations/Galerie (une option par
+  plugin, un écran de réglages `add_menu_page()`, un shortcode)** :
+  - `up2a-header` : logo, téléphone, localisation courte, adresse
+    complète, texte du bandeau défilant, URL de l'espace étudiant.
+    Shortcode `[up2a_header]`, hooké sur `wp_body_open` — s'affiche
+    désormais sur **toutes les pages** (avant : seulement la home et les
+    pages détail formation, via un appel direct dans chaque template).
+  - `up2a-footer` : logo, slogan, liens (répéteur label/URL), texte de
+    copyright (jeton `{annee}` remplacé automatiquement). Shortcode
+    `[up2a_footer]`, hooké sur `wp_footer` — également sitewide
+    désormais, ce qui corrige une régression où des pages comme
+    `/preinscription/` n'avaient **aucun** pied de page.
+  - `up2a-slider` : diapositives du Hero (répéteur image + titre/sous-
+    titre/CTA), date de rentrée (`<input type="date">` plutôt qu'une
+    constante PHP). Shortcode `[up2a_slider]`, home uniquement.
+  - `up2a-actualites` (nouveau module, pas une extraction — voir Scène 6
+    plus haut) : actualités (répéteur titre/date/extrait/image/lien).
+    Shortcode `[up2a_actualites]`, home uniquement. **Sans amorçage
+    automatique**, à la différence des trois plugins ci-dessus : aucune
+    actualité réelle n'existait avant ce module, donc rien à préserver —
+    inventer un contenu de démonstration aurait violé CLAUDE.md §3.
+- **Dépendance croisée sans lien rigide entre plugins** : la section
+  Contact (`up2a-core`) lit désormais le téléphone/l'adresse via
+  `function_exists('up2a_header_get_option')` plutôt qu'un appel direct
+  à une fonction d'`up2a-core` — chaque carte de contact disparaît
+  individuellement si sa donnée est vide, jamais d'erreur bloquante si
+  `up2a-header` est inactif. Même motif déjà en place pour Formations/
+  Galerie (voir plus haut).
+- **Bug de portée CSS repéré et corrigé avant livraison** : les classes
+  `.up2a-hero__cta*` sont en réalité les boutons **partagés** de tout le
+  site (Pourquoi, Admissions, Documents, CTA final, Contact, modale
+  Formations) et pas seulement du Hero. Les déplacer avec le reste du CSS
+  du Hero vers `up2a-slider` (chargé uniquement sur la home) aurait cassé
+  le style des boutons sur toute page ne chargeant pas ce plugin (ex.
+  `/formations/{slug}/`). Ces règles sont restées dans
+  `up2a-core/assets/css/up2a-front-page.css`.
+- **Second bug repéré et corrigé** : le pied de page utilisait la classe
+  utilitaire `.up2a-section-inner` (centrage/largeur max) définie dans
+  `up2a-front-page.css`, chargée seulement sur la home — or le pied de
+  page doit maintenant s'afficher partout. Les propriétés de centrage
+  ont été recopiées directement dans `.up2a-footer__grid` (nouveau
+  fichier CSS autonome `up2a-footer.css`) plutôt que de dépendre d'une
+  classe utilitaire potentiellement absente.
+- **SEO minimal ajouté à `up2a-core`** (menu "SEO") : méta description et
+  image de partage par défaut (réglables), balises Open Graph/Twitter
+  Card et URL canonique injectées en `wp_head` (priorité 1). Se
+  désactive automatiquement si un plugin SEO dédié (Yoast, RankMath, All
+  in One SEO) est détecté actif, pour ne jamais produire de balises en
+  double. Le sitemap XML (`/wp-sitemap.xml`) et le robots.txt virtuel
+  sont natifs à WordPress depuis la 5.5 — rien codé pour ça, juste à
+  vérifier une fois le site en ligne.
+- **Pages légales rédigées** (docs/07-pages-legales.md) : Mentions
+  légales + Politique de confidentialité, avec des placeholders
+  `[À CONFIRMER]` explicites pour toute information officielle non
+  fournie par le client (numéro RCCM/IFU, nom légal de l'association
+  gestionnaire, hébergeur, e-mail de contact...) — livrées comme du
+  contenu à coller dans deux Pages WordPress, pas comme du code.
+- **Login étudiant par matricule, SMTP abandonné définitivement** (hors
+  périmètre de ce fichier storyboard home, mais lié à la même demande
+  client) : voir `docs/03-roadmap.md` Phase 6 et
+  `app-etudiant/README.md` "Connexion par matricule".
 
 ## Règles transverses (toutes scènes)
 

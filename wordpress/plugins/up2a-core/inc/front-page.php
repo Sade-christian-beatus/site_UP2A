@@ -79,29 +79,6 @@ add_action(
 );
 
 /**
- * Diapositives du slider Hero. Par défaut : les deux photos de campus
- * fournies par le client (assets/img/hero-slide-*.webp — versions
- * desktop + mobile déjà optimisées). Remplaçable entièrement via le
- * filtre `up2a_core_hero_slides` (ex. depuis wp-config.php/un mu-plugin)
- * si de nouvelles photos arrivent, sans toucher au code du plugin.
- * Chaque diapositive : ['desktop' => url, 'mobile' => url].
- */
-function up2a_core_hero_slides(): array {
-	$defaults = array(
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-1.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-1-mobile.webp',
-		),
-		array(
-			'desktop' => UP2A_CORE_URL . 'assets/img/hero-slide-2.webp',
-			'mobile'  => UP2A_CORE_URL . 'assets/img/hero-slide-2-mobile.webp',
-		),
-	);
-
-	return apply_filters( 'up2a_core_hero_slides', $defaults );
-}
-
-/**
  * Photo de campus pour la section "Pourquoi choisir l'UP-2A" (bâtiment +
  * étudiants, fournie par le client). Retourne un tableau
  * ['desktop' => url, 'mobile' => url] ou un tableau vide pour revenir à
@@ -161,56 +138,20 @@ function up2a_core_preinscription_url( string $formation_slug = '' ): string {
 }
 
 /**
- * Date de rentrée académique, affichée en compte à rebours dans le Hero.
- * Par défaut 5 octobre (année courante avancée automatiquement si la date
- * est déjà passée), remplaçable via la constante `UP2A_RENTREE_DATE`
- * (format `Y-m-d` ou `Y-m-d H:i:s`) ou le filtre `up2a_core_rentree_date`.
- */
-function up2a_core_rentree_date(): string {
-	if ( defined( 'UP2A_RENTREE_DATE' ) ) {
-		return UP2A_RENTREE_DATE;
-	}
-
-	$year    = (int) gmdate( 'Y' );
-	$default = $year . '-10-05 08:00:00';
-	if ( strtotime( $default ) < time() ) {
-		$default = ( $year + 1 ) . '-10-05 08:00:00';
-	}
-
-	return apply_filters( 'up2a_core_rentree_date', $default );
-}
-
-/**
- * Formate une date en français sans dépendre de la locale du serveur
- * (`gmdate()` ne traduit pas les noms de mois) — utilisé pour l'étiquette
- * du compte à rebours.
- */
-function up2a_core_format_date_fr( int $timestamp ): string {
-	$mois = array(
-		1 => 'janvier',
-		'février',
-		'mars',
-		'avril',
-		'mai',
-		'juin',
-		'juillet',
-		'août',
-		'septembre',
-		'octobre',
-		'novembre',
-		'décembre',
-	);
-
-	return (int) gmdate( 'j', $timestamp ) . ' ' . $mois[ (int) gmdate( 'n', $timestamp ) ] . ' ' . gmdate( 'Y', $timestamp );
-}
-
-/**
- * Petites icônes de contenu (mêmes conventions que up2a_core_icon() dans
- * inc/header.php, mais pour les sections de la home — dessinées à la main,
- * pas de police d'icônes ni de librairie externe).
+ * Petites icônes de contenu, dessinées à la main (pas de police d'icônes
+ * ni de librairie externe — cohérent avec CLAUDE.md §7). Fonction
+ * partagée par tous les plugins `up2a-*` (dépendance obligatoire
+ * d'`up2a-core`) — inclut depuis le 2026-09-28 les icônes historiquement
+ * dans `up2a_core_content_icon()` (phone/pin/menu/close/cap, ex-inc/header.php),
+ * fusionnées ici pour n'avoir qu'un seul jeu d'icônes à maintenir.
  */
 function up2a_core_content_icon( string $name ): string {
 	$icons = array(
+		'phone'      => '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+		'pin'        => '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+		'menu'       => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+		'close'      => '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+		'cap'        => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>',
 		'star'       => '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 15 9 22 9.5 16.5 14 18 21 12 17.5 6 21 7.5 14 2 9.5 9 9 12 2Z"/></svg>',
 		'book'       => '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h5a3 3 0 0 1 3 3 3 3 0 0 1 3-3h5a2 2 0 0 1 2 2v12a1 1 0 0 1-1 1h-6a2 2 0 0 0-2 2 2 2 0 0 0-2-2H3a1 1 0 0 1-1-1Z"/></svg>',
 		'shield'     => '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5Z"/></svg>',
@@ -245,88 +186,6 @@ function up2a_core_decor( string $variant ): string {
 		. '<span class="up2a-decor__shape up2a-decor__shape--blob js-decor-shape"></span>'
 		. '<span class="up2a-decor__shape up2a-decor__shape--ring js-decor-shape"></span>'
 		. '</div>';
-}
-
-// --------------------------------------------------------------------
-// Scène 1 — Hero
-// --------------------------------------------------------------------
-
-function up2a_core_render_hero(): void {
-	$slides = up2a_core_hero_slides();
-	?>
-	<section class="up2a-hero js-hero" id="up2a-hero">
-		<?php if ( $slides ) : ?>
-			<style>
-				<?php foreach ( $slides as $i => $slide ) : ?>
-					.up2a-hero__slide[data-slide="<?php echo (int) $i; ?>"] { background-image: url('<?php echo esc_url_raw( $slide['desktop'] ); ?>'); }
-					@media (max-width: 640px) {
-						.up2a-hero__slide[data-slide="<?php echo (int) $i; ?>"] { background-image: url('<?php echo esc_url_raw( $slide['mobile'] ); ?>'); }
-					}
-				<?php endforeach; ?>
-			</style>
-			<div class="up2a-hero__slides js-hero-bg" aria-hidden="true">
-				<?php foreach ( $slides as $i => $slide ) : ?>
-					<div class="up2a-hero__slide<?php echo 0 === $i ? ' is-active' : ''; ?>" data-slide="<?php echo (int) $i; ?>"></div>
-				<?php endforeach; ?>
-			</div>
-		<?php else : ?>
-			<div class="up2a-hero__slides up2a-hero__slides--fallback js-hero-bg" aria-hidden="true"></div>
-		<?php endif; ?>
-
-		<div class="up2a-hero__scrim" aria-hidden="true"></div>
-
-		<div class="up2a-hero__content">
-			<p class="up2a-hero__eyebrow"><span></span> UP-2A</p>
-			<h1 class="up2a-hero__title js-hero-title">
-				<?php esc_html_e( "Former aujourd'hui", 'up2a-core' ); ?><br>
-				<span><?php esc_html_e( 'les élites de demain !', 'up2a-core' ); ?></span>
-			</h1>
-			<p class="up2a-hero__subtitle">
-				<?php esc_html_e( 'Une formation de qualité pour construire les compétences, développer les ambitions et préparer les professionnels de demain.', 'up2a-core' ); ?>
-			</p>
-			<div class="up2a-hero__actions">
-				<a href="#up2a-formations" class="up2a-hero__cta up2a-hero__cta--accent js-hero-cta">
-					<?php echo up2a_core_icon( 'cap' ); ?>
-					<?php esc_html_e( 'Découvrir nos formations', 'up2a-core' ); ?>
-					<?php echo up2a_core_content_icon( 'arrow' ); ?>
-				</a>
-				<a href="<?php echo esc_url( up2a_core_preinscription_url() ); ?>" class="up2a-hero__cta up2a-hero__cta--outline js-hero-cta">
-					<?php echo up2a_core_content_icon( 'file' ); ?>
-					<?php esc_html_e( "S'inscrire maintenant", 'up2a-core' ); ?>
-					<?php echo up2a_core_content_icon( 'arrow' ); ?>
-				</a>
-			</div>
-		</div>
-
-		<?php if ( count( $slides ) > 1 ) : ?>
-			<div class="up2a-hero__dots js-hero-dots">
-				<?php foreach ( $slides as $i => $slide ) : ?>
-					<button type="button" class="<?php echo 0 === $i ? 'is-active' : ''; ?>" data-slide="<?php echo (int) $i; ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Image %d', 'up2a-core' ), $i + 1 ) ); ?>"></button>
-				<?php endforeach; ?>
-			</div>
-		<?php endif; ?>
-	</section>
-
-	<?php
-	$rentree    = up2a_core_rentree_date();
-	$rentree_ts = strtotime( $rentree );
-	?>
-	<div class="up2a-hero__countdown-wrap">
-		<div class="up2a-hero__countdown js-hero-countdown" data-target="<?php echo esc_attr( gmdate( 'c', $rentree_ts ) ); ?>">
-			<div class="up2a-hero__countdown-icon" aria-hidden="true"><?php echo up2a_core_content_icon( 'clock' ); ?></div>
-			<div class="up2a-hero__countdown-label">
-				<span class="up2a-hero__countdown-eyebrow"><?php esc_html_e( 'Rentrée académique', 'up2a-core' ); ?></span>
-				<span class="up2a-hero__countdown-date"><?php echo esc_html( up2a_core_format_date_fr( $rentree_ts ) ); ?></span>
-			</div>
-			<div class="up2a-hero__countdown-stats">
-				<div class="up2a-hero__countdown-stat"><span class="js-countdown-days">00</span><small><?php esc_html_e( 'Jours', 'up2a-core' ); ?></small></div>
-				<div class="up2a-hero__countdown-stat"><span class="js-countdown-hours">00</span><small><?php esc_html_e( 'Heures', 'up2a-core' ); ?></small></div>
-				<div class="up2a-hero__countdown-stat"><span class="js-countdown-minutes">00</span><small><?php esc_html_e( 'Min', 'up2a-core' ); ?></small></div>
-				<div class="up2a-hero__countdown-stat"><span class="js-countdown-seconds">00</span><small><?php esc_html_e( 'Sec', 'up2a-core' ); ?></small></div>
-			</div>
-		</div>
-	</div>
-	<?php
 }
 
 // --------------------------------------------------------------------
@@ -599,6 +458,12 @@ function up2a_core_render_cta_final(): void {
 // --------------------------------------------------------------------
 
 function up2a_core_render_contact(): void {
+	// Téléphone/adresse viennent du plugin up2a-header (dépendance
+	// facultative, pas obligatoire, pour ne pas bloquer up2a-core si
+	// up2a-header n'est pas actif) — voir docs/06-storyboard.md
+	// "Extraction En-tête/Pied de page/Slider/Actualités".
+	$telephone = function_exists( 'up2a_header_get_option' ) ? up2a_header_get_option()['telephone'] : '';
+	$adresse   = function_exists( 'up2a_header_get_option' ) ? up2a_header_get_option()['adresse'] : '';
 	?>
 	<section id="up2a-contact" class="up2a-contact js-contact">
 		<?php echo up2a_core_decor( 'contact' ); ?>
@@ -607,112 +472,43 @@ function up2a_core_render_contact(): void {
 			<p class="up2a-contact__hint"><?php esc_html_e( 'Contactez-nous dès aujourd\'hui pour toute question sur nos formations et admissions.', 'up2a-core' ); ?></p>
 			<div class="up2a-contact__panel">
 				<div class="up2a-contact__grid">
-					<div class="up2a-contact__card">
-						<div class="up2a-contact__icon"><?php echo up2a_core_icon( 'phone' ); ?></div>
-						<h3><?php esc_html_e( 'Appelez-nous', 'up2a-core' ); ?></h3>
-						<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', up2a_core_header_phone() ) ); ?>"><?php echo esc_html( up2a_core_header_phone() ); ?></a>
-					</div>
+					<?php if ( $telephone ) : ?>
+						<div class="up2a-contact__card">
+							<div class="up2a-contact__icon"><?php echo up2a_core_content_icon( 'phone' ); ?></div>
+							<h3><?php esc_html_e( 'Appelez-nous', 'up2a-core' ); ?></h3>
+							<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $telephone ) ); ?>"><?php echo esc_html( $telephone ); ?></a>
+						</div>
+					<?php endif; ?>
 					<div class="up2a-contact__card">
 						<div class="up2a-contact__icon"><?php echo up2a_core_content_icon( 'mail' ); ?></div>
 						<h3><?php esc_html_e( 'Horaires', 'up2a-core' ); ?></h3>
 						<p><?php esc_html_e( 'Lundi – Vendredi, 8h – 17h', 'up2a-core' ); ?></p>
 					</div>
-					<div class="up2a-contact__card">
-						<div class="up2a-contact__icon"><?php echo up2a_core_icon( 'pin' ); ?></div>
-						<h3><?php esc_html_e( 'Adresse', 'up2a-core' ); ?></h3>
-						<a href="<?php echo esc_url( up2a_core_header_maps_url() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( up2a_core_header_address() ); ?></a>
-					</div>
+					<?php if ( $adresse ) : ?>
+						<div class="up2a-contact__card">
+							<div class="up2a-contact__icon"><?php echo up2a_core_content_icon( 'pin' ); ?></div>
+							<h3><?php esc_html_e( 'Adresse', 'up2a-core' ); ?></h3>
+							<a href="<?php echo esc_url( up2a_header_maps_url() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $adresse ); ?></a>
+						</div>
+					<?php endif; ?>
 				</div>
 			</div>
-			<div class="up2a-contact__map">
-				<iframe
-					src="<?php echo esc_url( up2a_core_header_maps_embed_url() ); ?>"
-					title="<?php esc_attr_e( "Localisation de l'UP-2A", 'up2a-core' ); ?>"
-					loading="lazy"
-					referrerpolicy="no-referrer-when-downgrade"
-				></iframe>
-			</div>
+			<?php if ( $adresse && function_exists( 'up2a_header_maps_embed_url' ) ) : ?>
+				<div class="up2a-contact__map">
+					<iframe
+						src="<?php echo esc_url( up2a_header_maps_embed_url() ); ?>"
+						title="<?php esc_attr_e( "Localisation de l'UP-2A", 'up2a-core' ); ?>"
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+					></iframe>
+				</div>
+			<?php endif; ?>
 		</div>
 	</section>
 	<?php
 }
 
-/**
- * Footer de contenu, multi-colonnes (informations, pas le colophon
- * technique du thème — voir wordpress/README.md pour la nuance).
- */
-function up2a_core_render_footer(): void {
-	$liens = array(
-		'#up2a-hero'       => __( 'Accueil', 'up2a-core' ),
-		'#up2a-pourquoi'   => __( "Pourquoi l'UP-2A", 'up2a-core' ),
-		'#up2a-valeurs'    => __( 'Nos valeurs', 'up2a-core' ),
-		'#up2a-formations' => __( 'Formations', 'up2a-core' ),
-		'#up2a-galerie'    => __( 'Galerie', 'up2a-core' ),
-		'#up2a-admissions' => __( 'Admissions', 'up2a-core' ),
-		'#up2a-contact'    => __( 'Contact', 'up2a-core' ),
-	);
-	// Le module Formations est un plugin séparé (up2a-formations) : la
-	// colonne "Nos formations" ci-dessous ne s'affiche que s'il est actif,
-	// plutôt que d'échouer si ce n'est pas le cas.
-	$formations = function_exists( 'up2a_formations_formations' ) ? up2a_formations_formations() : array();
-	?>
-	<footer class="up2a-footer">
-		<div class="up2a-section-inner up2a-footer__grid">
-			<div class="up2a-footer__col up2a-footer__col--brand">
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="up2a-footer__logo">
-					<picture>
-						<source srcset="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.webp' ); ?>" type="image/webp">
-						<img
-							src="<?php echo esc_url( UP2A_CORE_URL . 'assets/img/logo-up2a-footer.png' ); ?>"
-							alt="<?php esc_attr_e( "UP-2A — Université Privée An-Nahdah d'Afrique", 'up2a-core' ); ?>"
-							loading="lazy"
-							width="480"
-							height="134"
-						>
-					</picture>
-				</a>
-				<p class="up2a-footer__slogan"><?php esc_html_e( 'Former aujourd\'hui les élites de demain.', 'up2a-core' ); ?></p>
-				<p class="up2a-footer__contact-line">
-					<?php echo up2a_core_icon( 'pin' ); ?>
-					<a href="<?php echo esc_url( up2a_core_header_maps_url() ); ?>" target="_blank" rel="noopener"><?php echo esc_html( up2a_core_header_address() ); ?></a>
-				</p>
-				<p class="up2a-footer__contact-line">
-					<?php echo up2a_core_icon( 'phone' ); ?>
-					<a href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', up2a_core_header_phone() ) ); ?>"><?php echo esc_html( up2a_core_header_phone() ); ?></a>
-				</p>
-			</div>
-			<div class="up2a-footer__col">
-				<p class="up2a-footer__title"><?php esc_html_e( 'Liens rapides', 'up2a-core' ); ?></p>
-				<ul class="up2a-footer__list">
-					<?php foreach ( $liens as $href => $label ) : ?>
-						<li><a href="<?php echo esc_url( $href ); ?>"><?php echo esc_html( $label ); ?></a></li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
-			<?php if ( ! empty( $formations ) ) : ?>
-				<div class="up2a-footer__col">
-					<p class="up2a-footer__title"><?php esc_html_e( 'Nos formations', 'up2a-core' ); ?></p>
-					<ul class="up2a-footer__list">
-						<?php foreach ( $formations as $f ) : ?>
-							<li>
-								<a
-									href="#up2a-formations"
-									class="js-formations-card"
-									data-formation="<?php echo esc_attr( $f['slug'] ); ?>"
-									data-image="<?php echo esc_url( $f['image']['desktop'] ); ?>"
-								><?php echo esc_html( $f['nom'] ); ?></a>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-			<?php endif; ?>
-		</div>
-		<div class="up2a-footer__bottom">
-			<p>
-				&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php esc_html_e( "Université Privée An-Nahdah d'Afrique (UP-2A)", 'up2a-core' ); ?>
-				— <?php esc_html_e( 'Autorisation MESRI n°2026-001647', 'up2a-core' ); ?>
-			</p>
-		</div>
-	</footer>
-	<?php
-}
+// Le pied de page est un plugin séparé (up2a-footer, voir
+// docs/06-storyboard.md "Extraction En-tête/Pied de page/Slider/
+// Actualités") — il s'affiche désormais lui-même sur `wp_footer`, plus
+// besoin d'appeler une fonction de rendu depuis les templates.

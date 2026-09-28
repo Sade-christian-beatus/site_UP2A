@@ -93,9 +93,32 @@ Tous filtrés par RLS (`lib/etudiant/data.ts`) :
 - **Mon compte** (`/profil`) : changement de mot de passe self-service
   (`supabase.auth.updateUser`). Utile en particulier pour remplacer le
   mot de passe temporaire généré par l'admin lors de la transformation
-  de candidature (voir `back-office/README.md` "Candidatures" — pas
-  d'e-mail d'invitation tant que le SMTP n'est pas configuré). Accessible
-  depuis l'avatar (sidebar desktop ou barre du haut mobile).
+  de candidature (voir `back-office/README.md` "Candidatures" — le SMTP
+  n'est pas configuré, décision définitive : la connexion se fait par
+  matricule + mot de passe, jamais par e-mail). Accessible depuis
+  l'avatar (sidebar desktop ou barre du haut mobile).
+
+## Connexion par matricule (2026-09-28)
+
+La page `/connexion` demande un **matricule** (ex. `UP2A-2026-0001`) et
+un mot de passe — jamais une adresse e-mail. `lib/auth/actions.ts` →
+`login()` résout le matricule vers l'e-mail Supabase Auth interne via la
+fonction Postgres `resolve_etudiant_email` (migration
+`supabase/migrations/0006_resolve_etudiant_email.sql`, `SECURITY DEFINER`
+car appelée avant toute authentification), puis appelle
+`signInWithPassword` normalement. L'e-mail reste un identifiant Auth
+purement interne : l'étudiant ne le voit ni ne l'utilise jamais.
+
+Le message d'erreur est volontairement identique que le matricule soit
+inconnu ou le mot de passe faux ("Matricule ou mot de passe incorrect"),
+pour ne pas révéler laquelle des deux informations est fausse.
+
+**Limite connue** : `resolve_etudiant_email` est appelable par n'importe
+qui disposant de la clé `anon` (donc tout visiteur du site) et constitue
+un oracle "ce matricule existe/n'existe pas" — pas de rate-limiting
+dessus à ce jour. Acceptable pour la taille de cette université ; à
+revisiter (Edge Function avec limite par IP) si le nombre d'étudiants
+grandit significativement.
 
 ## Présentation (2026-09-25)
 
